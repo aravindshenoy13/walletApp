@@ -21,12 +21,13 @@
 ### V2 — Categories and CSV export
 
 - Add, edit, and manage custom categories.
+- Allow renaming, changing icons, and archiving all categories, including the built-in categories.
 - Add category icons alongside category management.
-- Filter records by category.
 - Export transactions as CSV.
 
 ### V3 — Analysis and overview
 
+- Filter records by one category at a time.
 - Add day-by-day income and expense flow graphs.
 - Add category analysis and a spending overview.
 - Allow viewing one account's transactions and balance.
