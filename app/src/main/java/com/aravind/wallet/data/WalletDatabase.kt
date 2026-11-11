@@ -19,9 +19,8 @@ interface WalletDao {
     @Query("SELECT * FROM accounts ORDER BY name COLLATE NOCASE, id")
     fun observeLedger(): Flow<List<AccountWithRecords>>
 
-    @Transaction
     @Query("SELECT * FROM accounts ORDER BY name COLLATE NOCASE, id")
-    suspend fun snapshot(): List<AccountWithRecords>
+    suspend fun accounts(): List<Account>
 
     @Insert suspend fun insertAccount(account: Account): Long
     @Update suspend fun updateAccount(account: Account): Int

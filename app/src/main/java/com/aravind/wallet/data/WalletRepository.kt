@@ -13,7 +13,7 @@ class WalletRepository(private val database: WalletDatabase) {
         val name = account.name.trim()
         require(name.isNotEmpty()) { "Enter an account name." }
         require(name.length <= 80) { "Use at most 80 characters for the account name." }
-        val existing = dao.snapshot().map { it.account }
+        val existing = dao.accounts()
         require(existing.none { it.id != account.id && it.name.equals(name, ignoreCase = true) }) {
             "An account with this name already exists."
         }
@@ -30,7 +30,7 @@ class WalletRepository(private val database: WalletDatabase) {
         require(record.description.trim().length <= 120) { "Use at most 120 characters for the description." }
         require(record.note.trim().length <= 1000) { "Use at most 1,000 characters for the note." }
         require(record.occurredAt.year in 1..9999) { "Choose a valid occurrence date." }
-        val accountIds = dao.snapshot().map { it.account.id }.toSet()
+        val accountIds = dao.accounts().map { it.id }.toSet()
         require(record.accountId in accountIds) { "Choose an existing account." }
         if (record.type == RecordType.TRANSFER) {
             require(record.destinationAccountId in accountIds) { "Choose a destination account." }

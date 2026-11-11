@@ -5,5 +5,6 @@
     <color name="quiet">#595959</color>
     <color name="line">#BDBDBD</color>
     <color name="error">#B00020</color>
+    <color name="legacy_navigation">#222222</color>
     <bool name="light_system_bars">true</bool>
 </resources>

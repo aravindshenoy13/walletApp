@@ -28,13 +28,11 @@
     <string name="total_balance">Total balance</string>
     <string name="edit_account_hint">Tap an account to edit its name or opening balance.</string>
     <string name="amount">Amount (₹)</string>
-    <string name="amount_hint">0.00</string>
     <string name="category">Category</string>
     <string name="account">Account</string>
     <string name="from_account">From account</string>
     <string name="to_account">To account</string>
     <string name="description">Description / payee</string>
-    <string name="description_hint">For example, Lunch or Salary</string>
     <string name="date">Date occurred</string>
     <string name="time">Time occurred</string>
     <string name="note">Note · optional</string>
@@ -46,7 +44,6 @@
     <string name="cancel">Cancel</string>
     <string name="save_account">Save account</string>
     <string name="account_name">Account name</string>
-    <string name="account_name_hint">For example, Cash or Bank</string>
     <string name="opening_balance">Opening balance (₹)</string>
     <string name="opening_balance_help">Your balance when you start tracking this account. Negative balances are allowed. Editing this value recalculates the current balance.</string>
     <string name="transfer_help">A transfer moves money between accounts and is excluded from income and expense totals.</string>
