@@ -1,0 +1,135 @@
+<style>
+  #wallet-v4-wireframes { font:14px/1.45 Arial,sans-serif; color:#222; }
+  #wallet-v4-wireframes * { box-sizing:border-box; }
+  #wallet-v4-wireframes .board { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:28px 22px; }
+  #wallet-v4-wireframes section { display:flex; flex-direction:column; min-width:0; }
+  #wallet-v4-wireframes h2 { font-size:14px; font-weight:400; margin:0 0 10px; }
+  #wallet-v4-wireframes .phone { --paper:#fff; --ink:#222; --line:#999; --quiet:#555; background:var(--paper); color:var(--ink); border:1px solid var(--ink); display:flex; flex:1; flex-direction:column; min-height:490px; }
+  #wallet-v4-wireframes .phone.dark { --paper:#222; --ink:#fff; --line:#aaa; --quiet:#ccc; }
+  #wallet-v4-wireframes header { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:14px; min-height:53px; border-bottom:1px solid var(--ink); }
+  #wallet-v4-wireframes .title { display:flex; align-items:center; gap:8px; }
+  #wallet-v4-wireframes .title svg { display:block; align-self:center; }
+  #wallet-v4-wireframes .search { display:flex; align-items:center; gap:6px; border:1px solid var(--line); padding:6px; font-size:12px; }
+  #wallet-v4-wireframes svg { width:16px; height:16px; flex-shrink:0; color:var(--ink); stroke:currentColor; }
+  #wallet-v4-wireframes .body { flex:1; padding:14px; }
+  #wallet-v4-wireframes p { margin:0; }
+  #wallet-v4-wireframes .row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  #wallet-v4-wireframes .label { display:flex; align-items:center; gap:8px; }
+  #wallet-v4-wireframes .item { padding:12px 0; border-bottom:1px solid var(--line); }
+  #wallet-v4-wireframes .group { margin:18px 0 7px; }
+  #wallet-v4-wireframes .muted { color:var(--quiet); font-size:12px; }
+  #wallet-v4-wireframes .field { border:1px solid var(--line); padding:9px; margin-top:8px; }
+  #wallet-v4-wireframes .action { border:1px solid var(--ink); padding:9px; margin-top:18px; text-align:center; }
+  #wallet-v4-wireframes .nav { display:flex; justify-content:space-between; gap:5px; padding:10px 6px; border-top:1px solid var(--ink); font-size:11px; }
+  #wallet-v4-wireframes .nav span { display:flex; align-items:center; flex-direction:column; gap:3px; }
+  #wallet-v4-wireframes .current { text-decoration:underline; text-underline-offset:4px; }
+  #wallet-v4-wireframes .summary { border-bottom:1px solid var(--line); padding-bottom:12px; }
+  #wallet-v4-wireframes .summary .row { margin-top:5px; }
+  #wallet-v4-wireframes .cat svg { background:#f7d5be; padding:6px; width:16px; height:16px; box-sizing:content-box; border-radius:4px; }
+  #wallet-v4-wireframes .dark .cat svg { background:#a75b48; color:#fff; }
+  #wallet-v4-wireframes .icons { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:8px; }
+  #wallet-v4-wireframes .icon { border:1px solid var(--line); text-align:center; padding:9px 2px; font-size:12px; }
+  #wallet-v4-wireframes .icon svg { display:block; margin:0 auto 4px; width:20px; height:20px; }
+  #wallet-v4-wireframes .more-icons .icon { border:0; }
+  @media(max-width:850px) { #wallet-v4-wireframes .board { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media(max-width:570px) { #wallet-v4-wireframes .board { grid-template-columns:minmax(0,1fr); } }
+</style>
+<div id="wallet-v4-wireframes">
+  <div class="board">
+    <section aria-label="Records screen in light mode with settings button next to Wallet and search on the right">
+      <h2>01 / Records · light</h2><div class="phone">
+        <header><span class="title"><i data-lucide="settings" aria-hidden="true"></i> Wallet</span><span class="search"><i data-lucide="search" aria-hidden="true"></i>Search</span></header>
+        <div class="body"><div class="summary"><p>Today · 12 Nov 2026</p><div class="row"><span>Income</span><span>₹2,000</span></div><div class="row"><span>Expenses</span><span>₹250</span></div><div class="row"><span>Net today</span><span>₹1,750</span></div></div>
+          <div class="group muted">12 Nov 2026</div><div class="item"><div class="row"><span class="label cat"><i data-lucide="utensils" aria-hidden="true"></i>Food</span><span>− ₹250</span></div><p class="muted">13:30 · Cash · Lunch</p></div>
+          <div class="item"><div class="row"><span class="label"><i data-lucide="arrow-down-left" aria-hidden="true"></i>Salary</span><span>+ ₹2,000</span></div><p class="muted">09:00 · Bank</p></div><div class="action">+ Add record</div>
+        </div><div class="nav"><span class="current"><i data-lucide="receipt" aria-hidden="true"></i>Records</span><span><i data-lucide="chart-no-axes-combined" aria-hidden="true"></i>Analysis</span><span><i data-lucide="wallet" aria-hidden="true"></i>Accounts</span><span><i data-lucide="tag" aria-hidden="true"></i>Categories</span></div>
+      </div>
+    </section>
+    <section aria-label="Settings with appearance, CSV export and import, backup and restore">
+      <h2>02 / Settings</h2><div class="phone">
+        <header><span>&lt; Wallet</span><span>Settings</span></header><div class="body">
+          <div class="group">Appearance</div><div class="item row"><span class="label"><i data-lucide="moon" aria-hidden="true"></i>Dark mode</span><span>☐</span></div>
+          <div class="group">Transactions</div><div class="item row"><span class="label"><i data-lucide="file-up" aria-hidden="true"></i>Export CSV</span><span>&gt;</span></div><div class="item row"><span class="label"><i data-lucide="file-down" aria-hidden="true"></i>Import CSV</span><span>&gt;</span></div>
+          <div class="group">Full backup</div><div class="item row"><span class="label"><i data-lucide="save" aria-hidden="true"></i>Back up data</span><span>&gt;</span></div><div class="item row"><span class="label"><i data-lucide="rotate-ccw" aria-hidden="true"></i>Restore backup</span><span>&gt;</span></div>
+        </div>
+      </div>
+    </section>
+    <section aria-label="CSV export with selection of accounts">
+      <h2>03 / Export CSV</h2><div class="phone">
+        <header><span>&lt; Settings</span><span>Export CSV</span></header><div class="body">
+          <p>Select accounts</p><div class="item row"><span>☑ Bank</span><span></span></div><div class="item row"><span>☐ Cash</span><span></span></div><div class="item row"><span>☐ Card</span><span></span></div>
+          <div class="group muted">Selected: Bank</div><div class="action">Choose location &amp; export</div><div class="group muted">Transaction export · CSV</div>
+        </div>
+      </div>
+    </section>
+    <section aria-label="CSV import entry screen for choosing a transaction CSV file">
+      <h2>04 / Import CSV</h2><div class="phone">
+        <header><span>&lt; Settings</span><span>Import CSV</span></header><div class="body">
+          <p>Import transactions</p><div class="group muted">Choose a CSV file from your device.</div><div class="field">No file selected</div><div class="action">Choose CSV file</div>
+        </div>
+      </div>
+    </section>
+    <section aria-label="Full backup screen for saving all wallet data">
+      <h2>05 / Back up data</h2><div class="phone">
+        <header><span>&lt; Settings</span><span>Back up data</span></header><div class="body">
+          <p>Full backup</p><div class="group muted">Includes:</div><div class="item">Accounts &amp; opening balances</div><div class="item">Categories</div><div class="item">Transactions</div><div class="action">Choose location &amp; save</div>
+        </div>
+      </div>
+    </section>
+    <section aria-label="Restore backup screen with file selection and review step">
+      <h2>06 / Restore backup</h2><div class="phone">
+        <header><span>&lt; Settings</span><span>Restore backup</span></header><div class="body">
+          <p>Restore a full backup</p><div class="group muted">Choose a previously saved wallet backup.</div><div class="field">No file selected</div><div class="action">Choose backup file</div><div class="group muted">Review before restoring.</div>
+        </div>
+      </div>
+    </section>
+    <section aria-label="Records screen in dark mode with white icon line art">
+      <h2>07 / Records · dark</h2><div class="phone dark">
+        <header><span class="title"><i data-lucide="settings" aria-hidden="true"></i> Wallet</span><span class="search"><i data-lucide="search" aria-hidden="true"></i>Search</span></header>
+        <div class="body"><div class="summary"><p>Today · 12 Nov 2026</p><div class="row"><span>Income</span><span>₹2,000</span></div><div class="row"><span>Expenses</span><span>₹250</span></div><div class="row"><span>Net today</span><span>₹1,750</span></div></div>
+          <div class="group muted">12 Nov 2026</div><div class="item"><div class="row"><span class="label cat"><i data-lucide="utensils" aria-hidden="true"></i>Food</span><span>− ₹250</span></div><p class="muted">13:30 · Cash · Lunch</p></div>
+          <div class="item"><div class="row"><span class="label"><i data-lucide="arrow-down-left" aria-hidden="true"></i>Salary</span><span>+ ₹2,000</span></div><p class="muted">09:00 · Bank</p></div><div class="action">+ Add record</div>
+        </div><div class="nav"><span class="current"><i data-lucide="receipt" aria-hidden="true"></i>Records</span><span><i data-lucide="chart-no-axes-combined" aria-hidden="true"></i>Analysis</span><span><i data-lucide="wallet" aria-hidden="true"></i>Accounts</span><span><i data-lucide="tag" aria-hidden="true"></i>Categories</span></div>
+      </div>
+    </section>
+    <section aria-label="Category editor with an Additional Icons button and background color selector">
+      <h2>08 / Edit category</h2><div class="phone">
+        <header><span>&lt; Categories</span><span>Edit category</span></header><div class="body">
+          <div class="muted">Category name</div><div class="field">Travel</div><div class="group">Choose icon</div>
+          <div class="icons"><div class="icon"><i data-lucide="utensils" aria-hidden="true"></i>☐ Food</div><div class="icon"><i data-lucide="house" aria-hidden="true"></i>☐ Home</div><div class="icon"><i data-lucide="book-open" aria-hidden="true"></i>☐ Book</div></div>
+          <div class="action">Additional Icons</div>
+          <div class="group muted">Selected icon: Travel</div>
+          <div class="group">Background color</div><div class="field">16 color choices</div><div class="action">Save changes</div>
+        </div>
+      </div>
+    </section>
+    <section aria-label="Additional category icons displayed in a borderless grid">
+      <h2>09 / Additional Icons</h2><div class="phone">
+        <header><span>&lt; Category</span><span>Additional Icons</span></header><div class="body">
+          <div class="icons more-icons">
+            <div class="icon"><i data-lucide="plane" aria-hidden="true"></i>☑ Travel</div><div class="icon"><i data-lucide="music" aria-hidden="true"></i>☐ Music</div><div class="icon"><i data-lucide="heart" aria-hidden="true"></i>☐ Health</div>
+            <div class="icon"><i data-lucide="car" aria-hidden="true"></i>☐ Car</div><div class="icon"><i data-lucide="coffee" aria-hidden="true"></i>☐ Coffee</div><div class="icon"><i data-lucide="gift" aria-hidden="true"></i>☐ Gifts</div>
+            <div class="icon"><i data-lucide="dumbbell" aria-hidden="true"></i>☐ Fitness</div><div class="icon"><i data-lucide="graduation-cap" aria-hidden="true"></i>☐ Study</div><div class="icon"><i data-lucide="paw-print" aria-hidden="true"></i>☐ Pets</div>
+            <div class="icon"><i data-lucide="bus" aria-hidden="true"></i>☐ Bus</div><div class="icon"><i data-lucide="shopping-bag" aria-hidden="true"></i>☐ Shopping</div><div class="icon"><i data-lucide="lightbulb" aria-hidden="true"></i>☐ Utilities</div>
+          </div>
+          <div class="action">Use selected icon</div>
+        </div>
+      </div>
+    </section>
+    <section aria-label="Analysis account selection using checkboxes with one account selected">
+      <h2>10 / Account selection</h2><div class="phone">
+        <header><span>&lt; Analysis</span><span>Accounts</span></header><div class="body">
+          <p>Select one account</p><div class="item">☑ All accounts</div><div class="item">☐ Bank</div><div class="item">☐ Cash</div><div class="item">☐ Card</div><div class="action">Apply</div>
+        </div>
+      </div>
+    </section>
+    <section aria-label="Records with search expanded in the top-right header">
+      <h2>11 / Search · expanded</h2><div class="phone">
+        <header><span class="title"><i data-lucide="settings" aria-hidden="true"></i> Wallet</span><span class="search"><i data-lucide="search" aria-hidden="true"></i>Lunch <span class="muted">Clear</span></span></header>
+        <div class="body"><div class="summary"><p>Today · 12 Nov 2026</p><div class="row"><span>Income</span><span>₹2,000</span></div><div class="row"><span>Expenses</span><span>₹250</span></div><div class="row"><span>Net today</span><span>₹1,750</span></div></div>
+          <div class="group muted">1 matching record</div><div class="item"><div class="row"><span class="label cat"><i data-lucide="utensils" aria-hidden="true"></i>Food</span><span>− ₹250</span></div><p class="muted">13:30 · Cash · Lunch</p></div>
+        </div><div class="nav"><span class="current"><i data-lucide="receipt" aria-hidden="true"></i>Records</span><span><i data-lucide="chart-no-axes-combined" aria-hidden="true"></i>Analysis</span><span><i data-lucide="wallet" aria-hidden="true"></i>Accounts</span><span><i data-lucide="tag" aria-hidden="true"></i>Categories</span></div>
+      </div>
+    </section>
+  </div>
+</div>

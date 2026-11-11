@@ -1,5 +1,20 @@
 # WalletApp wireframes
 
+## V4 revision 02
+
+- `wallet-v4-wireframe-r02.html` places Settings left of Wallet with aligned centers, shows compact and expanded top-right search, retains bottom navigation icons in light and dark examples, and adds an Additional Icons page with a borderless grid.
+- Square checkbox appearances replace radio-button appearances throughout V4. Single-choice groups remain mutually exclusive; the CSV export account list supports multiple selections. Account selection and category icon selection illustrate single-choice behavior.
+- The additional icon names shown are examples, not a final inventory. Icon/color selection remains independent and the existing 16 colors remain in one selector.
+- The sketches are static; the compact search expands for input in the intended app. CSV import and restore behavior still need product decisions before implementation.
+
+## V4 revision 01
+
+- `wallet-v4-wireframe-r01.html` sketches V4 settings, selected-account CSV export, CSV import, full backup and restore entry points, dark mode, app-wide icons, and more category icon examples.
+- These are static sketches using sample data. CSV import columns, validation, mapping, and duplicate handling remain undecided as specified in the roadmap. The icon examples and restore review step are proposals, not finalized behavior.
+- Backup includes accounts, opening balances, categories, and transactions and is distinct from CSV transaction export. Restore conflict/replacement behavior is deliberately undecided and needs product decisions before implementation.
+- Records and Analysis retain the current V3 roadmap behavior. The displayed icon line art is black in light mode and white in dark mode. Category icon choices and their 16 independently selectable background colors carry forward from V2.
+- No Android implementation or changes to AGENTS.md or ROADMAP.md are included.
+
 Latest V3 draft: `wallet-v3-wireframe-r03.html`. Revisions 02 and 03 supersede the V3 revision 01 proposals below.
 
 ## V3 revision 03
