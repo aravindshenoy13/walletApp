@@ -20,4 +20,6 @@ Use this file for project working requirements. Read [ROADMAP.md](ROADMAP.md) fo
 - Implement only the requested version's features.
 - Save wireframes in `wireframes/` in the main WalletApp directory. Use `wallet-v<app-version>-wireframe-r<revision>.html`, with at least two digits for revisions (for example, `wallet-v1-wireframe-r02.html`). Increment the revision for each saved iteration within an app version and preserve earlier revisions. Start a new app version at `r01`.
 - Ask the user for approval before future `AGENTS.md` updates, describing the proposed changes before editing.
+- When committing and pushing work, use `GITHUB_PAT` from `repository/.env` for GitHub authentication; never print or commit the token.
+- Commit frequently at meaningful checkpoints whenever appropriate, keeping commits focused and messages clear.
 
