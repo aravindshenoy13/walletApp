@@ -28,7 +28,6 @@
 ### V3 — Analysis and overview
 
 - Filter records by one category at a time.
-- Display transfer transactions in blue.
 - Add day-by-day income and expense flow graphs.
 - Add category analysis and a spending overview.
 - Allow viewing one account's transactions and balance.
