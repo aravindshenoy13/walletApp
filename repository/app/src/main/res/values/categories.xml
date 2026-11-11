@@ -28,9 +28,6 @@
     <string name="export_csv">Export CSV</string>
     <string name="all_transactions">All transactions</string>
     <string name="export_label">Export</string>
-    <string name="export_format">Format</string>
-    <string name="csv">CSV</string>
-    <string name="export_includes">Includes</string>
     <string name="transfers">Transfers</string>
     <string name="choose_save">Choose location &amp; save</string>
     <string name="export_help">Choose a destination in the Android file picker.</string>

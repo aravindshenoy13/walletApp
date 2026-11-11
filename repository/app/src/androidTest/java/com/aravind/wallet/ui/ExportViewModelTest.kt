@@ -1,6 +1,12 @@
 package com.aravind.wallet.ui
 
 import android.net.Uri
+import androidx.test.core.app.ActivityScenario
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.*
+import com.aravind.wallet.R
 import androidx.lifecycle.ViewModelStore
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -43,23 +49,42 @@ class ExportViewModelTest {
         }
     }
 
+    @Test fun exportTypeChoiceSurvivesRecreation() {
+        ActivityScenario.launch(ExportActivity::class.java).use { scenario ->
+            onView(withId(R.id.export_all)).check(matches(isChecked()))
+            onView(withId(R.id.export_income)).perform(click())
+            scenario.recreate()
+            onView(withId(R.id.export_income)).check(matches(isChecked()))
+            onView(withId(R.id.export_expenses)).perform(click()).check(matches(isChecked()))
+            onView(withId(R.id.export_transfers)).perform(click()).check(matches(isChecked()))
+        }
+    }
+
     @Test fun failedProviderCanBeRetriedAndActualOutputIsClosedAndReadable() = runBlocking {
         val account = app.repository.saveAccount(Account(name = "Export cash", openingBalanceMinor = 1000))
         app.repository.saveRecord(WalletRecord(type = RecordType.EXPENSE, amountMinor = 123, accountId = account,
             categoryId = "FOOD", occurredAt = LocalDateTime.of(2026,11,11,12,30), description = "Export test"))
+        app.repository.saveRecord(WalletRecord(type = RecordType.INCOME, amountMinor = 500, accountId = account,
+            categoryId = "SALARY", occurredAt = LocalDateTime.of(2026,11,11,13,30), description = "Excluded income"))
         val before = app.repository.snapshot()
         val model = ExportViewModel(app)
         val store = ViewModelStore()
         store.put("export", model)
         val file = File(app.cacheDir, "v2-export-writer-test.csv")
         try {
-            instrumentation.runOnMainSync { model.selected(Uri.parse("content://com.aravind.wallet.missing/file")) }
+            instrumentation.runOnMainSync {
+                assertTrue(model.choose(RecordType.EXPENSE))
+                assertFalse(model.choose(RecordType.INCOME))
+                assertEquals(RecordType.EXPENSE, model.recordType)
+                model.selected(Uri.parse("content://com.aravind.wallet.missing/file"))
+            }
             withTimeout(10_000) { model.state.first { it == ExportState.Failed } }
             instrumentation.runOnMainSync { assertTrue(model.choose()); model.selected(Uri.fromFile(file)) }
             val saved = withTimeout(10_000) { model.state.first { it is ExportState.Saved } } as ExportState.Saved
             assertEquals(1, saved.count)
             assertTrue(file.readText().startsWith("\uFEFFrecord_id,date,time,type,amount"))
             assertTrue(file.readText().contains(",1.23,INR,Export cash,,Food,Export test\r\n"))
+            assertFalse(file.readText().contains("Excluded income"))
             val after = app.repository.snapshot()
             assertEquals(before.records, after.records)
             assertEquals(before.balances, after.balances)

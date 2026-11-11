@@ -11,7 +11,7 @@ A personal, on-device INR transaction tracker for Android 8.0 (API 26) and later
 
 5. Open **Categories** to add a custom category or edit any category, including built-ins. Choose among six black line icons and 16 background colors independently. Names are trimmed, 1–80 characters, and unique without regard to case, including archived names. New categories start with Other/Sky.
 6. Archive a category from its editor after confirming. It stays visible and editable in Categories, and old records retain it; new assignments offer active categories only. An existing record can keep its archived category. At least one category must remain active. V2 has no restore action; an archived category can be renamed to free its old name.
-7. On **Records**, choose **Export CSV**, then **Choose location & save**. Select a location in Android's file picker to export all transactions. Cancelling leaves wallet data unchanged; a failed write can be retried.
+7. On **Records**, choose **Export CSV**, select **All transactions**, **Income**, **Expenses**, or **Transfers**, then **Choose location & save**. Select a location in Android's file picker. The file is always CSV. Cancelling leaves wallet data unchanged; a failed write can be retried with the same selection.
 
 V2 uses light mode even when the device uses dark mode. Category filters and analysis remain V3; CSV import, full backup/restore, dark mode, and additional/app-wide icons remain V4. No sample accounts or transactions are inserted at startup.
 
@@ -23,7 +23,7 @@ The file is UTF-8 with a BOM and CRLF row endings, named `wallet-transactions-YY
 record_id,date,time,type,amount,currency,account,to_account,category,description
 ```
 
-Rows run from oldest occurrence to newest, then by local record ID. Dates/times use `YYYY-MM-DD` and `HH:mm:ss`; types are `income`, `expense`, or `transfer`. Positive amounts use exact two-decimal INR values without grouping. Transfers appear once, with a destination account and blank category. Other rows have a blank destination. Current account/category names are used, including archived categories.
+Rows include all transactions or only the selected type, from oldest occurrence to newest, then by local record ID. A selection with no matches exports the column header only. Dates/times use `YYYY-MM-DD` and `HH:mm:ss`; types are `income`, `expense`, or `transfer`. Positive amounts use exact two-decimal INR values without grouping. Transfers appear once, with a destination account and blank category. Other rows have a blank destination. Current account/category names are used, including archived categories.
 
 Commas, quotes, and line breaks are CSV-escaped. Formula-like text (leading `=`, `+`, `-`, or `@` after whitespace, or an initial tab/newline) receives an export-only apostrophe so spreadsheet applications treat it as text. Stored data is unchanged. Opening balances, category appearance, and hidden legacy notes are excluded: this file is a transaction export, not a full wallet backup.
 
@@ -54,6 +54,8 @@ Run connected tests on a disposable emulator or test device: the UI test fixture
 Verified on 11 November 2026: 11 JVM tests and 19 Android tests passed, lint reported 0 errors (15 warnings), and debug/R8 release builds passed. An installed V1→V2 upgrade preserved data and the record sequence. Actual system-picker CSV saving and an optimized-release launch with saved data passed. Device testing used API 37 with system dark mode enabled; API 26 compatibility was checked by lint. Details are recorded in [the V2 implementation plan](../V2-PLAN.md).
 
 Verified artifacts: [installable debug APK](dist/wallet-v2-debug.apk), [unsigned release APK](dist/wallet-v2-release-unsigned.apk), and [SHA-256 checksums](dist/wallet-v2-SHA256SUMS.txt). The release APK requires signing before installation.
+
+The subsequent transaction-type export update passed all 12 JVM tests and 3 focused Android export tests, including selection recreation and filtered-write retry. Debug/release assembly and lint passed again (0 errors, 15 warnings); the APKs above include this update.
 
 ## Data and implementation
 

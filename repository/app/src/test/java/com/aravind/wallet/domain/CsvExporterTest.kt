@@ -19,6 +19,22 @@ class CsvExporterTest {
         if (type == RecordType.TRANSFER) null else "FOOD", time, "Lunch", "Hidden legacy note",
     )
 
+    @Test fun eachTypeExportsOnlyMatchingRowsAndEmptyMatchesKeepHeader() {
+        val records = RecordType.entries.mapIndexed { index, type -> entry(index.toLong() + 1, type) }
+        val ledger = Ledger(accounts, records, categories)
+        RecordType.entries.forEach { type ->
+            val output = StringWriter()
+            assertEquals(1, CsvExporter.write(ledger, output, type))
+            val rows = output.toString().split("\r\n").filter { it.isNotEmpty() }
+            assertEquals(2, rows.size)
+            assertEquals(type.name.lowercase(), rows[1].split(',')[3])
+            val empty = StringWriter()
+            assertEquals(0, CsvExporter.write(ledger.copy(records = records.filter { it.type != type }), empty, type))
+            assertEquals(1, empty.toString().count { it == '\n' })
+        }
+        assertEquals(records, ledger.records)
+    }
+
     @Test fun transferIsOneRowAndArchivedCategoryNamesAreExported() {
         val output = StringWriter()
         val count = CsvExporter.write(Ledger(accounts, listOf(entry(2, RecordType.TRANSFER), entry(1)), categories), output)

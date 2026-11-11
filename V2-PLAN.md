@@ -11,7 +11,7 @@ The accepted V1 remains available at Git tag `wallet-v1-2026-11-11-r01` and in [
 | Category management | One shared list for income and expenses. Add custom categories; rename, change appearance, and archive built-in and custom categories. |
 | Category appearance | Six line-art icons and 16 background colors from revision 03. Icon and color are independent selections. |
 | Records integration | Show category badges and names while preserving today's totals and the date-grouped record list. |
-| CSV export | Export all transactions, including transfers, through the Android save-file picker. |
+| CSV export | Export all transactions or only income, expenses, or transfers through the Android save-file picker. CSV is the fixed format; omit the format row. |
 | Light mode | Use light mode throughout V2, with black category line art on the selected backgrounds. |
 
 Category filtering and historical analysis stay in V3. CSV import, full backup/restore, dark mode, app-wide icons, and additional category icons stay in V4. Keep the accepted V1 account behavior, transaction types, form arrangement, description/payee field, and income/expense colors. Records has no date navigation, and the form has no separate note field.
@@ -112,17 +112,17 @@ The existing account and record adapters share `item_record.xml`. Separate the a
 
 **Checkpoint complete when:** category changes appear immediately on linked rows, edited records keep the correct category after list reordering/recreation, transfers remain valid, and account presentation and money behavior pass V1 regression checks.
 
-## Checkpoint 5 Export all transactions as CSV
+## Checkpoint 5 Export transactions as CSV
 
 **Files:** new export Activity/ViewModel, an export snapshot query, a small CSV writer, and the export layout under `repository/app/src/main/`.
 
-Follow panel 06: Export is fixed to All transactions, the screen lists income/expenses/transfers, and Choose location & save opens `ActivityResultContracts.CreateDocument` with MIME type `text/csv`. Use the returned document URI with the content resolver. The existing Activity dependency already supplies this contract. See [CreateDocument](https://developer.android.com/reference/androidx/activity/result/contract/ActivityResultContracts.CreateDocument).
+Follow panel 06 with the user's subsequent export refinement: offer All transactions (default), Income, Expenses, or Transfers as a single selection. The format is always CSV, so omit the format row. Choose location & save opens `ActivityResultContracts.CreateDocument` with MIME type `text/csv`. Preserve the type selection across recreation, picker cancellation, and retries, and lock it while choosing/writing. Use the returned document URI with the content resolver. The existing Activity dependency already supplies this contract. See [CreateDocument](https://developer.android.com/reference/androidx/activity/result/contract/ActivityResultContracts.CreateDocument).
 
 After the user chooses a location, obtain a consistent read-only snapshot and write it off the main thread. Do not hold a database transaction open during the file-picker interaction or file writing. Keep choosing, writing, saved, and error states distinct; prevent duplicate export launches during a write and preserve state across rotation. Picker cancellation returns to the export screen without changing data. Report success only after the stream closes; report write failures and remove a newly created partial document when supported.
 
 ### Implemented CSV contract
 
-The implementation uses this contract for the wireframed export-all flow:
+The implementation uses this contract for all-transactions and single-type exports:
 
 ```csv
 record_id,date,time,type,amount,currency,account,to_account,category,description
@@ -130,7 +130,7 @@ record_id,date,time,type,amount,currency,account,to_account,category,description
 18,2026-11-11,14:00:00,transfer,2000.00,INR,Bank,Cash,,ATM withdrawal
 ```
 
-Export one row per transaction, oldest first, with ID as the tie-breaker. Include records linked to archived categories and use the current category/account display names. Preserve local occurrence date/time, positive two-decimal amounts without grouping, and `income`, `expense`, or `transfer` type values. Use `Money.input()` or an equivalent exact conversion from integer paise. Transfers have a destination and blank category; other types have a blank destination. IDs are local to this wallet.
+Export one row per matching transaction, oldest first, with ID as the tie-breaker. An empty selection produces only the header. Include records linked to archived categories and use the current category/account display names. Preserve local occurrence date/time, positive two-decimal amounts without grouping, and `income`, `expense`, or `transfer` type values. Use `Money.input()` or an equivalent exact conversion from integer paise. Transfers have a destination and blank category; other types have a blank destination. IDs are local to this wallet.
 
 Encoding is UTF-8 with BOM and CRLF line endings. Apply [RFC 4180 quoting](https://www.rfc-editor.org/info/rfc4180/) to commas, quotes, and line breaks. Prefix formula-like names/descriptions with an apostrophe when the first non-whitespace character is `=`, `+`, `-`, or `@`, or the text starts with a tab/newline. This addresses [CSV formula interpretation](https://cwe.mitre.org/data/definitions/1236.html) without modifying stored wallet data. Filename: `wallet-transactions-YYYY-MM-DD.csv`, using the export date.
 
@@ -159,7 +159,7 @@ Set `versionCode = 2` and `versionName = 2.0` before the installed upgrade check
 2. **Category edge rules:** keep at least one active category and enforce unique names across active and archived categories. New-category default appearance is Other/Sky. The 12 seed mappings are frozen in `Migration1To2.kt`.
 3. **CSV contract:** use the ten columns, UTF-8 BOM, exact amounts, literal-text escaping, and dated filename documented above. CSV import decisions remain V4.
 
-These defaults were stated when implementation began. The confirmed V2 scope, six icons, independent 16-color selector, light-mode appearance, and export-all flow remain the implementation baseline.
+These defaults were stated when implementation began. The confirmed V2 scope, six icons, independent 16-color selector, light-mode appearance, and CSV export flow remain the implementation baseline, with single-type export added at the user's request.
 
 ## Completed validation — 11 November 2026
 
@@ -176,3 +176,7 @@ These defaults were stated when implementation began. The confirmed V2 scope, si
 | V1 preservation | V1 tag still points to `3908f31e3e7c9291023cc0a035826b563a246005`; all six backup checksums match. Existing roadmap/wireframe file hashes are unchanged. |
 
 API 26 compatibility was checked by lint; device execution was limited to available API 37. Local test logs and screenshots are under ignored `repository/.tools/v2-qa/`. Installable debug and unsigned release APKs are in `repository/dist/`, with hashes in `wallet-v2-SHA256SUMS.txt`. The app README documents usage, archive behavior, and the CSV contract.
+
+### Transaction-type export refinement
+
+Added All transactions, Income, Expenses, and Transfers choices and removed the fixed format row at the user's request. Follow-up validation: all 12 JVM tests and 3 focused export Android tests passed; debug/test APK assembly, lint (0 errors, 15 warnings), and R8 release assembly passed. Tests cover all three type filters, empty matches, unchanged source data, selection recreation, picker cancellation, and retaining the filter through failed-provider retry. Debug and unsigned release APKs and their checksums were refreshed. The earlier full-suite and installed-upgrade results above describe the original V2 validation.

@@ -19,6 +19,7 @@ import com.aravind.wallet.R
 import com.aravind.wallet.WalletApplication
 import com.aravind.wallet.databinding.ActivityExportBinding
 import com.aravind.wallet.domain.CsvExporter
+import com.aravind.wallet.domain.RecordType
 import java.io.IOException
 import java.io.OutputStreamWriter
 import java.time.LocalDate
@@ -42,9 +43,11 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
     private val app = application as WalletApplication
     private val _state = MutableStateFlow<ExportState>(ExportState.Idle)
     val state: StateFlow<ExportState> = _state
+    var recordType: RecordType? = null
 
-    fun choose(): Boolean {
+    fun choose(type: RecordType? = recordType): Boolean {
         if (_state.value == ExportState.Choosing || _state.value == ExportState.Writing) return false
+        recordType = type
         _state.value = ExportState.Choosing
         return true
     }
@@ -53,12 +56,13 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
         if (_state.value == ExportState.Writing) return
         if (uri == null) { _state.value = ExportState.Idle; return }
         _state.value = ExportState.Writing
+        val type = recordType
         viewModelScope.launch {
             try {
                 val count = withContext(Dispatchers.IO) {
                     val snapshot = app.repository.snapshot()
                     val stream = app.contentResolver.openOutputStream(uri, "w") ?: throw IOException("No output stream")
-                    OutputStreamWriter(stream, Charsets.UTF_8).buffered().use { CsvExporter.write(snapshot, it) }
+                    OutputStreamWriter(stream, Charsets.UTF_8).buffered().use { CsvExporter.write(snapshot, it, type) }
                 }
                 _state.value = ExportState.Saved(count)
             } catch (cancelled: CancellationException) {
@@ -86,10 +90,25 @@ class ExportActivity : AppCompatActivity() {
         binding = ActivityExportBinding.inflate(layoutInflater)
         setContentView(binding.root)
         applyInsets(binding.root)
+        if (savedInstanceState != null && model.state.value == ExportState.Idle) {
+            model.recordType = savedInstanceState.getString("exportType")?.let(RecordType::valueOf)
+        }
+        binding.exportType.check(when (model.recordType) {
+            RecordType.INCOME -> R.id.export_income
+            RecordType.EXPENSE -> R.id.export_expenses
+            RecordType.TRANSFER -> R.id.export_transfers
+            null -> R.id.export_all
+        })
         onBackPressedDispatcher.addCallback(this) { if (model.state.value != ExportState.Writing) finish() }
         binding.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.save.setOnClickListener {
-            if (model.choose()) {
+            val type = when (binding.exportType.checkedRadioButtonId) {
+                R.id.export_income -> RecordType.INCOME
+                R.id.export_expenses -> RecordType.EXPENSE
+                R.id.export_transfers -> RecordType.TRANSFER
+                else -> null
+            }
+            if (model.choose(type)) {
                 try { createDocument.launch("wallet-transactions-${LocalDate.now()}.csv") }
                 catch (_: RuntimeException) { model.pickerFailed() }
             }
@@ -104,6 +123,7 @@ class ExportActivity : AppCompatActivity() {
                     binding.error.isVisible = state == ExportState.Failed
                     binding.error.setText(R.string.export_failed)
                     binding.save.isEnabled = state != ExportState.Writing && state != ExportState.Choosing
+                    binding.exportType.enableTree(binding.save.isEnabled)
                     binding.back.isEnabled = state != ExportState.Writing
                     binding.save.setText(when (state) {
                         ExportState.Writing -> R.string.saving
@@ -113,5 +133,16 @@ class ExportActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        val type = when (binding.exportType.checkedRadioButtonId) {
+            R.id.export_income -> RecordType.INCOME
+            R.id.export_expenses -> RecordType.EXPENSE
+            R.id.export_transfers -> RecordType.TRANSFER
+            else -> null
+        }
+        outState.putString("exportType", type?.name)
+        super.onSaveInstanceState(outState)
     }
 }
