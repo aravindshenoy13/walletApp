@@ -62,6 +62,11 @@
 - In the category editor, add an "Additional Icons" button opening a separate page with the additional icons arranged in a borderless row-and-column grid. Preserve independent icon and 16-color background selection.
 - Use the square checkbox style for selection controls throughout the app, replacing radio-button appearances. Preserve each control's selection rules: mutually exclusive choices still allow only one selection, while multi-account CSV export allows multiple accounts.
 
+### V4.1 — Analysis views and category wheel
+
+- Add a wheel chart showing all categories in the Analysis tab.
+- Add a drop-down in the Analysis tab to switch between Calendar, Category Breakdown (wheel chart), and Flow Graph views.
+
 ## Business rules
 
 - Transaction direction and category are separate concepts: income and expense entries can share a category.
