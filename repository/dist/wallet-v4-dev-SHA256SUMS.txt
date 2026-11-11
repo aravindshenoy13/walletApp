@@ -1,0 +1,2 @@
+b8fd56b36a6c90eff86ea214194bf6a4ca23183ee8555b49ea3304987bab6433  wallet-v4-dev-debug.apk
+4e5749f770ea6c2406a7c31ed0d46bd182f174dd6b33c0dcfc64460c1d668ce8  wallet-v4-dev-release-unsigned.apk
