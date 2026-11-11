@@ -1,3 +1,5 @@
+param([string]$AndroidUserHome)
+
 $ErrorActionPreference = 'Stop'
 Set-Location -LiteralPath $PSScriptRoot
 
@@ -54,9 +56,34 @@ if ($deviceSerials.Count -eq 0) {
 $deviceSerial = $deviceSerials[0]
 Write-Host "Building WalletApp for device $deviceSerial..." -ForegroundColor Cyan
 
-& (Join-Path $PSScriptRoot 'gradlew.bat') ':app:assembleDebug'
-if ($LASTEXITCODE -ne 0) {
-    Stop-WithMessage "Gradle build failed with exit code $LASTEXITCODE. See the output above."
+$walletProjectAndroidHome = Join-Path $PSScriptRoot '.tools\android-home'
+$walletSigningHome = $AndroidUserHome
+if (-not $walletSigningHome -and (Test-Path -LiteralPath (Join-Path $walletProjectAndroidHome 'debug.keystore'))) {
+    $walletSigningHome = $walletProjectAndroidHome
+}
+if (-not $walletSigningHome) { $walletSigningHome = $env:ANDROID_USER_HOME }
+if ($walletSigningHome -and -not (Test-Path -LiteralPath (Join-Path $walletSigningHome 'debug.keystore'))) {
+    Stop-WithMessage "No debug.keystore found in $walletSigningHome. Choose the Android user directory containing the key used to install this app."
+}
+
+$walletPreviousAndroidHome = $env:ANDROID_USER_HOME
+$walletPreviousGradleHome = $env:GRADLE_USER_HOME
+try {
+    $env:GRADLE_USER_HOME = Join-Path $PSScriptRoot '.gradle-user-home'
+    if ($walletSigningHome) {
+        $env:ANDROID_USER_HOME = $walletSigningHome
+        Write-Host "Using debug key in $walletSigningHome" -ForegroundColor Cyan
+    }
+    & (Join-Path $PSScriptRoot 'gradlew.bat') ':app:assembleDebug'
+    $walletBuildExitCode = $LASTEXITCODE
+} finally {
+    if ($null -eq $walletPreviousAndroidHome) { Remove-Item Env:ANDROID_USER_HOME -ErrorAction SilentlyContinue }
+    else { $env:ANDROID_USER_HOME = $walletPreviousAndroidHome }
+    if ($null -eq $walletPreviousGradleHome) { Remove-Item Env:GRADLE_USER_HOME -ErrorAction SilentlyContinue }
+    else { $env:GRADLE_USER_HOME = $walletPreviousGradleHome }
+}
+if ($walletBuildExitCode -ne 0) {
+    Stop-WithMessage "Gradle build failed with exit code $walletBuildExitCode. See the output above."
 }
 
 $apkPath = Join-Path $PSScriptRoot 'app\build\outputs\apk\debug\app-debug.apk'
@@ -65,9 +92,20 @@ if (-not (Test-Path -LiteralPath $apkPath)) {
 }
 
 Write-Host 'Installing the updated app...' -ForegroundColor Cyan
-& $adbPath -s $deviceSerial install -r $apkPath
-if ($LASTEXITCODE -ne 0) {
-    Stop-WithMessage 'APK installation failed. Check that the device is unlocked and available.'
+$walletPreviousErrorAction = $ErrorActionPreference
+try {
+    $ErrorActionPreference = 'Continue'
+    $walletInstallOutput = @(& $adbPath -s $deviceSerial install -r $apkPath 2>&1)
+    $walletInstallExitCode = $LASTEXITCODE
+} finally {
+    $ErrorActionPreference = $walletPreviousErrorAction
+}
+$walletInstallOutput | ForEach-Object { Write-Host "$_" }
+if ($walletInstallExitCode -ne 0) {
+    if (($walletInstallOutput -join "`n") -match 'INSTALL_FAILED_UPDATE_INCOMPATIBLE') {
+        Stop-WithMessage 'The installed app uses a different signing key. Keep the installed app to preserve its data, and rerun with -AndroidUserHome pointing to the directory containing its original debug.keystore.'
+    }
+    Stop-WithMessage 'APK installation failed. See the adb output above.'
 }
 
 Write-Host 'Launching WalletApp...' -ForegroundColor Cyan
