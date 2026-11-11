@@ -4,7 +4,6 @@ import com.aravind.wallet.data.WalletRecord
 import java.math.BigInteger
 import java.time.LocalDate
 
-enum class FlowMode { BOTH, INCOME, EXPENSE }
 enum class BreakdownMode { NET, INCOME, EXPENSE }
 data class PeriodAnalysis(val totals: DailyTotals, val daily: Map<LocalDate, DailyTotals>, val categories: Map<String, DailyTotals>)
 
@@ -18,6 +17,19 @@ fun Ledger.searchRecords(query: String): List<WalletRecord> {
 }
 
 fun Ledger.accountRecords(id: Long): List<WalletRecord> = records.filter { it.accountId == id || it.destinationAccountId == id }
+
+fun Ledger.categoryRecords(categoryId: String, start: LocalDate, end: LocalDate, accountId: Long?, mode: BreakdownMode): List<WalletRecord> {
+    require(!end.isBefore(start))
+    return records.filter { record ->
+        val date = record.occurredAt.toLocalDate()
+        record.categoryId == categoryId && record.type != RecordType.TRANSFER && date >= start && date <= end &&
+            (accountId == null || record.accountId == accountId) && when (mode) {
+                BreakdownMode.NET -> true
+                BreakdownMode.INCOME -> record.type == RecordType.INCOME
+                BreakdownMode.EXPENSE -> record.type == RecordType.EXPENSE
+            }
+    }
+}
 
 fun Ledger.analyze(start: LocalDate, end: LocalDate, accountId: Long? = null): PeriodAnalysis {
     require(!end.isBefore(start)) { "End date must be on or after start date." }

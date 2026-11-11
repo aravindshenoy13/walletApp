@@ -1,6 +1,6 @@
 <resources>
     <string name="analysis">Analysis</string>
-    <string name="range_help">Choose the period for your analysis.</string>
+    <string name="range_help">Updates range totals, daily graph and category breakdown in Analysis.</string>
     <string name="transfer_accounts">%1$s → %2$s</string>
     <string name="edit_account_named">Edit %s</string>
     <string name="search_records">Search records</string>
@@ -18,8 +18,8 @@
     <string name="daily_flow">Daily flow</string>
     <string name="both_series">Both</string>
     <string name="flow_modes">Daily flow series</string>
-    <string name="breakdown_modes">Category breakdown values</string>
-    <string name="flow_legend">Income: green · Expenses: red</string>
+    <string name="breakdown_modes">Graph and category values</string>
+    <string name="flow_legend">Net: green above zero, red below zero · Income: green · Expenses: red</string>
     <string name="category_breakdown">By category</string>
     <string name="no_category_values">No category values for this view and period.</string>
     <string name="current_balance">Current balance</string>
@@ -28,4 +28,18 @@
     <string name="transfer_from">Transfer from %s</string>
     <string name="transfer_to">Transfer to %s</string>
     <string name="graph_summary">Daily flow from %1$s to %2$s. Income %3$s. Expenses %4$s.</string>
+    <string name="category_history_scope">%1$s · %2$s</string>
+    <string name="no_category_records">No transactions for this category and selection.</string>
+    <string name="monthly_net">Daily net · monthly calendar</string>
+    <string name="calendar_scope">All accounts · income minus expenses · transfers excluded</string>
+    <string name="previous_month">Previous month</string>
+    <string name="next_month">Next month</string>
+    <string name="calendar_legend">Green: positive · Red: negative · —: no transactions. Rounded amounts: K = thousand, M = million, B = billion, T = trillion.</string>
+    <string name="calendar_day_summary">%1$s. Net %2$s.</string>
+    <string name="calendar_empty_day">%1$s. No income or expenses.</string>
+    <string name="monthly_overview">Monthly overview · all accounts</string>
+    <string name="detailed_analysis">Detailed analysis</string>
+    <string name="detail_scope">Account and custom range apply to the totals, graph and categories below.</string>
+    <string name="range_totals">Selected range totals · transfers excluded</string>
+    <string name="shared_analysis_view">View · graph and categories</string>
 </resources>

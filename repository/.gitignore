@@ -22,3 +22,6 @@ local.properties
 /description
 /hooks/
 /info/
+
+# Frozen local version archives
+/archives/

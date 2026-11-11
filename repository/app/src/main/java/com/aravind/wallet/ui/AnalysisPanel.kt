@@ -1,6 +1,7 @@
 package com.aravind.wallet.ui
 
 import android.os.Bundle
+import android.content.Intent
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -11,25 +12,27 @@ import com.aravind.wallet.databinding.PanelAnalysisBinding
 import com.aravind.wallet.databinding.ItemRecordBinding
 import com.aravind.wallet.domain.*
 import java.time.LocalDate
+import java.time.YearMonth
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class AnalysisPanel(private val activity: AppCompatActivity, private val binding: PanelAnalysisBinding, saved: Bundle?, range: (LocalDate, LocalDate) -> Unit) {
     var start: LocalDate = saved?.getString("analysisStart")?.let(LocalDate::parse) ?: LocalDate.now().withDayOfMonth(1)
         private set
     var end: LocalDate = saved?.getString("analysisEnd")?.let(LocalDate::parse) ?: LocalDate.now()
         private set
+    private var calendarMonth = saved?.getString("calendarMonth")?.let(YearMonth::parse) ?: YearMonth.now()
+    private val calendar = MonthlyCalendar(binding.calendarGrid)
     private var custom = saved?.getBoolean("analysisCustom") ?: false
     private var accountId = saved?.getLong("analysisAccount")?.takeIf { it != 0L }
-    private var flow = saved?.getString("analysisFlow")?.let(FlowMode::valueOf) ?: FlowMode.BOTH
     private var breakdown = saved?.getString("analysisBreakdown")?.let(BreakdownMode::valueOf) ?: BreakdownMode.NET
     private var ledger: Ledger? = null
     private var accounts = emptyList<Pair<Long?, String>>()
     init {
-        binding.flowMode.check(when(flow) { FlowMode.BOTH -> R.id.flow_both; FlowMode.INCOME -> R.id.flow_income; FlowMode.EXPENSE -> R.id.flow_expense })
         binding.breakdownMode.check(when(breakdown) { BreakdownMode.NET -> R.id.breakdown_net; BreakdownMode.INCOME -> R.id.breakdown_income; BreakdownMode.EXPENSE -> R.id.breakdown_expense })
+        binding.previousMonth.setOnClickListener { calendarMonth = calendarMonth.minusMonths(1); render() }
+        binding.nextMonth.setOnClickListener { calendarMonth = calendarMonth.plusMonths(1); render() }
         binding.customRange.setOnClickListener { range(start, end) }
-        binding.flowMode.setOnCheckedChangeListener { _, id ->
-            flow = when(id) { R.id.flow_income -> FlowMode.INCOME; R.id.flow_expense -> FlowMode.EXPENSE; else -> FlowMode.BOTH }; render()
-        }
         binding.breakdownMode.setOnCheckedChangeListener { _, id ->
             breakdown = when(id) { R.id.breakdown_income -> BreakdownMode.INCOME; R.id.breakdown_expense -> BreakdownMode.EXPENSE; else -> BreakdownMode.NET }; render()
         }
@@ -43,10 +46,11 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
     }
     fun open() {
         start = LocalDate.now().withDayOfMonth(1); end = LocalDate.now(); custom = false
+        calendarMonth = YearMonth.now()
         accountId = null
         binding.analysisAccount.setSelection(0)
-        binding.flowMode.check(R.id.flow_both); binding.breakdownMode.check(R.id.breakdown_net)
-        flow = FlowMode.BOTH; breakdown = BreakdownMode.NET
+        breakdown = BreakdownMode.NET
+        binding.breakdownMode.check(R.id.breakdown_net)
         render()
     }
     fun range(start: LocalDate, end: LocalDate) {
@@ -69,10 +73,17 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
         val data = current.analyze(start, end, accountId)
         binding.periodLabel.setText(if (custom) R.string.custom_range else R.string.this_month)
         binding.periodDates.text = activity.getString(R.string.date_range, start.display(), end.display())
-        binding.periodIncome.text = Money.format(data.totals.income)
-        binding.periodExpense.text = Money.format(data.totals.expense)
-        binding.periodNet.showNet(data.totals.net)
-        binding.flowGraph.show(start, end, data, flow)
+        val monthly = current.analyze(calendarMonth.atDay(1), calendarMonth.atEndOfMonth())
+        binding.calendarMonth.text = calendarMonth.format(DateTimeFormatter.ofPattern("MMMM uuuu", Locale.getDefault()))
+        binding.totalsPeriod.text = activity.getString(R.string.date_range, calendarMonth.atDay(1).display(), calendarMonth.atEndOfMonth().display())
+        binding.periodIncome.text = Money.format(monthly.totals.income)
+        binding.periodExpense.text = Money.format(monthly.totals.expense)
+        binding.periodNet.showNet(monthly.totals.net)
+        calendar.show(calendarMonth, monthly.daily)
+        binding.rangeIncome.text = Money.format(data.totals.income)
+        binding.rangeExpense.text = Money.format(data.totals.expense)
+        binding.rangeNet.showNet(data.totals.net)
+        binding.flowGraph.show(start, end, data, breakdown)
         binding.breakdownList.removeAllViews()
         val values = data.categories.mapNotNull { (id, totals) ->
             current.categoriesById[id]?.let { it to totals.value(breakdown) }
@@ -80,7 +91,12 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
         binding.noCategoryValues.isVisible = values.isEmpty()
         values.forEach { (category, value) ->
             val row = ItemRecordBinding.inflate(activity.layoutInflater, binding.breakdownList, false)
-            row.root.isClickable = false; row.root.isFocusable = false
+            row.root.minimumHeight = 0
+            row.root.setOnClickListener {
+                activity.startActivity(Intent(activity, CategoryHistoryActivity::class.java)
+                    .putExtra("category", category.id).putExtra("start", start.toString()).putExtra("end", end.toString())
+                    .putExtra("account", accountId ?: 0L).putExtra("mode", breakdown.name))
+            }
             row.description.text = category.name
             row.badge.showCategory(category.iconKey, category.backgroundColorKey)
             row.amount.text = Money.format(value)
@@ -93,8 +109,9 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
         }
     }
     fun save(out: Bundle) {
+        out.putString("calendarMonth", calendarMonth.toString())
         out.putString("analysisStart", start.toString()); out.putString("analysisEnd", end.toString())
         out.putBoolean("analysisCustom", custom); out.putLong("analysisAccount", accountId ?: 0L)
-        out.putString("analysisFlow", flow.name); out.putString("analysisBreakdown", breakdown.name)
+        out.putString("analysisBreakdown", breakdown.name)
     }
 }

@@ -2,6 +2,7 @@ package com.aravind.wallet.domain
 
 import java.math.BigDecimal
 import java.math.BigInteger
+import java.math.MathContext
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -19,6 +20,19 @@ object Money {
         }
         require(allowNegative || minor > 0) { "Enter an amount greater than zero." }
         return minor
+    }
+
+    /** Rounded calendar label only; accounting retains exact values. */
+    fun compactNet(minor: BigInteger): String {
+        if (minor.signum() == 0) return "₹0"
+        val amount = BigDecimal(minor.abs(), 2).round(MathContext(3))
+        val units = listOf(12 to "T", 9 to "B", 6 to "M", 3 to "K", 0 to "")
+        val text = if (amount >= BigDecimal("1E15")) amount.stripTrailingZeros().toString()
+        else {
+            val (power, suffix) = units.first { amount >= BigDecimal.TEN.pow(it.first) || it.first == 0 }
+            amount.movePointLeft(power).stripTrailingZeros().toPlainString() + suffix
+        }
+        return (if (minor.signum() > 0) "+₹" else "−₹") + text
     }
 
     fun input(minor: Long): String = BigDecimal.valueOf(minor, 2).toPlainString()

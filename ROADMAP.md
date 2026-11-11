@@ -31,11 +31,12 @@
 ### V3 — Analysis, search, and account history
 
 - Keep a compact Records search field visible in the top-right header with a magnifying-glass icon. Filter the transaction list on the same page as the user types; match description/payee or amount only. Include a clear action. Do not search category names or add a category filter. Today's summary totals remain independent of search results.
-- Add an Analysis tab. Each time it opens, default to the first day of the current month through today and show income, expense, and net totals for that range.
-- Add a custom start/end date range. Applying it updates the totals, daily flow graph, and category breakdown together. Keep historical date selection and analysis controls out of Records.
-- Show daily income and expense as two colored series together by default, with controls to switch to income-only or expense-only. Use the existing muted pastel green and red semantic colors.
+- Add an Analysis tab with two separate sections. Monthly overview shows income, expense, and net totals plus a daily net calendar for the displayed full month across all accounts. Month arrows change both together; default to the current month on opening. Calendar cells are summary-only, with compact signed amounts, and exclude transfers.
+- Detailed analysis defaults to the first day of the current month through today on opening. Its account selector and custom range control the compact range totals, graph and category breakdown below the calendar.
+- Add a custom start/end date range. Applying it updates range totals, daily flow graph and category breakdown together, independently of the monthly overview. Keep historical date selection and analysis controls out of Records.
+- Use one Net/Income/Expenses chooser for the detailed graph and category breakdown, defaulting to Net. Plot daily net (income minus expenses) with positive portions green and negative portions red; income-only is green and expense-only is red. Use the existing muted semantic colors.
 - Show a per-category overview directly below the graph. Its default value is net cash flow per category (income minus expenses). Allow switching the breakdown to income-only or expense-only. Transfers are excluded. Reimbursements remain income in the same category and therefore increase that category's net value. Hide categories with no value in the active view and range.
-- Add an Analysis account selector for All accounts or one selected account at a time. The selection applies to totals, graph, and category breakdown.
+- Add an Analysis account selector for All accounts or one selected account at a time. The selection applies only to detailed range totals, graph and category breakdown; monthly totals and calendar always include all accounts.
 - Keep the Accounts list and current total balance. Tapping an account opens its dated transaction history and current balance; show an Edit action on the account row. Account history includes transfers in the appropriate direction and the opening balance. Do not add a past-date balance screen.
 
 #### V3 implementation order
@@ -53,9 +54,13 @@
 - Back up and restore accounts, opening balances, categories, and transactions.
 - Keep this distinct from transaction CSV import/export unless the user chooses to combine them.
 - Add dark mode.
-- Add a Settings button next to the "Wallet" title for dark mode, CSV export, CSV import, and other options to be decided later.
+- Place the Settings button at the far left of the header, immediately left of the "Wallet" title and vertically aligned with it. Settings contains dark mode, CSV export, CSV import, backup, restore, and other options to be decided later.
 - Add icons throughout the app, including navigation, actions, accounts, and transaction types, building on V2's category icons.
 - Add more icons to the category icon selection.
+- Keep the Records search compact at the top right until tapped, then expand it for text entry. Continue filtering descriptions/payees and amounts as the user types.
+- Keep icons on the bottom navigation, and use simple line-art icons throughout the app.
+- In the category editor, add an "Additional Icons" button opening a separate page with the additional icons arranged in a borderless row-and-column grid. Preserve independent icon and 16-color background selection.
+- Use the square checkbox style for selection controls throughout the app, replacing radio-button appearances. Preserve each control's selection rules: mutually exclusive choices still allow only one selection, while multi-account CSV export allows multiple accounts.
 
 ## Business rules
 

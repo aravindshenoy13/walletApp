@@ -39,3 +39,18 @@ Device tests used API 37 with system night mode enabled and the app remaining li
 - Category-wise transaction history was explicitly deferred by the user pending revised requirements. Analysis category rows remain non-interactive; no drilldown screen was added.
 
 Follow-up validation on 11 November 2026: all 19 JVM and 28 Android tests passed. Tests include saving/editing blank descriptions for all transaction types, blank-description CSV output, form saving without a description, and net colors in forced light mode while the device uses dark mode. Debug/test and optimized release builds passed; lint reported 0 errors and 25 warnings. Screenshots of search, date range, negative net, and account rows were visually reviewed. The refreshed optimized release opened Analysis and account history with saved data and no crash output. The V3 APKs and checksums in `repository/dist/` include these refinements.
+
+## Accepted final V3 archive — 12 November 2026
+
+The final V3 includes the changes approved after the initial validation:
+
+- Records search and custom date controls use the simple square outlined wireframe styling, with a text Clear action.
+- Analysis has separate monthly and detailed sections. Monthly totals and the smaller-cell calendar show the same full month across all accounts. Month arrows change them together. Transfers and opening balances are excluded; daily net amounts use compact signed notation. Calendar days are summary-only.
+- Detailed analysis has its own account selection and inclusive range, exact compact income/expense/net totals, and a larger graph. One Net/Income/Expenses chooser drives both graph and category values. Net is income minus expenses and supports negative graph values.
+- Category rows open dated history within the selected detailed range, account and mode, with transaction editing and an empty state. Rows use their actual content bounds for touch feedback.
+- Account balances retain sign colors; the all-account total balance is bold and neutral. Transaction rows have tighter padding and smaller icon backgrounds.
+- Rotation preserves monthly and detailed state separately. App version remains 3.0/code 3 and Room schema remains 2.
+
+Final archive checks on 12 November 2026 passed all 22 unit tests, lint (0 errors, 34 warnings), the debug build and the R8-optimized unsigned release build. The later calendar/shared-mode changes have not been visually verified on a device, and their updated Android test flows have been compiled but not run. Earlier device results above apply to the earlier V3 builds only.
+
+Archive location: `repository/archives/wallet-v3-2026-11-12-r01/`. Tag: `wallet-v3-2026-11-12-r01`. V4 draft work is excluded from this V3 source snapshot. Credentials, caches, signing keys and personal wallet data are excluded.

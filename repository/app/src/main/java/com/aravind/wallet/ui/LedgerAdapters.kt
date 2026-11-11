@@ -128,8 +128,7 @@ class AccountsAdapter(private val history: (Long) -> Unit, private val edit: (Lo
         val row = getItem(position)
         holder.binding.apply {
             description.text = row.account.name
-            amount.text = Money.format(row.balance)
-            amount.setTextColor(root.context.getColor(R.color.ink))
+            amount.showNet(row.balance)
             meta.text = root.context.getString(R.string.opening_balance_value, Money.format(row.account.openingBalanceMinor))
             root.setOnClickListener { history(row.account.id) }
             editAccount.contentDescription = root.context.getString(R.string.edit_account_named, row.account.name)

@@ -1,0 +1,163 @@
+<style>
+  #wallet-v2-wireframes {
+    color-scheme: light dark;
+    --paper: light-dark(#fff, #181818);
+    --ink: light-dark(#222, #eee);
+    --line: light-dark(#999, #858585);
+    --quiet: light-dark(#555, #b9b9b9);
+    color: var(--ink);
+    font: 14px/1.45 Arial, sans-serif;
+  }
+  #wallet-v2-wireframes * { box-sizing: border-box; }
+  #wallet-v2-wireframes .wf-board { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 22px; }
+  #wallet-v2-wireframes section { display: flex; flex-direction: column; min-width: 0; }
+  #wallet-v2-wireframes .wf-caption { margin: 0 0 10px; font-size: 14px; font-weight: 400; }
+  #wallet-v2-wireframes .wf-phone { background: var(--paper); border: 1px solid var(--ink); display: flex; flex-direction: column; flex: 1; min-height: 490px; }
+  #wallet-v2-wireframes .wf-header { min-height: 52px; padding: 14px; border-bottom: 1px solid var(--ink); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  #wallet-v2-wireframes .wf-body { flex: 1; padding: 14px; }
+  #wallet-v2-wireframes .wf-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  #wallet-v2-wireframes .wf-row > :first-child { min-width: 0; }
+  #wallet-v2-wireframes .wf-row > :last-child { flex-shrink: 0; }
+  #wallet-v2-wireframes .wf-muted { color: var(--quiet); font-size: 12px; }
+  #wallet-v2-wireframes .wf-item { padding: 12px 0; border-bottom: 1px solid var(--line); }
+  #wallet-v2-wireframes .wf-action { border: 1px solid var(--ink); padding: 9px 12px; text-align: center; margin-top: 20px; }
+  #wallet-v2-wireframes .wf-nav { border-top: 1px solid var(--ink); display: flex; justify-content: space-around; gap: 8px; padding: 12px 8px; font-size: 12px; color: var(--quiet); }
+  #wallet-v2-wireframes .wf-current { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+  #wallet-v2-wireframes .wf-label { margin: 18px 0 6px; font-size: 12px; color: var(--quiet); }
+  #wallet-v2-wireframes .wf-field { border: 1px solid var(--line); padding: 9px 10px; min-height: 40px; }
+  #wallet-v2-wireframes .wf-group { margin: 18px 0 8px; }
+  #wallet-v2-wireframes .wf-summary { padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+  #wallet-v2-wireframes .wf-summary .wf-row { margin-top: 5px; }
+  #wallet-v2-wireframes .wf-date { margin: 16px 0 2px; font-size: 12px; color: var(--quiet); }
+  #wallet-v2-wireframes .wf-category { display: flex; align-items: center; gap: 8px; }
+  #wallet-v2-wireframes .wf-category svg { flex-shrink: 0; width: 16px; height: 16px; }
+  #wallet-v2-wireframes .wf-icons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  #wallet-v2-wireframes .wf-icon-choice { border: 1px solid var(--line); padding: 10px 4px; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 12px; }
+  #wallet-v2-wireframes .wf-icon-choice svg { width: 20px; height: 20px; }
+  #wallet-v2-wireframes .wf-icon-choice.wf-current { border-color: var(--ink); }
+  #wallet-v2-wireframes .wf-rule { border: 0; border-top: 1px solid var(--line); margin: 20px 0; }
+  #wallet-v2-wireframes .wf-confirm { border: 1px solid var(--ink); padding: 16px; margin-top: 34px; }
+  #wallet-v2-wireframes .wf-confirm p + p { margin-top: 14px; }
+  #wallet-v2-wireframes .wf-confirm .wf-row { margin-top: 22px; }
+  #wallet-v2-wireframes .wf-confirm .wf-action { margin-top: 0; }
+  #wallet-v2-wireframes p { margin: 0; }
+  @media (max-width: 850px) { #wallet-v2-wireframes .wf-board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 570px) { #wallet-v2-wireframes .wf-board { grid-template-columns: minmax(0, 1fr); gap: 24px; } }
+</style>
+<div id="wallet-v2-wireframes">
+  <div class="wf-board">
+    <section aria-label="Records wireframe with current day totals and CSV export entry">
+      <h2 class="wf-caption">01 / Records</h2>
+      <div class="wf-phone">
+        <div class="wf-header"><span>Wallet</span><span>Export CSV</span></div>
+        <div class="wf-body">
+          <div class="wf-summary">
+            <p>Today · 11 Nov 2026</p>
+            <div class="wf-row"><span>Income</span><span>₹2,000</span></div>
+            <div class="wf-row"><span>Expenses</span><span>₹1,000</span></div>
+            <div class="wf-row"><span>Net today</span><span>₹1,000</span></div>
+          </div>
+          <div class="wf-date">Today</div>
+          <div class="wf-item"><div class="wf-row"><span class="wf-category"><i data-lucide="utensils" aria-hidden="true"></i>Food</span><span>− ₹250</span></div><p class="wf-muted">13:30 · Cash · Lunch</p></div>
+          <div class="wf-item"><div class="wf-row"><span class="wf-category"><i data-lucide="shopping-basket" aria-hidden="true"></i>Groceries</span><span>− ₹750</span></div><p class="wf-muted">10:15 · Bank · Weekly shop</p></div>
+          <div class="wf-item"><div class="wf-row"><span class="wf-category"><i data-lucide="briefcase" aria-hidden="true"></i>Salary</span><span>+ ₹2,000</span></div><p class="wf-muted">09:00 · Bank · Salary payment</p></div>
+          <div class="wf-date">10 Nov 2026</div>
+          <div class="wf-item"><div class="wf-row"><span>Transfer</span><span>₹500</span></div><p class="wf-muted">18:00 · Bank to Cash</p></div>
+          <div class="wf-action">+ Add record</div>
+        </div>
+        <div class="wf-nav"><span class="wf-current">Records</span><span>Accounts</span><span>Categories</span></div>
+      </div>
+    </section>
+
+    <section aria-label="Category management wireframe with built-in and custom categories in a shared list">
+      <h2 class="wf-caption">02 / Categories</h2>
+      <div class="wf-phone">
+        <div class="wf-header"><span>Categories</span><span>+ Add</span></div>
+        <div class="wf-body">
+          <p class="wf-muted">For income and expenses</p>
+          <div class="wf-item"><div class="wf-row"><span class="wf-category"><i data-lucide="utensils" aria-hidden="true"></i>Food</span><span>Edit</span></div><p class="wf-muted">Built-in</p></div>
+          <div class="wf-item"><div class="wf-row"><span class="wf-category"><i data-lucide="shopping-basket" aria-hidden="true"></i>Groceries</span><span>Edit</span></div><p class="wf-muted">Built-in</p></div>
+          <div class="wf-item"><div class="wf-row"><span class="wf-category"><i data-lucide="briefcase" aria-hidden="true"></i>Salary</span><span>Edit</span></div><p class="wf-muted">Built-in</p></div>
+          <div class="wf-item"><div class="wf-row"><span class="wf-category"><i data-lucide="book-open" aria-hidden="true"></i>Learning</span><span>Edit</span></div><p class="wf-muted">Custom</p></div>
+        </div>
+        <div class="wf-nav"><span>Records</span><span>Accounts</span><span class="wf-current">Categories</span></div>
+      </div>
+    </section>
+
+    <section aria-label="Add custom category wireframe with name and monochrome icon choices">
+      <h2 class="wf-caption">03 / Add category</h2>
+      <div class="wf-phone">
+        <div class="wf-header"><span>&lt; Categories</span><span>Add category</span></div>
+        <div class="wf-body">
+          <div class="wf-label">Category name</div><div class="wf-field">Learning</div>
+          <div class="wf-label">Choose icon</div>
+          <div class="wf-icons" aria-label="Example category icon choices; Book is selected">
+            <div class="wf-icon-choice"><i data-lucide="utensils" aria-hidden="true"></i><span>Food</span></div>
+            <div class="wf-icon-choice"><i data-lucide="shopping-basket" aria-hidden="true"></i><span>Basket</span></div>
+            <div class="wf-icon-choice"><i data-lucide="house" aria-hidden="true"></i><span>Home</span></div>
+            <div class="wf-icon-choice wf-current"><i data-lucide="book-open" aria-hidden="true"></i><span>Book ✓</span></div>
+            <div class="wf-icon-choice"><i data-lucide="briefcase" aria-hidden="true"></i><span>Work</span></div>
+            <div class="wf-icon-choice"><i data-lucide="tag" aria-hidden="true"></i><span>Other</span></div>
+          </div>
+          <div class="wf-group wf-muted">Available for both income and expenses.</div>
+          <div class="wf-action">Save category</div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label="Edit built-in category wireframe showing rename, icon changes and archive action">
+      <h2 class="wf-caption">04 / Edit category</h2>
+      <div class="wf-phone">
+        <div class="wf-header"><span>&lt; Categories</span><span>Edit category</span></div>
+        <div class="wf-body">
+          <p class="wf-muted">Food · Built-in category</p>
+          <div class="wf-label">Category name</div><div class="wf-field">Dining</div>
+          <div class="wf-label">Choose icon</div>
+          <div class="wf-icons" aria-label="Example category icon choices; Food is selected">
+            <div class="wf-icon-choice wf-current"><i data-lucide="utensils" aria-hidden="true"></i><span>Food ✓</span></div>
+            <div class="wf-icon-choice"><i data-lucide="shopping-basket" aria-hidden="true"></i><span>Basket</span></div>
+            <div class="wf-icon-choice"><i data-lucide="house" aria-hidden="true"></i><span>Home</span></div>
+            <div class="wf-icon-choice"><i data-lucide="book-open" aria-hidden="true"></i><span>Book</span></div>
+            <div class="wf-icon-choice"><i data-lucide="briefcase" aria-hidden="true"></i><span>Work</span></div>
+            <div class="wf-icon-choice"><i data-lucide="tag" aria-hidden="true"></i><span>Other</span></div>
+          </div>
+          <div class="wf-action">Save changes</div>
+          <hr class="wf-rule">
+          <p>Archive category</p>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label="Archive confirmation wireframe for a built-in category">
+      <h2 class="wf-caption">05 / Archive category</h2>
+      <div class="wf-phone">
+        <div class="wf-header"><span>&lt; Categories</span><span>Archive category</span></div>
+        <div class="wf-body">
+          <div class="wf-confirm">
+            <p class="wf-category"><i data-lucide="utensils" aria-hidden="true"></i>Archive Food?</p>
+            <p class="wf-muted">This category will no longer appear when adding new transactions.</p>
+            <p class="wf-muted">Existing transactions keep their category.</p>
+            <div class="wf-row"><span>Cancel</span><span class="wf-action">Archive</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label="CSV export wireframe for saving all transactions using the Android file picker">
+      <h2 class="wf-caption">06 / Export CSV</h2>
+      <div class="wf-phone">
+        <div class="wf-header"><span>&lt; Records</span><span>Export CSV</span></div>
+        <div class="wf-body">
+          <div class="wf-label">Export</div><div class="wf-field">All transactions</div>
+          <div class="wf-item wf-row"><span>Format</span><span>CSV</span></div>
+          <div class="wf-group">Includes</div>
+          <div class="wf-item">Income</div>
+          <div class="wf-item">Expenses</div>
+          <div class="wf-item">Transfers</div>
+          <div class="wf-action">Choose location &amp; save</div>
+          <div class="wf-group wf-muted">Choose a destination in the Android file picker.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

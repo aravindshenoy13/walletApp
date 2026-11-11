@@ -1,0 +1,115 @@
+<style>
+  #wallet-v3-wireframes { color-scheme: light; --paper:#fff; --ink:#222; --line:#999; --quiet:#555; color:var(--ink); font:14px/1.45 Arial,sans-serif; }
+  #wallet-v3-wireframes * { box-sizing:border-box; }
+  #wallet-v3-wireframes .board { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:28px 22px; }
+  #wallet-v3-wireframes section { display:flex; flex-direction:column; min-width:0; }
+  #wallet-v3-wireframes h2 { font-size:14px; font-weight:400; margin:0 0 10px; }
+  #wallet-v3-wireframes .phone { border:1px solid var(--ink); background:var(--paper); display:flex; flex:1; flex-direction:column; min-height:535px; }
+  #wallet-v3-wireframes header { border-bottom:1px solid var(--ink); padding:14px; display:flex; justify-content:space-between; gap:12px; align-items:center; min-height:52px; }
+  #wallet-v3-wireframes .body { padding:14px; flex:1; }
+  #wallet-v3-wireframes p { margin:0; }
+  #wallet-v3-wireframes .row { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  #wallet-v3-wireframes .row > :last-child { flex-shrink:0; }
+  #wallet-v3-wireframes .muted { font-size:12px; color:var(--quiet); }
+  #wallet-v3-wireframes .item { padding:11px 0; border-bottom:1px solid var(--line); }
+  #wallet-v3-wireframes .group { margin:16px 0 7px; }
+  #wallet-v3-wireframes .field { border:1px solid var(--line); padding:8px; margin:6px 0 12px; }
+  #wallet-v3-wireframes .summary { border-bottom:1px solid var(--line); padding-bottom:12px; }
+  #wallet-v3-wireframes .summary .row { margin-top:5px; }
+  #wallet-v3-wireframes .action { border:1px solid var(--ink); padding:9px; margin-top:18px; text-align:center; }
+  #wallet-v3-wireframes .nav { border-top:1px solid var(--ink); display:flex; justify-content:space-between; padding:12px 8px; gap:6px; font-size:12px; color:var(--quiet); }
+  #wallet-v3-wireframes .current { color:var(--ink); text-decoration:underline; text-underline-offset:4px; }
+  #wallet-v3-wireframes .cat { display:flex; align-items:center; gap:7px; }
+  #wallet-v3-wireframes .cat svg { color:#000; stroke:#000; background:var(--chip,#f7d5be); padding:6px; width:16px; height:16px; box-sizing:content-box; border-radius:4px; flex-shrink:0; }
+  #wallet-v3-wireframes .datepair { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  #wallet-v3-wireframes .graph { width:100%; height:140px; display:block; color:var(--ink); }
+  #wallet-v3-wireframes .graph text { font:12px Arial,sans-serif; fill:var(--ink); }
+  #wallet-v3-wireframes .bar { height:5px; background:#ddd; margin-top:7px; }
+  #wallet-v3-wireframes .bar span { display:block; height:100%; background:#666; }
+  @media(max-width:850px) { #wallet-v3-wireframes .board { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media(max-width:570px) { #wallet-v3-wireframes .board { grid-template-columns:minmax(0,1fr); } }
+</style>
+<div id="wallet-v3-wireframes">
+  <div class="board">
+    <section aria-label="Records with a search bar matching descriptions and amounts only">
+      <h2>01 / Records · search</h2>
+      <div class="phone">
+        <header><span>Wallet</span><span>Records</span></header>
+        <div class="body">
+          <div class="summary"><p>Today · 11 Nov 2026</p><div class="row"><span>Income</span><span>₹2,000</span></div><div class="row"><span>Expenses</span><span>₹1,000</span></div><div class="row"><span>Net today</span><span>₹1,000</span></div></div>
+          <div class="group muted">Search description or amount</div><div class="field row"><span>Lunch</span><span>Clear</span></div>
+          <p class="muted">1 matching record</p>
+          <div class="group muted">11 Nov 2026</div>
+          <div class="item"><div class="row"><span class="cat"><i data-lucide="utensils" aria-hidden="true"></i>Food</span><span>− ₹250</span></div><p class="muted">13:30 · Cash · Lunch</p></div>
+          <div class="action">+ Add record</div>
+          <div class="group muted">Export CSV</div>
+        </div>
+        <div class="nav"><span class="current">Records</span><span>Analysis</span><span>Accounts</span><span>Categories</span></div>
+      </div>
+    </section>
+    <section aria-label="Analysis opens month to date, with category expenses below its daily flow graph">
+      <h2>02 / Analysis · this month</h2>
+      <div class="phone">
+        <header><span>Analysis</span></header>
+        <div class="body">
+          <div class="row"><span>This month</span><span class="field">Custom range</span></div>
+          <p class="group">1–11 Nov 2026</p>
+          <div class="field row"><span>All accounts</span><span>⌄</span></div>
+          <div class="summary"><div class="row"><span>Income</span><span>₹3,000</span></div><div class="row"><span>Expenses</span><span>₹1,500</span></div><div class="row"><span>Net</span><span>₹1,500</span></div></div>
+          <div class="group">Daily flow</div>
+          <svg class="graph" viewBox="0 0 260 140" role="img" aria-label="Sample month-to-date daily flow, November 1 through 11. Income totals 3000 rupees and expenses total 1500 rupees.">
+            <text x="0" y="12">₹2,000</text><text x="25" y="106">0</text>
+            <path d="M47 16V103H248" fill="none" stroke="#999"/>
+            <polyline points="54,103 73,103 92,103 111,103 130,103 149,103 168,103 187,103 206,60 225,103 244,17" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <polyline points="54,103 73,103 92,103 111,103 130,103 149,103 168,103 187,103 206,90 225,94 244,60" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <text x="46" y="128">1 Nov</text><text x="132" y="128">6 Nov</text><text x="218" y="128">11 Nov</text>
+          </svg>
+          <p class="muted">— Income &nbsp; - - Expenses</p>
+          <div class="group">Expenses by category</div>
+          <div class="item"><div class="row"><span class="cat" style="--chip:#cce8d4"><i data-lucide="shopping-basket" aria-hidden="true"></i>Groceries</span><span>₹750</span></div></div>
+          <div class="item"><div class="row"><span class="cat"><i data-lucide="utensils" aria-hidden="true"></i>Food</span><span>₹750</span></div></div>
+        </div>
+        <div class="nav"><span>Records</span><span class="current">Analysis</span><span>Accounts</span><span>Categories</span></div>
+      </div>
+    </section>
+    <section aria-label="Custom date range selection opened from Analysis">
+      <h2>03 / Custom range</h2>
+      <div class="phone">
+        <header><span>&lt; Analysis</span><span>Custom range</span></header>
+        <div class="body">
+          <div class="group muted">From</div><div class="field">9 Nov 2026</div>
+          <div class="group muted">To</div><div class="field">11 Nov 2026</div>
+          <div class="action">Apply range</div>
+          <div class="group muted">Updates the totals, daily graph and category expenses in Analysis.</div>
+        </div>
+      </div>
+    </section>
+    <section aria-label="Accounts with entry points to each account's balance and transactions">
+      <h2>04 / Accounts</h2>
+      <div class="phone">
+        <header><span>Accounts</span><span>+ Add</span></header>
+        <div class="body">
+          <div class="summary"><p class="muted">Total current balance</p><p>₹11,500</p></div>
+          <div class="item"><div class="row"><span>Bank</span><span>₹10,250 &gt;</span></div><p class="muted">View transactions &amp; balance</p></div>
+          <div class="item"><div class="row"><span>Cash</span><span>₹1,250 &gt;</span></div><p class="muted">View transactions &amp; balance</p></div>
+        </div>
+        <div class="nav"><span>Records</span><span>Analysis</span><span class="current">Accounts</span><span>Categories</span></div>
+      </div>
+    </section>
+    <section aria-label="Single account history with current balance and dated transactions including transfers">
+      <h2>05 / Account transactions</h2>
+      <div class="phone">
+        <header><span>&lt; Accounts</span><span>Bank</span></header>
+        <div class="body">
+          <div class="summary"><p class="muted">Current balance</p><p>₹10,250</p></div>
+          <div class="group muted">11 Nov 2026</div>
+          <div class="item"><div class="row"><span class="cat" style="--chip:#f3e8b8"><i data-lucide="briefcase" aria-hidden="true"></i>Salary</span><span>+ ₹2,000</span></div><p class="muted">09:00 · Salary payment</p></div>
+          <div class="item"><div class="row"><span class="cat" style="--chip:#cce8d4"><i data-lucide="shopping-basket" aria-hidden="true"></i>Groceries</span><span>− ₹750</span></div><p class="muted">10:15 · Weekly shop</p></div>
+          <div class="group muted">10 Nov 2026</div>
+          <div class="item"><div class="row"><span>Transfer to Cash</span><span>− ₹500</span></div><p class="muted">18:00</p></div>
+          <div class="item"><div class="row"><span>Opening balance</span><span>₹9,500</span></div></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

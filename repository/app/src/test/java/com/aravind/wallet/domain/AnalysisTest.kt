@@ -64,6 +64,23 @@ class AnalysisTest {
         assertEquals(2,ledger.searchRecords("  ").size)
         assertEquals(BigInteger.valueOf(2500),ledger.totals(day).income)
     }
+    @Test fun categoryHistoryMatchesRangeAccountAndBreakdown() {
+        val other = WalletCategory("OTHER", "Other", "tag", "Peach", true, false)
+        val ledger = Ledger(accounts, listOf(
+            record(1, RecordType.EXPENSE, 100, date = day.minusDays(1)),
+            record(2, RecordType.INCOME, 50),
+            record(3, RecordType.EXPENSE, 80, 2),
+            record(4, RecordType.INCOME, 20, date = day.plusDays(1)),
+            record(5, RecordType.TRANSFER, 10),
+            record(6, RecordType.EXPENSE, 30).copy(categoryId = "OTHER")
+        ), categories + other)
+        fun ids(account: Long?, mode: BreakdownMode) = ledger.categoryRecords("FOOD", day.minusDays(1), day, account, mode).map { it.id }
+        assertEquals(listOf(1L, 2L, 3L), ids(null, BreakdownMode.NET))
+        assertEquals(listOf(1L, 2L), ids(1, BreakdownMode.NET))
+        assertEquals(listOf(2L), ids(null, BreakdownMode.INCOME))
+        assertEquals(listOf(1L, 3L), ids(null, BreakdownMode.EXPENSE))
+        assertTrue(ledger.categoryRecords("FOOD", day.plusDays(2), day.plusDays(3), null, BreakdownMode.NET).isEmpty())
+    }
     @Test fun accountHistoryIncludesBothTransferDirectionsButNoOtherAccountsRecords() {
         val transfer = record(1,RecordType.TRANSFER,500)
         val expense = record(2,RecordType.EXPENSE,100)
