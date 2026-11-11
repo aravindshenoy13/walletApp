@@ -6,6 +6,9 @@
 *.iml
 local.properties
 
+# Local archives of accepted app versions
+/backups/
+
 # Android build output
 .gradle/
 .gradle-user-home/
