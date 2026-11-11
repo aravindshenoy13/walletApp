@@ -44,7 +44,7 @@ Planning reference: [ROADMAP.md](ROADMAP.md) and [V4 wireframe revision 02](wire
 
 ## Implementation checkpoint — 12 November 2026
 
-Implementation started from V3 after verifying all six archived checksums and the complete Git history bundle in `repository/archives/wallet-v3-2026-11-12-r01/`. The archived source, history, debug APK, and unsigned release APK remain untouched.
+Implementation started from V3 after verifying all six archived checksums and the complete Git history bundle in `backups/wallet-v3-2026-11-12-r01/`. The archived source, history, debug APK, and unsigned release APK remain untouched.
 
 Implemented Settings, persistent light/dark selection, compact/expanded live Records search, native square radio styling, navigation/action/account/type vectors, seven additional category icons on a separate borderless grid, and selected-account CSV export. Transfers match either selected endpoint once. Existing export columns and spreadsheet-safety behavior remain unchanged.
 

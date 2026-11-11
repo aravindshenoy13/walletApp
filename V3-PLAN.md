@@ -53,4 +53,4 @@ The final V3 includes the changes approved after the initial validation:
 
 Final archive checks on 12 November 2026 passed all 22 unit tests, lint (0 errors, 34 warnings), the debug build and the R8-optimized unsigned release build. The later calendar/shared-mode changes have not been visually verified on a device, and their updated Android test flows have been compiled but not run. Earlier device results above apply to the earlier V3 builds only.
 
-Archive location: `repository/archives/wallet-v3-2026-11-12-r01/`. Tag: `wallet-v3-2026-11-12-r01`. V4 draft work is excluded from this V3 source snapshot. Credentials, caches, signing keys and personal wallet data are excluded.
+Archive location: `backups/wallet-v3-2026-11-12-r01/`. Tag: `wallet-v3-2026-11-12-r01`. V4 draft work is excluded from this V3 source snapshot. Credentials, caches, signing keys and personal wallet data are excluded.
