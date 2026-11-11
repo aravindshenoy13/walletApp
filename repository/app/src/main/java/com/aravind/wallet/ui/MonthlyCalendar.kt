@@ -49,7 +49,7 @@ class MonthlyCalendar(private val container: LinearLayout) {
                     setPadding(dp(1), dp(3), dp(1), dp(3))
                     background = GradientDrawable().apply {
                         setColor(context.getColor(R.color.paper))
-                        setStroke(dp(2).coerceAtLeast(2), context.getColor(R.color.quiet))
+                        setStroke(dp(1).coerceAtLeast(1), context.getColor(R.color.line))
                     }
                 }
                 weekRow.addView(cell, LinearLayout.LayoutParams(0, -2, 1f))

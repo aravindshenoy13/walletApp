@@ -24,7 +24,7 @@ fun categoryDisplayColor(context: Context, key: String): Int {
     if (!dark) return color
     var displayed = color
     var shade = 0f
-    while (androidx.core.graphics.ColorUtils.calculateContrast(Color.WHITE, displayed) < 4.5 && shade < 1f) {
+    while (androidx.core.graphics.ColorUtils.calculateContrast(Color.WHITE, displayed) < 3.0 && shade < 1f) {
         shade += 0.05f
         displayed = androidx.core.graphics.ColorUtils.blendARGB(color, Color.BLACK, shade.coerceAtMost(1f))
     }
@@ -84,7 +84,8 @@ class CategoriesAdapter(private val edit: (String) -> Unit) : ListAdapter<Wallet
             name.text = category.name
             badge.showCategory(category.iconKey, category.backgroundColorKey)
             val base = root.context.getString(if (category.isBuiltIn) R.string.built_in else R.string.custom)
-            origin.text = if (category.isArchived) root.context.getString(R.string.archived_name, base) else base
+            origin.text = if (category.isArchived) root.context.getString(R.string.archived_name, if (category.isBuiltIn) category.name else base) else if (category.isBuiltIn) "" else base
+            origin.visibility = if (origin.text.isEmpty()) View.GONE else View.VISIBLE
             root.setOnClickListener { edit(category.id) }
         }
     }

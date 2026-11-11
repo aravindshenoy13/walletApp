@@ -198,8 +198,9 @@ class MainActivity : AppCompatActivity() {
         categoriesPanel.isVisible = ledger != null && tab == Tab.CATEGORIES
         analysisPanel.root.isVisible = ledger != null && tab == Tab.ANALYSIS
         val month = YearMonth.from(today)
-        todayDate.text = if (monthlySummary) getString(R.string.records_month, month.atDay(1).display(), month.atEndOfMonth().display())
+        todayDate.text = if (monthlySummary) getString(R.string.records_month, month.format(java.time.format.DateTimeFormatter.ofPattern("MMM yyyy", java.util.Locale.getDefault())))
             else getString(R.string.today_date, today.display())
+        todayDate.isChecked = monthlySummary
         todayDate.contentDescription = getString(R.string.summary_toggle, todayDate.text, getString(if (monthlySummary) R.string.today_summary_title else R.string.this_month))
         val current = ledger ?: return@with
         val matching = current.searchRecords(recordSearch.text.toString())

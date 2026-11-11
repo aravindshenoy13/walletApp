@@ -4,9 +4,11 @@
         <LinearLayout android:id="@+id/calendar_panel" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
         <TextView style="@style/FormLabel" android:text="@string/monthly_overview" android:textColor="@color/ink" android:textStyle="bold" android:textSize="18sp" />
         <TextView android:id="@+id/totals_period" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/quiet" android:paddingVertical="8dp" />
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="10dp" android:layout_marginBottom="6dp" android:background="@drawable/summary_outline"><TextView style="@style/SummaryLabel" android:text="@string/income" android:textColor="@color/income_amount" /><TextView android:id="@+id/period_income" style="@style/SummaryValue" android:textColor="@color/income_amount" /></LinearLayout>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="10dp" android:layout_marginBottom="6dp" android:background="@drawable/summary_outline"><TextView style="@style/SummaryLabel" android:text="@string/expenses" android:textColor="@color/expense_amount" /><TextView android:id="@+id/period_expense" style="@style/SummaryValue" android:textColor="@color/expense_amount" /></LinearLayout>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="10dp" android:layout_marginBottom="6dp" android:background="@drawable/summary_outline"><TextView style="@style/SummaryLabel" android:text="@string/net" /><TextView android:id="@+id/period_net" style="@style/SummaryValue" android:textStyle="bold" /></LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="10dp" android:layout_marginBottom="6dp" android:background="@drawable/summary_outline">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="3dp"><TextView style="@style/SummaryLabel" android:textSize="13sp" android:text="@string/income" android:textColor="@color/income_amount" /><TextView android:id="@+id/period_income" style="@style/SummaryValue" android:textSize="14sp" android:textColor="@color/income_amount" /></LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="3dp"><TextView style="@style/SummaryLabel" android:textSize="13sp" android:text="@string/expenses" android:textColor="@color/expense_amount" /><TextView android:id="@+id/period_expense" style="@style/SummaryValue" android:textSize="14sp" android:textColor="@color/expense_amount" /></LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="3dp"><TextView style="@style/SummaryLabel" android:textSize="13sp" android:text="@string/net" /><TextView android:id="@+id/period_net" style="@style/SummaryValue" android:textSize="14sp" android:textStyle="bold" /></LinearLayout>
+        </LinearLayout>
         <TextView style="@style/FormLabel" android:text="@string/monthly_net" />
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
             <Button android:id="@+id/previous_month" style="@style/PlainButton" android:layout_width="48dp" android:layout_height="48dp" android:minWidth="0dp" android:text="‹" android:textSize="24sp" android:contentDescription="@string/previous_month" />
@@ -20,17 +22,19 @@
         <TextView android:id="@+id/period_label" style="@style/FormLabel" android:text="@string/this_month" />
         <TextView android:id="@+id/period_dates" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/ink" android:textSize="16sp" android:paddingVertical="8dp" />
         <Button android:id="@+id/custom_range" style="@style/OutlineButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="0dp" android:layout_marginBottom="12dp" android:drawableStart="@drawable/ic_calendar" android:drawableTint="@color/ink" android:text="@string/custom_range" />
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="10dp" android:layout_marginBottom="6dp" android:background="@drawable/summary_outline">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="10dp" android:layout_marginBottom="6dp" android:background="@drawable/summary_outline">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="3dp">
             <TextView style="@style/SummaryLabel" android:text="@string/income" android:textSize="13sp" android:textColor="@color/income_amount" />
             <TextView android:id="@+id/range_income" style="@style/SummaryValue" android:textSize="14sp" android:textColor="@color/income_amount" />
         </LinearLayout>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="10dp" android:layout_marginBottom="6dp" android:background="@drawable/summary_outline">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="3dp">
             <TextView style="@style/SummaryLabel" android:text="@string/expenses" android:textSize="13sp" android:textColor="@color/expense_amount" />
             <TextView android:id="@+id/range_expense" style="@style/SummaryValue" android:textSize="14sp" android:textColor="@color/expense_amount" />
         </LinearLayout>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="10dp" android:layout_marginBottom="6dp" android:background="@drawable/summary_outline">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="3dp">
             <TextView style="@style/SummaryLabel" android:text="@string/net" android:textSize="13sp" android:textColor="@color/ink" />
             <TextView android:id="@+id/range_net" style="@style/SummaryValue" android:textSize="14sp" android:textColor="@color/ink" />
+        </LinearLayout>
         </LinearLayout>
         <TextView android:id="@+id/mode_label" style="@style/FormLabel" android:text="@string/shared_analysis_view" />
         <RadioGroup android:id="@+id/breakdown_mode" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:checkedButton="@id/breakdown_net" android:contentDescription="@string/breakdown_modes">

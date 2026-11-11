@@ -1,0 +1,5 @@
+<resources>
+    <color name="action_add">#8DBBFF</color>
+    <color name="action_save">#A8D8B2</color>
+    <color name="action_delete">#FFB4AB</color>
+</resources>
