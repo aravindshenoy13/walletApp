@@ -62,7 +62,7 @@
 
 ### V4.1 — Analysis views and category wheel
 
-- Add a wheel chart showing all categories in the Analysis tab.
+- Add a Net-only wheel chart showing only categories with negative net cash flow. Size slices by the absolute negative net amounts; exclude zero and positive categories.
 - Add a drop-down in the Analysis tab to switch between Calendar, Category Breakdown (wheel chart), and Flow Graph views.
 
 ## Business rules

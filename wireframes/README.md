@@ -1,5 +1,13 @@
 # WalletApp wireframes
 
+## V4.1 revision 01
+
+- `wallet-v4.1-wireframe-r01.html` shows the Calendar, Category Breakdown, and Flow Graph views and an open view selector. These are static sketches.
+- Calendar retains the V3 full-month, all-account summary and daily net calendar. The detailed views illustrate the V3 range, account selector, totals, and Net/Income/Expenses control; their range remains independent of the calendar month.
+- The wheel example uses Expenses, with nonnegative category slices. All categories appear in the accompanying list, including a zero-value example, while zero has no visible slice. Exact treatment of zero and mixed positive/negative Net values in the wheel is a proposal that needs a product decision before implementation.
+- The Flow Graph panel is a structural sketch illustrating V3's green/red net rendering; transfer exclusion remains in the roadmap. Amounts and dates are illustrative.
+- No Android implementation or changes to AGENTS.md or ROADMAP.md are included.
+
 ## V4 revision 02
 
 - `wallet-v4-wireframe-r02.html` places Settings left of Wallet with aligned centers, shows compact and expanded top-right search, retains bottom navigation icons in light and dark examples, and adds an Additional Icons page with a borderless grid.

@@ -1,0 +1,96 @@
+<style>
+  #wallet-v41 { --paper:#fff; --ink:#222; --line:#999; --quiet:#555; color:#222; font:14px/1.45 Arial,sans-serif; }
+  #wallet-v41 * { box-sizing:border-box; }
+  #wallet-v41 .board { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:28px 22px; }
+  #wallet-v41 section { display:flex; flex-direction:column; min-width:0; }
+  #wallet-v41 h2 { font-size:14px; font-weight:400; margin:0 0 10px; }
+  #wallet-v41 .phone { background:var(--paper); color:var(--ink); border:1px solid var(--ink); display:flex; flex:1; flex-direction:column; min-height:650px; }
+  #wallet-v41 header { display:flex; align-items:center; justify-content:space-between; gap:8px; border-bottom:1px solid var(--ink); padding:14px; }
+  #wallet-v41 .body { flex:1; padding:14px; }
+  #wallet-v41 p { margin:0; }
+  #wallet-v41 .row { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  #wallet-v41 .item { padding:9px 0; border-bottom:1px solid var(--line); }
+  #wallet-v41 .group { margin:16px 0 6px; }
+  #wallet-v41 .muted { color:var(--quiet); font-size:12px; }
+  #wallet-v41 .field { border:1px solid var(--line); padding:8px; margin:7px 0; }
+  #wallet-v41 .menu { border:1px solid var(--line); margin:-8px 0 10px; }
+  #wallet-v41 .menu div { padding:7px 8px; }
+  #wallet-v41 .menu div + div { border-top:1px solid var(--line); }
+  #wallet-v41 .summary { border-bottom:1px solid var(--line); padding-bottom:10px; }
+  #wallet-v41 .summary .row { margin-top:4px; }
+  #wallet-v41 .nav { border-top:1px solid var(--ink); display:flex; justify-content:space-between; gap:5px; padding:10px 6px; font-size:11px; }
+  #wallet-v41 .nav span { display:flex; align-items:center; flex-direction:column; gap:3px; }
+  #wallet-v41 .nav svg { width:16px; height:16px; }
+  #wallet-v41 .current { text-decoration:underline; text-underline-offset:4px; }
+  #wallet-v41 .calendar { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); text-align:center; font-size:11px; gap:2px; margin:10px 0; }
+  #wallet-v41 .calendar span { min-height:34px; padding:2px 0; border-bottom:1px solid #ddd; }
+  #wallet-v41 .calendar .weekday { min-height:18px; font-weight:500; }
+  #wallet-v41 .calendar small { display:block; font-size:10px; }
+  #wallet-v41 .wheel { width:148px; height:148px; border-radius:50%; background:conic-gradient(#888 0 60%,#bbb 60% 90%,#ddd 90% 100%); margin:16px auto; display:grid; place-items:center; }
+  #wallet-v41 .wheel-inner { width:76px; height:76px; border-radius:50%; background:#fff; display:grid; place-items:center; text-align:center; font-size:12px; }
+  #wallet-v41 .key { display:inline-block; width:11px; height:11px; margin-right:7px; border:1px solid #888; }
+  #wallet-v41 .graph { width:100%; height:130px; display:block; color:#222; }
+  #wallet-v41 .graph text { font:11px Arial,sans-serif; fill:#222; }
+  @media(max-width:850px) { #wallet-v41 .board { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media(max-width:570px) { #wallet-v41 .board { grid-template-columns:minmax(0,1fr); } }
+</style>
+<div id="wallet-v41">
+  <div class="board">
+    <section aria-label="Analysis calendar view with monthly totals and daily net calendar">
+      <h2>01 / Calendar view</h2><div class="phone">
+        <header><span>Analysis</span></header><div class="body">
+          <div class="field row"><span>Calendar</span><span>⌄</span></div>
+          <div class="row group"><span>&lt;</span><span>November 2026</span><span>&gt;</span></div><p class="muted">All accounts · full month</p>
+          <div class="summary"><div class="row"><span>Income</span><span>₹15,000</span></div><div class="row"><span>Expenses</span><span>₹10,000</span></div><div class="row"><span>Net</span><span>₹5,000</span></div></div>
+          <div class="group">Daily net</div>
+          <div class="calendar" aria-label="Example November calendar: 2 November plus 15,000, 5 November minus 6,000, 8 November minus 3,000, and 10 November minus 1,000">
+            <span class="weekday">S</span><span class="weekday">M</span><span class="weekday">T</span><span class="weekday">W</span><span class="weekday">T</span><span class="weekday">F</span><span class="weekday">S</span>
+            <span>1</span><span>2<small>+15k</small></span><span>3</span><span>4</span><span>5<small>−6k</small></span><span>6</span><span>7</span>
+            <span>8<small>−3k</small></span><span>9</span><span>10<small>−1k</small></span><span>11</span><span>12</span><span>13</span><span>14</span>
+            <span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span>
+            <span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span>
+            <span>29</span><span>30</span><span></span><span></span><span></span><span></span><span></span>
+          </div><p class="muted">Daily net · transfers excluded</p>
+        </div><div class="nav"><span><i data-lucide="receipt" aria-hidden="true"></i>Records</span><span class="current"><i data-lucide="chart-no-axes-combined" aria-hidden="true"></i>Analysis</span><span><i data-lucide="wallet" aria-hidden="true"></i>Accounts</span><span><i data-lucide="tag" aria-hidden="true"></i>Categories</span></div>
+      </div>
+    </section>
+    <section aria-label="Analysis view selector listing Calendar, Category Breakdown and Flow Graph">
+      <h2>02 / Choose view</h2><div class="phone">
+        <header><span>Analysis</span></header><div class="body">
+          <div class="field row"><span>Calendar</span><span>⌃</span></div>
+          <div class="menu"><div>☑ Calendar</div><div>☐ Category Breakdown</div><div>☐ Flow Graph</div></div>
+          <div class="row group"><span>&lt;</span><span>November 2026</span><span>&gt;</span></div><p class="muted">All accounts · full month</p>
+          <div class="summary"><div class="row"><span>Income</span><span>₹15,000</span></div><div class="row"><span>Expenses</span><span>₹10,000</span></div><div class="row"><span>Net</span><span>₹5,000</span></div></div>
+          <div class="group">Daily net calendar</div><div class="field" style="min-height:125px">Calendar</div>
+        </div><div class="nav"><span><i data-lucide="receipt" aria-hidden="true"></i>Records</span><span class="current"><i data-lucide="chart-no-axes-combined" aria-hidden="true"></i>Analysis</span><span><i data-lucide="wallet" aria-hidden="true"></i>Accounts</span><span><i data-lucide="tag" aria-hidden="true"></i>Categories</span></div>
+      </div>
+    </section>
+    <section aria-label="Category Breakdown view with expense wheel and all categories, including zero-value categories">
+      <h2>03 / Category Breakdown</h2><div class="phone">
+        <header><span>Analysis</span></header><div class="body">
+          <div class="field row"><span>Category Breakdown</span><span>⌄</span></div>
+          <div class="row group"><span>1–12 Nov 2026</span><span>Custom range</span></div><div class="field row"><span>All accounts</span><span>⌄</span></div>
+          <div class="summary"><div class="row"><span>Income</span><span>₹15,000</span></div><div class="row"><span>Expenses</span><span>₹10,000</span></div><div class="row"><span>Net</span><span>₹5,000</span></div></div>
+          <div class="field row"><span>Expenses</span><span>⌄</span></div>
+          <div class="wheel" role="img" aria-label="Expenses: Rent 6000 rupees, Groceries 3000 rupees, Food 1000 rupees, Salary 0 rupees"><div class="wheel-inner">Expenses<br>₹10,000</div></div>
+          <div class="item row"><span><span class="key" style="background:#888"></span>Rent</span><span>₹6,000</span></div>
+          <div class="item row"><span><span class="key" style="background:#bbb"></span>Groceries</span><span>₹3,000</span></div>
+          <div class="item row"><span><span class="key" style="background:#ddd"></span>Food</span><span>₹1,000</span></div>
+          <div class="item row"><span><span class="key" style="background:#fff"></span>Salary</span><span>₹0</span></div>
+        </div><div class="nav"><span><i data-lucide="receipt" aria-hidden="true"></i>Records</span><span class="current"><i data-lucide="chart-no-axes-combined" aria-hidden="true"></i>Analysis</span><span><i data-lucide="wallet" aria-hidden="true"></i>Accounts</span><span><i data-lucide="tag" aria-hidden="true"></i>Categories</span></div>
+      </div>
+    </section>
+    <section aria-label="Flow Graph view with daily net and category breakdown for a selected range">
+      <h2>04 / Flow Graph</h2><div class="phone">
+        <header><span>Analysis</span></header><div class="body">
+          <div class="field row"><span>Flow Graph</span><span>⌄</span></div>
+          <div class="row group"><span>1–12 Nov 2026</span><span>Custom range</span></div><div class="field row"><span>All accounts</span><span>⌄</span></div>
+          <div class="summary"><div class="row"><span>Income</span><span>₹15,000</span></div><div class="row"><span>Expenses</span><span>₹10,000</span></div><div class="row"><span>Net</span><span>₹5,000</span></div></div>
+          <div class="field row"><span>Net</span><span>⌄</span></div><div class="group">Daily flow</div>
+          <svg class="graph" viewBox="0 0 260 130" role="img" aria-label="Illustrative daily net graph with positive values green and negative values red"><text x="0" y="16">₹</text><line x1="30" y1="14" x2="30" y2="105" stroke="#999"/><line x1="30" y1="60" x2="250" y2="60" stroke="#999"/><polyline points="35,60 53,18 72,60" fill="none" stroke="#39834b" stroke-width="1.5"/><polyline points="90,60 108,79 126,60" fill="none" stroke="#b84b4b" stroke-width="1.5"/><polyline points="144,60 162,70 180,60 198,65 216,60" fill="none" stroke="#b84b4b" stroke-width="1.5"/><text x="30" y="124">1 Nov</text><text x="212" y="124">12 Nov</text></svg>
+          <div class="group">Net by category</div><div class="item row"><span>Salary</span><span>+ ₹15,000</span></div><div class="item row"><span>Rent</span><span>− ₹6,000</span></div><div class="item row"><span>Groceries</span><span>− ₹3,000</span></div><div class="item row"><span>Food</span><span>− ₹1,000</span></div>
+        </div><div class="nav"><span><i data-lucide="receipt" aria-hidden="true"></i>Records</span><span class="current"><i data-lucide="chart-no-axes-combined" aria-hidden="true"></i>Analysis</span><span><i data-lucide="wallet" aria-hidden="true"></i>Accounts</span><span><i data-lucide="tag" aria-hidden="true"></i>Categories</span></div>
+      </div>
+    </section>
+  </div>
+</div>
