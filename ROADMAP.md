@@ -40,6 +40,7 @@
 ### V4 — Full backup, restore, dark mode, and app-wide icons
 
 - Import transactions from CSV.
+- Add account selection to CSV export so users can export transactions for particular accounts.
 - CSV column format and import details are intentionally undecided; confirm them with the user before implementing CSV import.
 - Back up and restore accounts, opening balances, categories, and transactions.
 - Keep this distinct from transaction CSV import/export unless the user chooses to combine them.
