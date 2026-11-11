@@ -1,19 +1,22 @@
-# Wallet V2
+# Wallet V3
 
-A personal, on-device INR transaction tracker for Android 8.0 (API 26) and later. Built with Kotlin, native Android Views/XML, and Room. The product scope is defined in [ROADMAP.md](../ROADMAP.md); the simple appearance follows [V2 wireframe revision 03](../wireframes/wallet-v2-wireframe-r03.html).
+A personal, on-device INR transaction tracker for Android 8.0 (API 26) and later. Built with Kotlin, native Android Views/XML, and Room. The product scope is defined in [ROADMAP.md](../ROADMAP.md); the simple appearance follows [V3 wireframe revision 03](../wireframes/wallet-v3-wireframe-r03.html) and the subsequently confirmed decisions in the wireframe README.
 
 ## Using the app
 
 1. Open **Accounts** and add an account with a name and opening balance. All accounts behave identically, including accounts with negative balances.
 2. Open **Records** and choose **+ Add record**. Enter an expense, income, or transfer with an account, category when applicable, amount, description/payee, and occurrence date/time. Tap the category field to open a separate list with icon badges and a case-insensitive name search. Tap a category to return to your draft; Back cancels without changing it. Income and expenses share the same category list. Transfers require two different accounts.
-3. Tap a record to edit it or delete it. Balances recalculate after every change. Tap an account to edit its name or opening balance.
+3. Tap a record to edit it or delete it. Balances recalculate after every change. Tap an account to view its current balance and dated history, including signed transfers and opening balance. Use the separate **Edit** button on its Accounts row to edit the account name or opening balance.
 4. The Records summary always shows today's income, expense, and net totals. The list below shows all records grouped by occurrence date, newest first. Date headings do not change the summary. Income amounts are green, expenses muted red, and transfers blue with a blue two-arrow badge. Transfers are excluded from income and expense totals.
 
 5. Open **Categories** to add a custom category or edit any category, including built-ins. Choose among six black line icons and 16 background colors independently. Names are trimmed, 1–80 characters, and unique without regard to case, including archived names. New categories start with Other/Sky.
 6. Archive a category from its editor after confirming. It stays visible and editable in Categories, and old records retain it; new assignments offer active categories only. An existing record can keep its archived category. At least one category must remain active. V2 has no restore action; an archived category can be renamed to free its old name.
 7. On **Records**, choose **Export CSV**, select **All transactions**, **Income**, **Expenses**, or **Transfers**, then **Choose location & save**. Select a location in Android's file picker. The file is always CSV. Cancelling leaves wallet data unchanged; a failed write can be retried with the same selection.
 
-V2 uses light mode even when the device uses dark mode. Category filters and analysis remain V3; CSV import, full backup/restore, dark mode, and additional/app-wide icons remain V4. No sample accounts or transactions are inserted at startup.
+8. Type in the compact search field at the top right of **Records** to match description/payee or amount, and use × to clear. Today's totals stay unchanged. Category/account names are not searched; CSV still exports all records or the selected transaction type.
+9. Open **Analysis** for the first of the current month through today. Select All accounts or one account, or apply an inclusive **Custom range**. Totals, daily graph, and category values use the same period/account. The graph defaults to income and expenses together; its controls switch to one series. Category values default to net (income minus expenses), with separate income/expense views. Reimbursements increase category net; transfers and opening balances are excluded. Zero-value categories are hidden in the active view. Reopening Analysis resets its defaults; rotation retains the current choices.
+
+V3 uses light mode even when the device uses dark mode. CSV import, account-specific CSV export, full backup/restore, settings, dark mode, and additional/app-wide icons remain V4. There is no category filter or past-date balance screen. No sample accounts or transactions are inserted at startup.
 
 ## CSV format
 
@@ -51,13 +54,11 @@ On macOS/Linux use `./gradlew`. The debug APK is directly installable. `:app:ass
 
 Run connected tests on a disposable emulator or test device: the UI test fixture clears the installed debug app's wallet data. Tests cover money and accounting, migration from the checked-in V1 schema, category validation and metadata updates, archiving, independent appearance choices, draft recreation, CSV serialization, failed-write retry, picker cancellation, and the V1 entry flows. Reports are under `app/build/reports/`. UI tests capture screenshots in the app's external-files `qa/` directory; collect them before uninstalling the test app (Gradle may uninstall it during teardown).
 
-Verified on 11 November 2026: 11 JVM tests and 19 Android tests passed, lint reported 0 errors (15 warnings), and debug/R8 release builds passed. An installed V1→V2 upgrade preserved data and the record sequence. Actual system-picker CSV saving and an optimized-release launch with saved data passed. Device testing used API 37 with system dark mode enabled; API 26 compatibility was checked by lint. Details are recorded in [the V2 implementation plan](../V2-PLAN.md).
+Verified V3 on 11 November 2026: all 18 JVM tests passed. The API 37 Android suite passed 25/26; the remaining account-entry test passed on rerun with all four V3 flows and the record-draft regression (6/6). A final search test checked rendered rows after layout/animations as well as count, rotation, and clearing. Lint reported 0 errors (22 warnings); debug and R8 release builds passed. An installed V2→V3 upgrade preserved every account, record, category, and ID sequence. The optimized release opened Analysis and account history with saved data and no crash output. API 26 compatibility was checked by lint. See [V3 validation details](../V3-PLAN.md).
 
-Verified artifacts: [installable debug APK](dist/wallet-v2-debug.apk), [unsigned release APK](dist/wallet-v2-release-unsigned.apk), and [SHA-256 checksums](dist/wallet-v2-SHA256SUMS.txt). The release APK requires signing before installation.
+Verified artifacts: [installable V3 debug APK](dist/wallet-v3-debug.apk), [unsigned V3 release APK](dist/wallet-v3-release-unsigned.apk), and [SHA-256 checksums](dist/wallet-v3-SHA256SUMS.txt). The release APK requires signing before installation.
 
-The subsequent transaction-type export update passed all 12 JVM tests and 3 focused Android export tests, including selection recreation and filtered-write retry. Debug/release assembly and lint passed again (0 errors, 15 warnings); the APKs above include this update.
-
-The searchable category-page and blue transfer-badge update passed all 12 JVM tests and all 22 Android checks across the suite and a targeted rerun of one missed legacy time-picker interaction. Search/selection, cancellation, draft/query recreation, archive rules, and transfer color were verified. Debug/R8 builds passed and lint reported 0 errors (16 warnings). APKs and checksums include this latest update.
+Earlier V2 results and artifact details are recorded in [the V2 implementation plan](../V2-PLAN.md). Its standalone source/history/APK archive is preserved separately from V3.
 
 ## Data and implementation
 
@@ -66,7 +67,8 @@ The searchable category-page and blue transfer-badge update passed all 12 JVM te
 - A transfer is one database row referencing both accounts. Balances are derived from opening balances and records, so edits/deletions cannot leave a separate balance cache out of sync. Writes and observable ledger snapshots are transactional.
 - Occurrence timestamps preserve the entered local date and time, including after a device time-zone change. No opening-balance effective date is modeled.
 - Database schemas 1 and 2 are checked in under `app/schemas/`. The explicit 1→2 migration seeds 12 categories with the original IDs, preserves every record column and the record ID sequence, and adds a category foreign key. There is no destructive-migration fallback.
+- V3 keeps database schema 2 and adds read-only search/analysis/history calculations. Analysis excludes transfers and opening balances, applies inclusive local dates and one optional account ID, and aggregates with `BigInteger`. Graph coordinates alone use normalized drawing values; the graph allocates sparse daily points rather than a list of every date.
 - Editors keep drafts across recreation and keep writes in a ViewModel to prevent double saves during rotation.
 - Six Lucide icons are bundled as vectors, without a runtime icon dependency. Notices are in `third_party/LUCIDE-LICENSE.txt` and bundled in `assets/licenses/lucide.txt`.
 
-The accepted V1 is preserved at tag `wallet-v1-2026-11-11-r01` and in [the V1 backup](../backups/wallet-v1-2026-11-11-r01/README.md). The roadmap and earlier wireframes remain in the parent WalletApp directory.
+Accepted versions are preserved at tags `wallet-v1-2026-11-11-r01` and `wallet-v2-2026-11-11-r01`, with standalone [V1](../backups/wallet-v1-2026-11-11-r01/README.md) and [V2](../backups/wallet-v2-2026-11-11-r01/README.md) archives. The roadmap and earlier wireframes remain in the parent WalletApp directory.
