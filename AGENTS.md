@@ -19,6 +19,7 @@ Use this file for project working requirements. Read [ROADMAP.md](ROADMAP.md) fo
 - `repository/` is the Android application project root. Keep all app source, configuration, Gradle files, build caches, generated output, and APKs inside that directory. Run builds and tests from `repository/` and open that folder in Android Studio. Do not create the Android project in the main WalletApp directory.
 - Keep project instructions, the roadmap, wireframes, and visual reference assets in the main WalletApp directory.
 - Keep implementation as simple as the approved wireframes; beautification comes in later versions.
+- Keep the app and code as minimal as possible. Prefer simple, direct solutions; avoid bloated or overcomplicated code, unnecessary dependencies, abstractions, and features.
 - Implement only the requested version's features.
 - Save wireframes in `wireframes/` in the main WalletApp directory. Use `wallet-v<app-version>-wireframe-r<revision>.html`, with at least two digits for revisions (for example, `wallet-v1-wireframe-r02.html`). Increment the revision for each saved iteration within an app version and preserve earlier revisions. Start a new app version at `r01`.
 - Ask the user for approval before future `AGENTS.md` updates, describing the proposed changes before editing.
