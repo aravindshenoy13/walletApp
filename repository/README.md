@@ -1,15 +1,31 @@
-# Wallet V1
+# Wallet V2
 
-A personal, on-device INR transaction tracker for Android 8.0 (API 26) and later. Built with Kotlin, native Android Views/XML, and Room. The product scope is defined in [ROADMAP.md](../ROADMAP.md); the simple appearance follows [wireframe revision 02](../wireframes/wallet-v1-wireframe-r02.html).
+A personal, on-device INR transaction tracker for Android 8.0 (API 26) and later. Built with Kotlin, native Android Views/XML, and Room. The product scope is defined in [ROADMAP.md](../ROADMAP.md); the simple appearance follows [V2 wireframe revision 03](../wireframes/wallet-v2-wireframe-r03.html).
 
 ## Using the app
 
 1. Open **Accounts** and add an account with a name and opening balance. All accounts behave identically, including accounts with negative balances.
-2. Open **Records** and choose **+ Add record**. Enter an expense, income, or transfer with an account, category when applicable, amount, description/payee, and occurrence date/time. Income and expenses use the same built-in category list. Transfers require two different accounts.
+2. Open **Records** and choose **+ Add record**. Enter an expense, income, or transfer with an account, category when applicable, amount, description/payee, and occurrence date/time. Income and expenses share the same category list. Transfers require two different accounts.
 3. Tap a record to edit it or delete it. Balances recalculate after every change. Tap an account to edit its name or opening balance.
 4. The Records summary always shows today's income, expense, and net totals. The list below shows all records grouped by occurrence date, newest first. Date headings do not change the summary. Transfers are excluded from income and expense totals.
 
-V1 has no analysis, budgets, custom categories, category filters, CSV, date-range totals, account history screens, or backup/restore controls. No sample accounts or transactions are inserted at startup.
+5. Open **Categories** to add a custom category or edit any category, including built-ins. Choose among six black line icons and 16 background colors independently. Names are trimmed, 1–80 characters, and unique without regard to case, including archived names. New categories start with Other/Sky.
+6. Archive a category from its editor after confirming. It stays visible and editable in Categories, and old records retain it; new assignments offer active categories only. An existing record can keep its archived category. At least one category must remain active. V2 has no restore action; an archived category can be renamed to free its old name.
+7. On **Records**, choose **Export CSV**, then **Choose location & save**. Select a location in Android's file picker to export all transactions. Cancelling leaves wallet data unchanged; a failed write can be retried.
+
+V2 uses light mode even when the device uses dark mode. Category filters and analysis remain V3; CSV import, full backup/restore, dark mode, and additional/app-wide icons remain V4. No sample accounts or transactions are inserted at startup.
+
+## CSV format
+
+The file is UTF-8 with a BOM and CRLF row endings, named `wallet-transactions-YYYY-MM-DD.csv` using the export date. It contains these columns:
+
+```csv
+record_id,date,time,type,amount,currency,account,to_account,category,description
+```
+
+Rows run from oldest occurrence to newest, then by local record ID. Dates/times use `YYYY-MM-DD` and `HH:mm:ss`; types are `income`, `expense`, or `transfer`. Positive amounts use exact two-decimal INR values without grouping. Transfers appear once, with a destination account and blank category. Other rows have a blank destination. Current account/category names are used, including archived categories.
+
+Commas, quotes, and line breaks are CSV-escaped. Formula-like text (leading `=`, `+`, `-`, or `@` after whitespace, or an initial tab/newline) receives an export-only apostrophe so spreadsheet applications treat it as text. Stored data is unchanged. Opening balances, category appearance, and hidden legacy notes are excluded: this file is a transaction export, not a full wallet backup.
 
 ## Build and install
 
@@ -33,17 +49,20 @@ On macOS/Linux use `./gradlew`. The debug APK is directly installable. `:app:ass
 .\gradlew.bat :app:connectedDebugAndroidTest
 ```
 
-Run connected tests on a disposable emulator or test device: the UI test fixture clears the installed debug app's wallet data. Tests cover exact money parsing, day boundaries, negative/large balances, transfer/edit/delete accounting, validation, simultaneous duplicate account creation, local persistence, occurrence sorting, the complete entry flow, and form recreation. Reports are under `app/build/reports/`. UI tests capture screenshots in the app's external-files `qa/` directory; collect them before uninstalling the test app (Gradle may uninstall it during teardown).
+Run connected tests on a disposable emulator or test device: the UI test fixture clears the installed debug app's wallet data. Tests cover money and accounting, migration from the checked-in V1 schema, category validation and metadata updates, archiving, independent appearance choices, draft recreation, CSV serialization, failed-write retry, picker cancellation, and the V1 entry flows. Reports are under `app/build/reports/`. UI tests capture screenshots in the app's external-files `qa/` directory; collect them before uninstalling the test app (Gradle may uninstall it during teardown).
 
-Verified on 11 November 2026: all 6 JVM tests and 9 instrumented tests passed on Android 17 / API 37. Debug lint completed with no errors. The R8 optimized release built successfully and launched with saved data after being signed with the standard debug key for a local smoke test; the distribution release artifact remains unsigned. The minimum supported Android version is checked by lint; device testing was performed on API 37.
+Verified on 11 November 2026: 11 JVM tests and 19 Android tests passed, lint reported 0 errors (15 warnings), and debug/R8 release builds passed. An installed V1→V2 upgrade preserved data and the record sequence. Actual system-picker CSV saving and an optimized-release launch with saved data passed. Device testing used API 37 with system dark mode enabled; API 26 compatibility was checked by lint. Details are recorded in [the V2 implementation plan](../V2-PLAN.md).
+
+Verified artifacts: [installable debug APK](dist/wallet-v2-debug.apk), [unsigned release APK](dist/wallet-v2-release-unsigned.apk), and [SHA-256 checksums](dist/wallet-v2-SHA256SUMS.txt). The release APK requires signing before installation.
 
 ## Data and implementation
 
-- Room stores accounts and records in the app-private `wallet.db`; there are no network permissions. Android cloud backup and device transfer are disabled in the manifest and extraction rules.
+- Room stores accounts, records, and categories in the app-private `wallet.db`; there are no network permissions. Android cloud backup and device transfer are disabled in the manifest and extraction rules. CSV writes only to the location selected by the user.
 - Amounts and opening balances use signed 64-bit integer paise. Transactions require positive amounts. Aggregates use `BigInteger` so totals cannot wrap around; formatting uses exact decimal INR amounts.
 - A transfer is one database row referencing both accounts. Balances are derived from opening balances and records, so edits/deletions cannot leave a separate balance cache out of sync. Writes and observable ledger snapshots are transactional.
 - Occurrence timestamps preserve the entered local date and time, including after a device time-zone change. No opening-balance effective date is modeled.
-- Database schema version 1 is checked in under `app/schemas/`. There is no destructive-migration fallback.
+- Database schemas 1 and 2 are checked in under `app/schemas/`. The explicit 1→2 migration seeds 12 categories with the original IDs, preserves every record column and the record ID sequence, and adds a category foreign key. There is no destructive-migration fallback.
 - Editors keep drafts across recreation and keep writes in a ViewModel to prevent double saves during rotation.
+- Six Lucide icons are bundled as vectors, without a runtime icon dependency. Notices are in `third_party/LUCIDE-LICENSE.txt` and bundled in `assets/licenses/lucide.txt`.
 
-The roadmap and earlier wireframes remain in the parent WalletApp directory.
+The accepted V1 is preserved at tag `wallet-v1-2026-11-11-r01` and in [the V1 backup](../backups/wallet-v1-2026-11-11-r01/README.md). The roadmap and earlier wireframes remain in the parent WalletApp directory.
