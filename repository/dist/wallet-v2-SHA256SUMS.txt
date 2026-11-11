@@ -1,2 +1,2 @@
-2fdfbce3bb8a7a88a24a57c5cae844f2dcc9e7e99b71357ea01f6ec976ecf3c8  wallet-v2-debug.apk
-9de1d7e28deb8a30d2f4aa434fc7cfc08998fecdf5310cf1193940ada240ee14  wallet-v2-release-unsigned.apk
+ed925b0755f636493862bd0fc3c9d9146d579d4601d064e5a804f5d3c420542c  wallet-v2-debug.apk
+66e56e779486f780fcd9903710943c7dcdf8260ab50b39fcd5cdfa242e3afbe6  wallet-v2-release-unsigned.apk

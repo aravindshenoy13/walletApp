@@ -107,6 +107,12 @@ class WalletFlowTest {
             capture("transfer")
             onView(withId(R.id.save)).perform(scrollTo(), click())
             awaitText(transfer, true)
+            onView(allOf(withId(R.id.amount), isDisplayed())).check { view, error ->
+                if (error != null) throw error
+                assertEquals(context.getColor(R.color.transfer_amount), (view as android.widget.TextView).currentTextColor)
+            }
+            onView(allOf(withId(R.id.badge), isDisplayed())).check(matches(isDisplayed()))
+            capture("v2-transfer-records")
             ledger = awaitLedger { it.records.any { row -> row.description == transfer } }
             assertEquals(BigInteger.valueOf(8_000), ledger.balances[cashId])
             assertEquals(BigInteger.valueOf(-3_000), ledger.balances[bankId])

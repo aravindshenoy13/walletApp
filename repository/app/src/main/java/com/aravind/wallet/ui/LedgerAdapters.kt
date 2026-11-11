@@ -68,8 +68,15 @@ class RecordsAdapter(private val edit: (Long) -> Unit) :
                 val record = row.record
                 val context = root.context
                 description.text = row.category?.name ?: context.getString(R.string.transfer)
-                badge.isVisible = row.category != null
-                row.category?.let { badge.showCategory(it.iconKey, it.backgroundColorKey) }
+                badge.isVisible = true
+                if (record.type == RecordType.TRANSFER) {
+                    badge.setImageResource(R.drawable.ic_transfer)
+                    badge.imageTintList = null
+                    badge.background = android.graphics.drawable.GradientDrawable().apply {
+                        setColor(context.getColor(R.color.transfer_background))
+                        cornerRadius = 4 * context.resources.displayMetrics.density
+                    }
+                } else row.category?.let { badge.showCategory(it.iconKey, it.backgroundColorKey) }
                 amount.text = context.getString(when (record.type) {
                     RecordType.EXPENSE -> R.string.expense_amount
                     RecordType.INCOME -> R.string.income_amount
@@ -78,7 +85,7 @@ class RecordsAdapter(private val edit: (Long) -> Unit) :
                 amount.setTextColor(context.getColor(when (record.type) {
                     RecordType.INCOME -> R.color.income_amount
                     RecordType.EXPENSE -> R.color.expense_amount
-                    RecordType.TRANSFER -> R.color.ink
+                    RecordType.TRANSFER -> R.color.transfer_amount
                 }))
                 val time = record.occurredAt.format(DateTimeFormatter.ofPattern("HH:mm"))
                 meta.text = if (record.type == RecordType.TRANSFER)

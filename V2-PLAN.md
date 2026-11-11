@@ -102,9 +102,9 @@ Use screen-owned mutation state. The current `WalletViewModel.perform()` stops a
 
 Add the text-only Categories navigation tab and replace the current two-tab Boolean with three-tab state that survives recreation. On Records, use the header's Export CSV action and the body Add record button shown in panel 01. Accounts keeps its existing add/edit flow.
 
-Record rows follow revision 03: category badge/name and amount, followed by time, account, and description/payee. Transfers remain plain rows without a category badge. Preserve income/expense colors and today's totals across all categories; category edits and archiving never change balances or totals.
+Record rows follow revision 03: category badge/name and amount, followed by time, account, and description/payee. At the user's subsequent request, transfers show blue amounts and a blue two-arrow badge on a pale blue background. Transfers still have no category. Preserve income/expense colors and today's totals across all categories; category edits and archiving never change balances or totals.
 
-Replace enum-backed category selection in the transaction form with managed categories and their badges. Keep the V1 account/category placement, type choices, date/time pair, amount, and description arrangement. Transfer mode continues to substitute the destination account for category selection.
+Replace enum-backed category selection in the transaction form with managed categories and their badges. At the user's subsequent request, tapping the category field opens a separate searchable category list rather than a dropdown. Search matches names without regard to case; selection returns the stable category ID to the preserved record draft. Back cancels, and the query survives picker recreation. Keep the V1 account/category placement, type choices, date/time pair, amount, and description arrangement. Transfer mode continues to substitute the destination account for category selection.
 
 Restore category selection by stable ID rather than enum name, ordinal, or adapter position. Refresh category choices without overwriting unrelated unsaved form fields. An existing record may keep its archived category; new assignments must use active categories. Saving as a transfer stores a null category; a saved transfer converted back to income/expense offers active categories.
 
@@ -176,6 +176,12 @@ These defaults were stated when implementation began. The confirmed V2 scope, si
 | V1 preservation | V1 tag still points to `3908f31e3e7c9291023cc0a035826b563a246005`; all six backup checksums match. Existing roadmap/wireframe file hashes are unchanged. |
 
 API 26 compatibility was checked by lint; device execution was limited to available API 37. Local test logs and screenshots are under ignored `repository/.tools/v2-qa/`. Installable debug and unsigned release APKs are in `repository/dist/`, with hashes in `wallet-v2-SHA256SUMS.txt`. The app README documents usage, archive behavior, and the CSV contract.
+
+### Searchable categories and transfer appearance
+
+At the user's request, category selection now opens a separate page with icon badges, case-insensitive name search, and an empty-results message. Selected category IDs and record drafts survive returning and recreation; Back preserves the previous selection. Archived-category assignment rules remain unchanged. Transfers use blue amounts and a blue two-arrow badge, with no category or financial changes.
+
+Validation: all 12 JVM tests passed; 21 of 22 Android tests passed in the suite, and the remaining legacy record-entry test passed on a targeted rerun after a missed time-picker dialog. This includes the new search, selection/cancellation, draft/query recreation, and transfer-color checks. Initial emulator system ANR dialogs were cleared before the suite. Lint completed with 0 errors and 16 warnings; debug/test and R8 release builds passed. Search and transfer-row screenshots were visually reviewed. APKs and checksums in `repository/dist/` include this update.
 
 ### Transaction-type export refinement
 

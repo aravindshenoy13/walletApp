@@ -1,10 +1,12 @@
 package com.aravind.wallet.ui
 
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.widget.ArrayAdapter
 import androidx.activity.addCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -35,6 +37,13 @@ class RecordEditorActivity : AppCompatActivity() {
     private var accounts = emptyList<Account>()
     private var categoryChoices = emptyList<WalletCategory>()
     private var originalCategoryId: String? = null
+    private var selectedCategoryId: String? = null
+    private val pickCategory = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            result.data?.getStringExtra("categoryId")?.let { selectedCategoryId = it }
+            (model.ledger.value as? LedgerState.Ready)?.let { refreshCategories(it.ledger) }
+        }
+    }
     private var preservedNote = ""
     private var occurredAt = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES)
     private val recordId get() = intent.getLongExtra("id", 0)
@@ -53,6 +62,10 @@ class RecordEditorActivity : AppCompatActivity() {
         binding.title.setText(if (recordId == 0L) R.string.new_record else R.string.edit_record)
         binding.delete.isVisible = recordId != 0L
         binding.category.isSaveEnabled = false
+        binding.category.setOnClickListener {
+            pickCategory.launch(Intent(this, CategoryPickerActivity::class.java)
+                .putExtra("recordId", recordId))
+        }
         binding.account.isSaveEnabled = false
         binding.destination.isSaveEnabled = false
         onBackPressedDispatcher.addCallback(this) { if (model.operation.value != Operation.Working) finish() }
@@ -124,7 +137,7 @@ class RecordEditorActivity : AppCompatActivity() {
             RecordType.EXPENSE -> R.id.type_expense
             RecordType.TRANSFER -> R.id.type_transfer
         })
-        refreshCategories(ledger, draft?.getString("category") ?: record?.categoryId ?: "FOOD")
+        refreshCategories(ledger, selectedCategoryId ?: draft?.getString("category") ?: record?.categoryId ?: "FOOD")
         binding.amount.setText(draft?.getString("amount") ?: record?.let { Money.input(it.amountMinor) }.orEmpty())
         binding.description.setText(draft?.getString("description") ?: record?.description.orEmpty())
         occurredAt = draft?.getString("occurredAt")?.let(LocalDateTime::parse) ?: record?.occurredAt
@@ -137,14 +150,15 @@ class RecordEditorActivity : AppCompatActivity() {
         updateType()
     }
 
-    private fun refreshCategories(ledger: Ledger, wantedId: String? = categoryChoices.getOrNull(binding.category.selectedItemPosition)?.id) {
-        val available = ledger.categories.filter { !it.isArchived || it.id == originalCategoryId }
-        if (available != categoryChoices) {
-            categoryChoices = available
-            binding.category.adapter = CategoryChoices(this, available)
-            val chosen = available.indexOfFirst { it.id == wantedId }
-            binding.category.setSelection(if (chosen >= 0) chosen else 0)
-        }
+    private fun refreshCategories(ledger: Ledger, wantedId: String? = selectedCategoryId) {
+        categoryChoices = ledger.categories.filter { !it.isArchived || it.id == originalCategoryId }
+        val category = categoryChoices.find { it.id == wantedId } ?: categoryChoices.firstOrNull()
+        selectedCategoryId = category?.id
+        binding.categoryName.text = category?.let { if (it.isArchived) getString(R.string.archived_name, it.name) else it.name }
+            ?: getString(R.string.choose_category)
+        binding.categoryBadge.isVisible = category != null
+        category?.let { binding.categoryBadge.showCategory(it.iconKey, it.backgroundColorKey) }
+        binding.category.contentDescription = getString(R.string.category_selection, binding.categoryName.text)
         updateEnabled()
     }
 
@@ -188,7 +202,7 @@ class RecordEditorActivity : AppCompatActivity() {
         }
         model.saveRecord(WalletRecord(
             id = recordId, type = type, amountMinor = amount, accountId = source, destinationAccountId = destination,
-            categoryId = if (type == RecordType.TRANSFER) null else categoryChoices.getOrNull(binding.category.selectedItemPosition)?.id,
+            categoryId = if (type == RecordType.TRANSFER) null else selectedCategoryId,
             occurredAt = occurredAt, description = binding.description.text.toString(), note = preservedNote,
         ))
     }
@@ -214,7 +228,7 @@ class RecordEditorActivity : AppCompatActivity() {
             putString("amount", binding.amount.text.toString())
             putString("description", binding.description.text.toString())
             putString("occurredAt", occurredAt.toString())
-            putString("category", categoryChoices.getOrNull(binding.category.selectedItemPosition)?.id)
+            putString("category", selectedCategoryId)
             putLong("source", accounts.getOrNull(binding.account.selectedItemPosition)?.id ?: 0)
             putLong("destination", accounts.getOrNull(binding.destination.selectedItemPosition)?.id ?: 0)
         } else draft)

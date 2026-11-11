@@ -5,7 +5,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.view.View
-import android.widget.Spinner
+import android.widget.ListView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
@@ -91,21 +91,18 @@ class CategoryFlowTest {
             await(withText("Dining"))
             onView(allOf(withText("Dining"), isDisplayed())).perform(click())
             await(withId(R.id.amount))
-            onView(withId(R.id.category)).check { view, error ->
-                if (error != null) throw error
-                assertEquals("FOOD", ((view as Spinner).selectedItem as WalletCategory).id)
-            }
+            onView(withId(R.id.category_name)).check(matches(withText("Dining · Archived")))
             onView(withId(R.id.amount)).perform(scrollTo(), replaceText("26.00"), closeSoftKeyboard())
             onView(withId(R.id.save)).perform(scrollTo(), click())
             withTimeout(10_000) { repository.ledger.first { it.records.single { row -> row.id == record }.amountMinor == 2600L } }
             await(withId(R.id.add_record_button))
             onView(withId(R.id.add_record_button)).perform(click())
             await(withId(R.id.save))
-            onView(withId(R.id.category)).check { view, error ->
-                if (error != null) throw error
-                val adapter = (view as Spinner).adapter
-                assertTrue((0 until adapter.count).none { (adapter.getItem(it) as WalletCategory).id == "FOOD" })
-            }
+            onView(withId(R.id.category)).perform(scrollTo(), click())
+            await(withId(R.id.search))
+            onView(withId(R.id.search)).perform(replaceText("Dining"), closeSoftKeyboard())
+            onView(withId(R.id.message)).check(matches(withText(R.string.no_categories_found)))
+            onView(withId(R.id.back)).perform(click())
             onView(withId(R.id.back)).perform(click())
             await(withId(R.id.categories_tab))
             onView(withId(R.id.categories_tab)).perform(click())
@@ -159,6 +156,56 @@ class CategoryFlowTest {
             onView(withContentDescription(startsWith("Sky background"))).perform(scrollTo(), click())
             onView(withId(R.id.selection_status)).check(matches(withText("Home · Sky")))
         } finally { scenario.close() }
+    }
+
+    @Test fun searchableCategoryPageReturnsSelectionWithoutLosingRecordDraft() = runBlocking {
+        repository.saveAccount(Account(name = "Cash", openingBalanceMinor = 0))
+        val scenario = ActivityScenario.launch<RecordEditorActivity>(Intent(app, RecordEditorActivity::class.java))
+        try {
+            await(withId(R.id.save))
+            onView(withId(R.id.amount)).perform(scrollTo(), replaceText("42.50"), closeSoftKeyboard())
+            onView(withId(R.id.description)).perform(scrollTo(), replaceText("Draft payee"), closeSoftKeyboard())
+            onView(withId(R.id.category)).perform(scrollTo(), click())
+            await(withId(R.id.search))
+            onView(withId(R.id.search)).perform(replaceText("sALa"), closeSoftKeyboard())
+            onView(withId(R.id.category_results)).check { view, error ->
+                if (error != null) throw error
+                assertEquals(1, (view as ListView).adapter.count)
+            }
+            capture("v2-category-search")
+            onView(withText("Salary")).perform(click())
+            await(withId(R.id.save))
+            onView(withId(R.id.category_name)).check(matches(withText("Salary")))
+            scenario.recreate()
+            await(withId(R.id.save))
+            onView(withId(R.id.category_name)).check(matches(withText("Salary")))
+            onView(withId(R.id.amount)).check(matches(withText("42.50")))
+            onView(withId(R.id.description)).check(matches(withText("Draft payee")))
+            onView(withId(R.id.category)).perform(scrollTo(), click())
+            await(withId(R.id.search))
+            onView(withId(R.id.search)).perform(replaceText("no such category"), closeSoftKeyboard())
+            onView(withId(R.id.message)).check(matches(isDisplayed()))
+            onView(withId(R.id.back)).perform(click())
+            await(withId(R.id.save))
+            onView(withId(R.id.category_name)).check(matches(withText("Salary")))
+            onView(withId(R.id.save)).perform(scrollTo(), click())
+            val ledger = withTimeout(10_000) { repository.ledger.first { it.records.any { row -> row.description == "Draft payee" } } }
+            assertEquals("SALARY", ledger.records.single { it.description == "Draft payee" }.categoryId)
+        } finally { scenario.close() }
+    }
+
+    @Test fun categorySearchSurvivesPageRecreation() {
+        ActivityScenario.launch<CategoryPickerActivity>(Intent(app, CategoryPickerActivity::class.java)).use { scenario ->
+            await(withId(R.id.search))
+            onView(withId(R.id.search)).perform(replaceText("groc"), closeSoftKeyboard())
+            scenario.recreate()
+            await(withText("Groceries"))
+            onView(withId(R.id.search)).check(matches(withText("groc")))
+            onView(withId(R.id.category_results)).check { view, error ->
+                if (error != null) throw error
+                assertEquals(1, (view as ListView).adapter.count)
+            }
+        }
     }
 
     private fun await(matcher: Matcher<View>) {

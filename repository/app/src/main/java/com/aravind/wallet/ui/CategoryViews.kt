@@ -33,14 +33,14 @@ fun ImageView.showCategory(iconKey: String, colorKey: String) {
     }
 }
 
-class CategoryChoices(context: Context, val choices: List<WalletCategory>) :
+class CategoryChoices(context: Context, choices: List<WalletCategory>) :
     ArrayAdapter<WalletCategory>(context, R.layout.item_category_choice, choices) {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View = row(position, convertView, parent)
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View = row(position, convertView, parent)
     private fun row(position: Int, recycled: View?, parent: ViewGroup): View {
         val binding = recycled?.let(ItemCategoryChoiceBinding::bind)
             ?: ItemCategoryChoiceBinding.inflate(LayoutInflater.from(context), parent, false)
-        val category = choices[position]
+        val category = requireNotNull(getItem(position))
         binding.badge.showCategory(category.iconKey, category.backgroundColorKey)
         binding.label.text = if (category.isArchived) context.getString(R.string.archived_name, category.name) else category.name
         return binding.root

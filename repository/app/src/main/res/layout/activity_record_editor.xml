@@ -16,7 +16,10 @@
                 <Space android:layout_width="12dp" android:layout_height="1dp" />
                 <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
                     <TextView android:id="@+id/category_label" style="@style/FormLabel" android:layout_marginTop="0dp" android:text="@string/category" android:labelFor="@id/category" />
-                    <Spinner android:id="@+id/category" style="@style/FormField" android:spinnerMode="dropdown" android:layout_marginTop="4dp" />
+                    <LinearLayout android:id="@+id/category" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:layout_marginTop="4dp" android:padding="8dp" android:gravity="center_vertical" android:background="@drawable/action_outline" android:clickable="true" android:focusable="true" android:orientation="horizontal">
+                        <ImageView android:id="@+id/category_badge" android:layout_width="32dp" android:layout_height="32dp" android:padding="6dp" android:importantForAccessibility="no" />
+                        <TextView android:id="@+id/category_name" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:paddingStart="8dp" android:paddingEnd="0dp" android:textSize="16sp" android:textColor="@color/ink" />
+                    </LinearLayout>
                     <TextView android:id="@+id/destination_label" style="@style/FormLabel" android:layout_marginTop="0dp" android:text="@string/to_account" android:labelFor="@id/destination" android:visibility="gone" />
                     <Spinner android:id="@+id/destination" style="@style/FormField" android:spinnerMode="dropdown" android:layout_marginTop="4dp" android:visibility="gone" />
                 </LinearLayout>

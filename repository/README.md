@@ -5,9 +5,9 @@ A personal, on-device INR transaction tracker for Android 8.0 (API 26) and later
 ## Using the app
 
 1. Open **Accounts** and add an account with a name and opening balance. All accounts behave identically, including accounts with negative balances.
-2. Open **Records** and choose **+ Add record**. Enter an expense, income, or transfer with an account, category when applicable, amount, description/payee, and occurrence date/time. Income and expenses share the same category list. Transfers require two different accounts.
+2. Open **Records** and choose **+ Add record**. Enter an expense, income, or transfer with an account, category when applicable, amount, description/payee, and occurrence date/time. Tap the category field to open a separate list with icon badges and a case-insensitive name search. Tap a category to return to your draft; Back cancels without changing it. Income and expenses share the same category list. Transfers require two different accounts.
 3. Tap a record to edit it or delete it. Balances recalculate after every change. Tap an account to edit its name or opening balance.
-4. The Records summary always shows today's income, expense, and net totals. The list below shows all records grouped by occurrence date, newest first. Date headings do not change the summary. Transfers are excluded from income and expense totals.
+4. The Records summary always shows today's income, expense, and net totals. The list below shows all records grouped by occurrence date, newest first. Date headings do not change the summary. Income amounts are green, expenses muted red, and transfers blue with a blue two-arrow badge. Transfers are excluded from income and expense totals.
 
 5. Open **Categories** to add a custom category or edit any category, including built-ins. Choose among six black line icons and 16 background colors independently. Names are trimmed, 1–80 characters, and unique without regard to case, including archived names. New categories start with Other/Sky.
 6. Archive a category from its editor after confirming. It stays visible and editable in Categories, and old records retain it; new assignments offer active categories only. An existing record can keep its archived category. At least one category must remain active. V2 has no restore action; an archived category can be renamed to free its old name.
@@ -56,6 +56,8 @@ Verified on 11 November 2026: 11 JVM tests and 19 Android tests passed, lint rep
 Verified artifacts: [installable debug APK](dist/wallet-v2-debug.apk), [unsigned release APK](dist/wallet-v2-release-unsigned.apk), and [SHA-256 checksums](dist/wallet-v2-SHA256SUMS.txt). The release APK requires signing before installation.
 
 The subsequent transaction-type export update passed all 12 JVM tests and 3 focused Android export tests, including selection recreation and filtered-write retry. Debug/release assembly and lint passed again (0 errors, 15 warnings); the APKs above include this update.
+
+The searchable category-page and blue transfer-badge update passed all 12 JVM tests and all 22 Android checks across the suite and a targeted rerun of one missed legacy time-picker interaction. Search/selection, cancellation, draft/query recreation, archive rules, and transfer color were verified. Debug/R8 builds passed and lint reported 0 errors (16 warnings). APKs and checksums include this latest update.
 
 ## Data and implementation
 
