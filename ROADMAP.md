@@ -43,6 +43,7 @@
 - Back up and restore accounts, opening balances, categories, and transactions.
 - Keep this distinct from transaction CSV import/export unless the user chooses to combine them.
 - Add dark mode.
+- Add a Settings button next to the "Wallet" title for dark mode, CSV export, CSV import, and other options to be decided later.
 - Add icons throughout the app, including navigation, actions, accounts, and transaction types, building on V2's category icons.
 
 ## Business rules
