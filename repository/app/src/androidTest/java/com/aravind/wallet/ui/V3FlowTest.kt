@@ -161,7 +161,7 @@ class V3FlowTest {
     private fun assertColor(id: Int, color: Int) {
         onView(withId(id)).check { view, error ->
             if (error != null) throw error
-            assertEquals(app.getColor(color), (view as android.widget.TextView).currentTextColor)
+            assertEquals(view.context.getColor(color), (view as android.widget.TextView).currentTextColor)
         }
     }
     private fun setDate(id: Int,date: LocalDate) {

@@ -13,7 +13,7 @@ The accepted V2 is frozen at tag `wallet-v2-2026-11-11-r01` (`8cc58c7`) and arch
 - Accounts: row opens dated history and current balance; Edit is a separate row button. History includes both transfer directions with signed blue amounts, and a separate undated opening-balance row. Records can be edited from history, with live balance refresh. No past-date balance screen.
 - Native Views/XML, Room schema 2 retained, no new dependencies, application version 3.0/code 3. V4 import, account-specific export, settings, dark mode, and full backup/restore remain excluded.
 
-## Validation
+## Initial V3 validation
 
 Completed on 11 November 2026:
 
@@ -28,3 +28,14 @@ Completed on 11 November 2026:
 | Archives | V2 tag still points to `8cc58c7324f579c3cc028dfa875aa97ea9e4bd41`; all 6 archive-file checksums match. V1 and V2 APKs remain intact. |
 
 Device tests used API 37 with system night mode enabled and the app remaining light. API 26 compatibility was checked by lint, not a separate device run. Local logs/screenshots are in ignored `repository/.tools/v3-qa/`. Final debug and unsigned release APKs are `repository/dist/wallet-v3-debug.apk` and `wallet-v3-release-unsigned.apk`, with hashes in `wallet-v3-SHA256SUMS.txt`.
+
+## V3 refinements
+
+- Replaced the outlined/underlined Records search field with a rounded filled field and an icon clear action.
+- Made description/payee optional in both the form and repository, retaining its 120-character limit. Blank descriptions are stored as empty strings and export as empty CSV columns. Record metadata omits the trailing separator when the description is blank.
+- Net amounts in Records and Analysis are green when positive, red when negative, and neutral at zero.
+- Restyled Custom range with a separate padded body, rounded date cards with calendar icons, and a filled Apply action. Root system-bar insets no longer replace the content padding.
+- Account balances occupy a padded right-hand section with Edit beneath them; names and opening balances remain on the left.
+- Category-wise transaction history was explicitly deferred by the user pending revised requirements. Analysis category rows remain non-interactive; no drilldown screen was added.
+
+Follow-up validation on 11 November 2026: all 19 JVM and 28 Android tests passed. Tests include saving/editing blank descriptions for all transaction types, blank-description CSV output, form saving without a description, and net colors in forced light mode while the device uses dark mode. Debug/test and optimized release builds passed; lint reported 0 errors and 25 warnings. Screenshots of search, date range, negative net, and account rows were visually reviewed. The refreshed optimized release opened Analysis and account history with saved data and no crash output. The V3 APKs and checksums in `repository/dist/` include these refinements.
