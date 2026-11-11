@@ -11,6 +11,9 @@ local.properties
 
 # Android build output
 .gradle/
+.gradle-user-home/
+.tools/
+.kotlin/
 **/build/
 *.apk
 *.aab

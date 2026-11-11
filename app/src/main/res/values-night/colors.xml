@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="paper">#181818</color>
+    <color name="ink">#EEEEEE</color>
+    <color name="quiet">#BBBBBB</color>
+    <color name="line">#707070</color>
+    <color name="error">#FFB4AB</color>
+    <bool name="light_system_bars">false</bool>
+</resources>
