@@ -6,7 +6,7 @@ Planning reference: [ROADMAP.md](ROADMAP.md) and [V4 wireframe revision 02](wire
 
 ### Settings, search, and navigation
 
-- Place a Settings icon at the far left of the Wallet header, immediately before and vertically aligned with the title. Settings provides dark mode, CSV export, CSV import, full backup, and full restore.
+- Place a Settings icon at the far left of the Wallet header, immediately before and vertically aligned with the title. Settings provides dark mode, CSV export, full backup, and full restore.
 - Keep Records search compact at the top right until tapped; expand it for text entry. Preserve the existing live description/payee and amount filtering, clear action, and today's summary behavior.
 - Keep bottom-navigation icons and add simple line-art icons throughout the app. Use black line art in light mode and white in dark mode. Prefer native vector assets and minimal dependencies.
 
@@ -20,17 +20,12 @@ Planning reference: [ROADMAP.md](ROADMAP.md) and [V4 wireframe revision 02](wire
 - Add an **Additional Icons** button to the category editor. It opens a separate screen containing a borderless row-and-column grid of additional line-art icons.
 - Preserve independent icon and background-color selection, including the existing 16 colors. Existing categories keep their icon/color choices. The wireframe's additional icon names are examples for the initial inventory.
 
-### CSV export and import
+### CSV export
 
-- Move or expose CSV export and import through Settings. Extend the existing export flow with multiple-account selection while retaining its transaction-type choices.
-- Include a transfer once when either its source or destination account is selected, preserving both account references in the exported row.
-- Support importing both Wallet exports and bank CSVs with column mapping. When imported account or category names do not match existing wallet entries, ask the user to map them to existing entries rather than creating entries automatically.
-- Reject a bank CSV that has no category column in V4. Income and expense entries must map to existing categories; transfers do not require a category.
-- Reject the entire import if any row is invalid or identified as a duplicate; do not import a partial file. Give a clear rejection reason. Detailed row-error previews and selecting valid rows for partial import are deferred to V5.
-- Treat transactions as duplicates when date, type, amount, and accounts match. For transfers, compare source and destination in their respective roles. Check against the wallet and within the imported file; time, category, description, and local record ID do not distinguish a match.
-- This rule can flag two genuine transactions as duplicates when those fields match; V4 rejects the file rather than offering a row-level override.
-- Confirm the remaining bank-column mapping details before implementing import.
-- The existing export columns are `record_id,date,time,type,amount,currency,account,to_account,category,description`. Its record IDs are local to a wallet, and some text is prefixed for spreadsheet safety; a lossless import/decoding contract must be settled rather than assumed.
+- Expose CSV export through Settings with multiple-account selection and existing transaction-type choices.
+- Include a transfer once when either endpoint is selected, preserving both account references.
+- Keep existing export columns and spreadsheet-safety behavior.
+- CSV import is removed from product scope by user direction on 12 November 2026.
 
 ### Full backup and restore
 
@@ -44,28 +39,18 @@ Planning reference: [ROADMAP.md](ROADMAP.md) and [V4 wireframe revision 02](wire
 2. Add the persistent theme and app-wide line-art icons, then apply square selection styling while preserving single- and multi-select behavior.
 3. Add the Additional Icons screen and connect its selection to the existing category editor and 16-color palette.
 4. Extend CSV export with multi-account selection, including a transfer once if either endpoint is selected.
-5. Implement full-backup creation; implement CSV import and empty-wallet-only restore after their remaining details are confirmed.
-6. Verify V3 regressions and the V4 flows, including theme persistence, search, single/multiple selections, category icon/color independence, selected-account exports, and data round trips. Exercise error and cancellation paths for import and restore after their specifications are settled.
-
-## Deferred to V5
-
-- Add a row-level preview of invalid and duplicate entries and allow the user to select valid rows for partial import.
-- Add more comprehensive handling for bank CSVs that have no category column; the specific behavior is to be decided later.
-
-## Details awaiting confirmation before implementation
-
-- Bank CSV column mapping, including supported amount-direction formats and missing time values. The user chose to decide the amount formats later.
-- A lossless handling rule for spreadsheet-safety prefixes in existing Wallet CSV exports.
+5. Implement full-backup creation and empty-wallet-only restore.
+6. Verify V3 regressions and the V4 flows, including theme persistence, search, single/multiple selections, category icon/color independence, selected-account exports, and data round trips. Exercise error and cancellation paths for restore.
 
 ## Implementation checkpoint — 12 November 2026
 
 Implementation started from V3 after verifying all six archived checksums and the complete Git history bundle in `repository/archives/wallet-v3-2026-11-12-r01/`. The archived source, history, debug APK, and unsigned release APK remain untouched.
 
-Implemented Settings, persistent light/dark selection, compact/expanded live Records search, native square radio styling, navigation/action/account/type vectors, seven additional category icons on a separate borderless grid, and selected-account CSV export. Transfers match either selected endpoint once. Existing export columns and spreadsheet-safety behavior remain unchanged pending the import contract.
+Implemented Settings, persistent light/dark selection, compact/expanded live Records search, native square radio styling, navigation/action/account/type vectors, seven additional category icons on a separate borderless grid, and selected-account CSV export. Transfers match either selected endpoint once. Existing export columns and spreadsheet-safety behavior remain unchanged.
 
 Full backup uses versioned INR JSON with exact integer strings, account opening balances, category metadata/archived state, transaction IDs and relationships, and preserved legacy note data. Restore validates the complete document before writing and rechecks the untouched-empty-wallet condition inside one Room transaction. Backup selection uses Android document pickers; files over 20 MB are rejected on restore. Theme preference stays device-local and is separate from ledger backup.
 
-CSV import is pending: the user will provide example bank statements so bank formats and missing-field handling can be determined. The Settings entry currently explains that import is unavailable in this development build. Do not mark V4 complete or archive its chat until import and remaining acceptance checks are finished.
+CSV import has been removed from Settings and product scope. Full-backup restore remains supported. Final V4 acceptance remains separate from this scope change.
 
 Build version is `4.0-dev` (code 4), database schema remains 2. No new runtime dependencies were added.
 
@@ -76,4 +61,4 @@ Build version is `4.0-dev` (code 4), database schema remains 2. No new runtime d
 - Lint: zero errors, 44 warnings. Debug and optimized unsigned release builds passed.
 - Direct instrumentation result: `repository/.tools/v4-instrumentation-final.txt`. The first attempt encountered an emulator System UI ANR; the successful run followed clearing that dialog and stopping build daemons.
 - A final visual check found the launcher wallet asset unsuitable for a tinted navigation icon; it was replaced with a dedicated line-art account vector. This resource-only correction was rebuilt and checked with lint.
-- Development APKs and checksums are under `repository/dist/wallet-v4-dev-*`. Release APK requires signing. CSV import and final V4 acceptance remain outstanding.
+- Development APKs and checksums are under `repository/dist/wallet-v4-dev-*`. Release APK requires signing. Final V4 acceptance remains outstanding.

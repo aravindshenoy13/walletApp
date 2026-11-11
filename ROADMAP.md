@@ -48,13 +48,11 @@
 
 ### V4 — Full backup, restore, dark mode, and app-wide icons
 
-- Import transactions from CSV.
 - Add account selection to CSV export so users can export transactions for particular accounts.
-- CSV column format and import details are intentionally undecided; confirm them with the user before implementing CSV import.
 - Back up and restore accounts, opening balances, categories, and transactions.
-- Keep this distinct from transaction CSV import/export unless the user chooses to combine them.
+- Keep this distinct from transaction CSV export.
 - Add dark mode.
-- Place the Settings button at the far left of the header, immediately left of the "Wallet" title and vertically aligned with it. Settings contains dark mode, CSV export, CSV import, backup, restore, and other options to be decided later.
+- Place the Settings button at the far left of the header, immediately left of the "Wallet" title and vertically aligned with it. Settings contains dark mode, CSV export, backup, restore, and other options to be decided later.
 - Add icons throughout the app, including navigation, actions, accounts, and transaction types, building on V2's category icons.
 - Add more icons to the category icon selection.
 - Keep the Records search compact at the top right until tapped, then expand it for text entry. Continue filtering descriptions/payees and amounts as the user types.
@@ -76,6 +74,6 @@
 
 ## Scope reminders
 
-- CSV export is for V2. CSV import handling (format, duplicate detection, row validation) is for V4 and requires later product decisions.
+- CSV export is supported. CSV import is removed from the product scope.
 - Full backup/restore is V4; exporting transactions as CSV alone is not a full backup.
 - Budgets and app lock are not in the roadmap.

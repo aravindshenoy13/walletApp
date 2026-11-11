@@ -53,12 +53,11 @@ class SettingsActivity : AppCompatActivity() {
             setOnCheckedChangeListener { _, checked -> prefs.edit().putBoolean("dark", checked).apply(); AppCompatDelegate.setDefaultNightMode(if (checked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO) }
         })
         button("Export CSV") { startActivity(Intent(this, ExportActivity::class.java)) }
-        button("Import CSV") { message("CSV import is not available in this development build.") }
         button("Back up data") { save.launch("wallet-backup-${java.time.LocalDate.now()}.json") }
         button("Restore backup") { restore.launch(arrayOf("application/json", "text/plain", "application/octet-stream")) }
     }
     private fun button(label: String, clicked: () -> Unit) { actions.addView(Button(this).apply { text = label; isAllCaps = false
-        val icon = when (label) { "Export CSV" -> com.aravind.wallet.R.drawable.ic_expense; "Import CSV" -> com.aravind.wallet.R.drawable.ic_income; "Back up data" -> com.aravind.wallet.R.drawable.ic_save; "Restore backup" -> com.aravind.wallet.R.drawable.ic_back; else -> com.aravind.wallet.R.drawable.ic_back }
+        val icon = when (label) { "Export CSV" -> com.aravind.wallet.R.drawable.ic_expense; "Back up data" -> com.aravind.wallet.R.drawable.ic_save; "Restore backup" -> com.aravind.wallet.R.drawable.ic_back; else -> com.aravind.wallet.R.drawable.ic_back }
         setCompoundDrawablesRelativeWithIntrinsicBounds(icon, 0, 0, 0)
         setOnClickListener { clicked() } }) }
     private fun message(text: String) { AlertDialog.Builder(this).setMessage(text).setPositiveButton("OK", null).show() }
