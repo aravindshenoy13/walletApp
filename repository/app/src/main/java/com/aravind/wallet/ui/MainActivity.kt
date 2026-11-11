@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private enum class Tab { RECORDS, ANALYSIS, ACCOUNTS, CATEGORIES }
     private lateinit var binding: ActivityMainBinding
     private val model: WalletViewModel by viewModels()
+    private var searchExpanded = false
     private var tab = Tab.RECORDS
     private var ledger: Ledger? = null
     private lateinit var analysis: AnalysisPanel
@@ -60,8 +61,11 @@ class MainActivity : AppCompatActivity() {
         analysis = AnalysisPanel(this, binding.analysisPanel, savedInstanceState) { start, end ->
             rangePicker.launch(Intent(this, DateRangeActivity::class.java).putExtra("start", start.toString()).putExtra("end", end.toString()))
         }
+        searchExpanded = savedInstanceState?.getBoolean("searchExpanded") ?: false
+        binding.settings.setOnClickListener { startActivity(Intent(this, SettingsActivity::class.java)) }
+        binding.openSearch.setOnClickListener { searchExpanded = true; render(); binding.recordSearch.requestFocus(); (getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager).showSoftInput(binding.recordSearch, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT) }
         binding.recordSearch.doAfterTextChanged { render() }
-        binding.clearSearch.setOnClickListener { binding.recordSearch.text.clear() }
+        binding.clearSearch.setOnClickListener { binding.recordSearch.text.clear(); searchExpanded = false; (getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager).hideSoftInputFromWindow(binding.recordSearch.windowToken, 0); render() }
         binding.recordList.layoutManager = LinearLayoutManager(this)
         binding.recordList.adapter = recordsAdapter
         binding.accountList.layoutManager = LinearLayoutManager(this)
@@ -111,12 +115,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun render() = with(binding) {
         val today = LocalDate.now()
-        title.setText(when (tab) { Tab.RECORDS -> R.string.app_name; Tab.ANALYSIS -> R.string.analysis; Tab.ACCOUNTS -> R.string.accounts; Tab.CATEGORIES -> R.string.categories })
+        title.setText(R.string.app_name)
         add.setText(if (tab == Tab.CATEGORIES) R.string.add_category else R.string.add_account)
         add.isVisible = tab == Tab.ACCOUNTS || tab == Tab.CATEGORIES
-        searchBox.isVisible = tab == Tab.RECORDS
+        searchBox.isVisible = tab == Tab.RECORDS && searchExpanded
+        openSearch.isVisible = tab == Tab.RECORDS && !searchExpanded
         clearSearch.isEnabled = recordSearch.text.isNotEmpty()
-        export.isVisible = tab == Tab.RECORDS
+        export.isVisible = false
         listOf(recordsTab to Tab.RECORDS, analysisTab to Tab.ANALYSIS, accountsTab to Tab.ACCOUNTS, categoriesTab to Tab.CATEGORIES).forEach { (button, target) ->
             button.setTypeface(null, if (tab == target) Typeface.BOLD else Typeface.NORMAL)
             button.isSelected = tab == target
@@ -160,6 +165,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean("searchExpanded", searchExpanded)
         outState.putString("tab", tab.name)
         analysis.save(outState)
         super.onSaveInstanceState(outState)

@@ -43,6 +43,7 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
     private val app = application as WalletApplication
     private val _state = MutableStateFlow<ExportState>(ExportState.Idle)
     val state: StateFlow<ExportState> = _state
+    var accountIds: Set<Long>? = null
     var recordType: RecordType? = null
 
     fun choose(type: RecordType? = recordType): Boolean {
@@ -57,12 +58,13 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
         if (uri == null) { _state.value = ExportState.Idle; return }
         _state.value = ExportState.Writing
         val type = recordType
+        val scope = accountIds?.toSet()
         viewModelScope.launch {
             try {
                 val count = withContext(Dispatchers.IO) {
                     val snapshot = app.repository.snapshot()
                     val stream = app.contentResolver.openOutputStream(uri, "w") ?: throw IOException("No output stream")
-                    OutputStreamWriter(stream, Charsets.UTF_8).buffered().use { CsvExporter.write(snapshot, it, type) }
+                    OutputStreamWriter(stream, Charsets.UTF_8).buffered().use { CsvExporter.write(snapshot, it, type, scope) }
                 }
                 _state.value = ExportState.Saved(count)
             } catch (cancelled: CancellationException) {
@@ -100,6 +102,15 @@ class ExportActivity : AppCompatActivity() {
             null -> R.id.export_all
         })
         onBackPressedDispatcher.addCallback(this) { if (model.state.value != ExportState.Writing) finish() }
+        lifecycleScope.launch {
+            val accounts = (application as WalletApplication).repository.snapshot().accounts
+            val restored = savedInstanceState?.getLongArray("accounts")?.toSet()
+            if (model.accountIds == null) model.accountIds = restored ?: accounts.map { it.id }.toSet()
+            accounts.forEach { account -> binding.accountChoices.addView(android.widget.CheckBox(this@ExportActivity).apply {
+                text = account.name; isChecked = account.id in model.accountIds.orEmpty()
+                setOnCheckedChangeListener { _, checked -> model.accountIds = if (checked) model.accountIds.orEmpty() + account.id else model.accountIds.orEmpty() - account.id }
+            }) }
+        }
         binding.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.save.setOnClickListener {
             val type = when (binding.exportType.checkedRadioButtonId) {
@@ -108,6 +119,7 @@ class ExportActivity : AppCompatActivity() {
                 R.id.export_transfers -> RecordType.TRANSFER
                 else -> null
             }
+            if (model.accountIds.isNullOrEmpty()) { Toast.makeText(this, "Select at least one account.", Toast.LENGTH_LONG).show(); return@setOnClickListener }
             if (model.choose(type)) {
                 try { createDocument.launch("wallet-transactions-${LocalDate.now()}.csv") }
                 catch (_: RuntimeException) { model.pickerFailed() }
@@ -124,6 +136,7 @@ class ExportActivity : AppCompatActivity() {
                     binding.error.setText(R.string.export_failed)
                     binding.save.isEnabled = state != ExportState.Writing && state != ExportState.Choosing
                     binding.exportType.enableTree(binding.save.isEnabled)
+                    binding.accountChoices.enableTree(binding.save.isEnabled)
                     binding.back.isEnabled = state != ExportState.Writing
                     binding.save.setText(when (state) {
                         ExportState.Writing -> R.string.saving
@@ -142,6 +155,7 @@ class ExportActivity : AppCompatActivity() {
             R.id.export_transfers -> RecordType.TRANSFER
             else -> null
         }
+        model.accountIds?.let { outState.putLongArray("accounts", it.toLongArray()) }
         outState.putString("exportType", type?.name)
         super.onSaveInstanceState(outState)
     }

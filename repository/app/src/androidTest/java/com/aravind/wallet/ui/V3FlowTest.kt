@@ -59,6 +59,8 @@ class V3FlowTest {
     }
     @Test fun headerSearchFiltersSamePageAndRestoresWithoutChangingTodayTotals() {
         ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+            await(withId(R.id.open_search))
+            onView(withId(R.id.open_search)).perform(click())
             await(withId(R.id.record_search))
             await(allOf(withId(R.id.income),withText(Money.format(22500))))
             assertColor(R.id.net, R.color.income_amount)
@@ -81,7 +83,7 @@ class V3FlowTest {
             onView(withId(R.id.clear_search)).perform(click())
             await(withText(app.getString(R.string.all_records)))
             awaitRecords(7)
-            onView(withId(R.id.record_search)).check(matches(withText("")))
+            onView(withId(R.id.open_search)).check(matches(isDisplayed()))
         }
     }
     @Test fun monthlyOverviewStaysIndependentOfDetailedRangeAndAccount() {

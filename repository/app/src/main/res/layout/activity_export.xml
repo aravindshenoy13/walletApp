@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:paddingHorizontal="8dp">
-        <Button android:id="@+id/back" style="@style/PlainButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/back" />
+        <Button android:id="@+id/back" android:drawableStart="@drawable/ic_back" android:drawableTint="@color/icon_stroke" android:drawablePadding="4dp" style="@style/PlainButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/back" />
         <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:paddingHorizontal="8dp" android:text="@string/export_csv" android:textSize="20sp" android:textColor="@color/ink" />
     </LinearLayout>
     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/ink" />
     <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true">
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Select accounts" />
+            <LinearLayout android:id="@+id/account_choices" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
             <TextView style="@style/FormLabel" android:text="@string/export_label" />
             <RadioGroup android:id="@+id/export_type" android:layout_width="match_parent" android:layout_height="wrap_content" android:checkedButton="@id/export_all" android:orientation="vertical">
                 <RadioButton android:id="@+id/export_all" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:text="@string/all_transactions" />
@@ -15,7 +17,7 @@
                 <RadioButton android:id="@+id/export_transfers" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:text="@string/transfers" />
             </RadioGroup>
             <TextView android:id="@+id/error" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:textColor="@color/error" android:accessibilityLiveRegion="polite" android:visibility="gone" />
-            <Button android:id="@+id/save" style="@style/OutlineButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/choose_save" />
+            <Button android:id="@+id/save" android:drawableStart="@drawable/ic_save" android:drawableTint="@color/icon_stroke" android:drawablePadding="4dp" style="@style/OutlineButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/choose_save" />
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="16dp" android:text="@string/export_help" android:textColor="@color/quiet" android:textSize="14sp" />
         </LinearLayout>
     </ScrollView>

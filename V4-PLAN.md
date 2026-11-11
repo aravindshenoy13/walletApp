@@ -68,3 +68,12 @@ Full backup uses versioned INR JSON with exact integer strings, account opening 
 CSV import is pending: the user will provide example bank statements so bank formats and missing-field handling can be determined. The Settings entry currently explains that import is unavailable in this development build. Do not mark V4 complete or archive its chat until import and remaining acceptance checks are finished.
 
 Build version is `4.0-dev` (code 4), database schema remains 2. No new runtime dependencies were added.
+
+### Checkpoint verification
+
+- 23 JVM tests passed, including selected-account export and either-endpoint transfer inclusion.
+- 32 API 37 instrumentation tests passed. These include backup round trips, invalid reference/version rejection, nonempty-wallet protection, compact search/Settings/theme controls, additional icon selection across recreation, and V1–V3 regressions.
+- Lint: zero errors, 44 warnings. Debug and optimized unsigned release builds passed.
+- Direct instrumentation result: `repository/.tools/v4-instrumentation-final.txt`. The first attempt encountered an emulator System UI ANR; the successful run followed clearing that dialog and stopping build daemons.
+- A final visual check found the launcher wallet asset unsuitable for a tinted navigation icon; it was replaced with a dedicated line-art account vector. This resource-only correction was rebuilt and checked with lint.
+- Development APKs and checksums are under `repository/dist/wallet-v4-dev-*`. Release APK requires signing. CSV import and final V4 acceptance remain outstanding.

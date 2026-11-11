@@ -8,6 +8,13 @@ object CategoryCatalog {
         CategoryIcon("utensils", "Food"), CategoryIcon("shopping-basket", "Basket"),
         CategoryIcon("house", "Home"), CategoryIcon("book-open", "Book"),
         CategoryIcon("briefcase", "Work"), CategoryIcon("tag", "Other"),
+        CategoryIcon("plane", "Travel"),
+        CategoryIcon("music", "Music"),
+        CategoryIcon("heart", "Health"),
+        CategoryIcon("car", "Car"),
+        CategoryIcon("coffee", "Coffee"),
+        CategoryIcon("gift", "Gifts"),
+        CategoryIcon("bulb", "Utilities"),
     )
     val colors = listOf(
         CategoryColor("Red", "#D56565"), CategoryColor("Orange", "#C88645"),

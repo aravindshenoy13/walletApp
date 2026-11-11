@@ -6,9 +6,9 @@ import java.time.format.DateTimeFormatter
 /** Export only: a single row per movement, with exact amounts and literal spreadsheet text. */
 object CsvExporter {
     private val time = DateTimeFormatter.ofPattern("HH:mm:ss")
-    fun write(ledger: Ledger, writer: Writer, type: RecordType? = null): Int {
+    fun write(ledger: Ledger, writer: Writer, type: RecordType? = null, accountIds: Set<Long>? = null): Int {
         writer.write("\uFEFFrecord_id,date,time,type,amount,currency,account,to_account,category,description\r\n")
-        val records = ledger.records.filter { type == null || it.type == type }
+        val records = ledger.records.filter { (type == null || it.type == type) && (accountIds == null || it.accountId in accountIds || it.destinationAccountId in accountIds) }
             .sortedWith(compareBy({ it.occurredAt }, { it.id }))
         records.forEach { record ->
             val fields = listOf(

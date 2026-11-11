@@ -77,6 +77,18 @@ class WalletRepository(private val database: WalletDatabase) {
         }
     }
 
+    suspend fun restore(backup: Ledger) = database.withTransaction {
+        // Recheck at commit time, so edits made while the picker was open cannot be overwritten.
+        require(dao.accounts().isEmpty() && dao.records().isEmpty() && dao.categories().toSet() == V2CategorySeeds.rows.toSet()) {
+            "Restore requires an empty wallet with untouched built-in categories."
+        }
+        val checked = WalletBackup.decode(WalletBackup.encode(backup))
+        dao.clearCategories()
+        checked.categories.forEach { dao.insertCategory(it) }
+        checked.accounts.forEach { dao.insertAccount(it) }
+        checked.records.forEach { dao.insertRecord(it) }
+    }
+
     suspend fun deleteRecord(id: Long) = database.withTransaction {
         require(dao.deleteRecord(id) == 1) { "This record no longer exists." }
     }

@@ -41,6 +41,9 @@ class CategoryEditorActivity : AppCompatActivity() {
     private val isNew get() = intent.getStringExtra("id") == null
     private fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()
 
+    private val moreIcons = registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) result.data?.getStringExtra("icon")?.let { icon = it; updatePreview() }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         draft = savedInstanceState?.getBundle("draft")
@@ -106,7 +109,7 @@ class CategoryEditorActivity : AppCompatActivity() {
     }
 
     private fun createChoices() {
-        CategoryCatalog.icons.forEach { choice ->
+        CategoryCatalog.icons.take(6).forEach { choice ->
             val cell = LinearLayout(this).apply {
                 orientation = LinearLayout.VERTICAL
                 gravity = Gravity.CENTER
@@ -126,6 +129,8 @@ class CategoryEditorActivity : AppCompatActivity() {
             binding.iconChoices.addView(cell)
             iconButtons[choice.key] = cell to badge
         }
+        val more = Button(this).apply { text = "Additional Icons"; isAllCaps = false; setOnClickListener { moreIcons.launch(android.content.Intent(this@CategoryEditorActivity, AdditionalIconsActivity::class.java).putExtra("icon", icon).putExtra("color", color)) } }
+        (binding.iconChoices.parent as android.view.ViewGroup).addView(more, (binding.iconChoices.parent as android.view.ViewGroup).indexOfChild(binding.iconChoices) + 1)
         binding.colorChoices.columnCount = if (resources.configuration.screenWidthDp >= 600) 8 else 4
         CategoryCatalog.colors.forEach { choice ->
             val button = Button(this).apply {
@@ -149,13 +154,14 @@ class CategoryEditorActivity : AppCompatActivity() {
         iconButtons.forEach { (key, views) ->
             val selected = key == icon
             views.first.isSelected = selected
+            ((views.first as LinearLayout).getChildAt(1) as TextView).text = (if (selected) "\u2611 " else "\u2610 ") + CategoryCatalog.icons.first { it.key == key }.label
             views.first.contentDescription = selectedDescription(getString(R.string.icon_accessibility, CategoryCatalog.icons.first { it.key == key }.label), selected)
-            views.first.background = GradientDrawable().apply { setColor(Color.WHITE); setStroke(dp(if (selected) 2 else 1), getColor(if (selected) R.color.ink else R.color.line)) }
+            views.first.background = GradientDrawable().apply { setColor(getColor(R.color.paper)); setStroke(dp(if (selected) 2 else 1), getColor(if (selected) R.color.ink else R.color.line)) }
             views.second.showCategory(key, color)
         }
         colorButtons.forEach { (key, button) ->
             val selected = key == color
-            button.text = if (selected) "✓" else ""
+            button.text = if (selected) "\u2611" else "\u2610"
             button.isSelected = selected
             button.contentDescription = selectedDescription(getString(R.string.color_accessibility, key), selected)
             button.background = GradientDrawable().apply {

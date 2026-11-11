@@ -75,3 +75,10 @@ Accepted versions are preserved at tags `wallet-v1-2026-11-11-r01` and `wallet-v
 
 
 Final accepted V3 is preserved at tag `wallet-v3-2026-11-12-r01`, with a standalone source/history/APK archive under `archives/wallet-v3-2026-11-12-r01/`. See [final V3 notes](../V3-PLAN.md) for behavior and validation limits.
+
+
+## V4 development checkpoint
+
+V4 development adds Settings, persistent dark mode, compact expandable search, app icons, additional category icons, selected-account CSV exports, and full JSON backup/empty-wallet restore. CSV import awaits bank statement examples and is unavailable in this development build. See [V4 implementation notes](../V4-PLAN.md). The frozen V3 archive remains under `archives/wallet-v3-2026-11-12-r01/`.
+
+V4 checkpoint validation: 23 JVM tests and 32 API 37 instrumentation tests passed; lint has zero errors. Installable development APK: `dist/wallet-v4-dev-debug.apk`. Optimized release APK: `dist/wallet-v4-dev-release-unsigned.apk` (requires signing). This is an unfinished V4 build while CSV import awaits bank examples.

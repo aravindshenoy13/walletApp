@@ -14,6 +14,8 @@
         <activity android:name=".ui.DateRangeActivity" android:exported="false" />
         <activity android:name=".ui.CategoryPickerActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.CategoryEditorActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ui.AdditionalIconsActivity" android:exported="false" />
+        <activity android:name=".ui.SettingsActivity" android:exported="false" />
         <activity android:name=".ui.ExportActivity" android:exported="false" />
         <activity android:name=".ui.AccountEditorActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.RecordEditorActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />

@@ -19,6 +19,13 @@ import com.aravind.wallet.domain.CategoryCatalog
 
 fun ImageView.showCategory(iconKey: String, colorKey: String) {
     setImageResource(when (iconKey) {
+        "plane" -> R.drawable.ic_category_plane
+        "music" -> R.drawable.ic_category_music
+        "heart" -> R.drawable.ic_category_heart
+        "car" -> R.drawable.ic_category_car
+        "coffee" -> R.drawable.ic_category_coffee
+        "gift" -> R.drawable.ic_category_gift
+        "bulb" -> R.drawable.ic_category_bulb
         "utensils" -> R.drawable.ic_category_utensils
         "shopping-basket" -> R.drawable.ic_category_shopping_basket
         "house" -> R.drawable.ic_category_house
@@ -26,7 +33,7 @@ fun ImageView.showCategory(iconKey: String, colorKey: String) {
         "briefcase" -> R.drawable.ic_category_briefcase
         else -> R.drawable.ic_category_tag
     })
-    imageTintList = null
+    imageTintList = android.content.res.ColorStateList.valueOf(context.getColor(R.color.icon_stroke))
     background = GradientDrawable().apply {
         setColor(Color.parseColor(CategoryCatalog.colors.find { it.key == colorKey }?.hex ?: "#C9DEF5"))
         cornerRadius = 4 * resources.displayMetrics.density

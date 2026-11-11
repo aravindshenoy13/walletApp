@@ -19,6 +19,14 @@ class CsvExporterTest {
         if (type == RecordType.TRANSFER) null else "FOOD", time, "Lunch", "Hidden legacy note",
     )
 
+    @Test fun accountScopeIncludesEitherTransferEndpointExactlyOnce() {
+        val ledger = Ledger(accounts, listOf(entry(1), entry(2, RecordType.TRANSFER)), categories)
+        assertEquals(1, CsvExporter.write(ledger, StringWriter(), accountIds = setOf(2)))
+        assertEquals(2, CsvExporter.write(ledger, StringWriter(), accountIds = setOf(1, 2)))
+        assertEquals(0, CsvExporter.write(ledger, StringWriter(), accountIds = emptySet()))
+        assertEquals(0, CsvExporter.write(ledger, StringWriter(), RecordType.EXPENSE, setOf(2)))
+    }
+
     @Test fun eachTypeExportsOnlyMatchingRowsAndEmptyMatchesKeepHeader() {
         val records = RecordType.entries.mapIndexed { index, type -> entry(index.toLong() + 1, type) }
         val ledger = Ledger(accounts, records, categories)

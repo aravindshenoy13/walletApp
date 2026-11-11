@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.Wallet.Base" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="radioButtonStyle">@style/SquareRadio</item>
+        <item name="android:listChoiceIndicatorSingle">?android:attr/listChoiceIndicatorMultiple</item>
         <item name="colorPrimary">@color/ink</item>
         <item name="colorPrimaryDark">@color/ink</item>
         <item name="colorAccent">@color/ink</item>
@@ -14,6 +16,7 @@
         <item name="android:windowLightStatusBar">@bool/light_system_bars</item>
         <item name="android:windowActionModeOverlay">true</item>
     </style>
+    <style name="SquareRadio" parent="Widget.AppCompat.CompoundButton.RadioButton"><item name="android:button">?android:attr/listChoiceIndicatorMultiple</item><item name="buttonCompat">@null</item></style>
     <style name="Theme.Wallet" parent="Theme.Wallet.Base" />
     <style name="FormLabel">
         <item name="android:layout_width">match_parent</item>

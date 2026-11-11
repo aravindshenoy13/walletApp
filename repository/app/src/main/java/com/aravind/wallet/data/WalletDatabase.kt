@@ -21,6 +21,7 @@ interface WalletDao {
     suspend fun categories(): List<WalletCategory>
     @Query("SELECT * FROM records WHERE id=:id") suspend fun record(id: Long): WalletRecord?
     @Query("SELECT * FROM categories WHERE id=:id") suspend fun category(id: String): WalletCategory?
+    @Query("DELETE FROM categories") suspend fun clearCategories()
     @Insert suspend fun insertCategory(category: WalletCategory)
     @Update suspend fun updateCategory(category: WalletCategory): Int
 
