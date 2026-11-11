@@ -14,7 +14,7 @@ class LedgerTest {
     private fun record(type: RecordType, amount: Long, account: Long = 1, destination: Long? = null,
                        at: LocalDateTime = day.atTime(13, 30)) = WalletRecord(
         type = type, amountMinor = amount, accountId = account, destinationAccountId = destination,
-        category = if (type == RecordType.TRANSFER) null else Category.FOOD,
+        categoryId = if (type == RecordType.TRANSFER) null else "FOOD",
         occurredAt = at, description = "Test",
     )
 

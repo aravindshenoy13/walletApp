@@ -98,7 +98,7 @@ class ExportActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 model.state.collect { state ->
                     if (state is ExportState.Saved) {
-                        Toast.makeText(this@ExportActivity, getString(R.string.export_saved, state.count), Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@ExportActivity, resources.getQuantityString(R.plurals.export_saved, state.count, state.count), Toast.LENGTH_LONG).show()
                         finish()
                     }
                     binding.error.isVisible = state == ExportState.Failed

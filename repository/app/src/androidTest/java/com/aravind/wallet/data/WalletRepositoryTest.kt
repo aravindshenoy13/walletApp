@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.aravind.wallet.domain.Category
 import com.aravind.wallet.domain.Ledger
 import com.aravind.wallet.domain.RecordType
 import java.math.BigInteger
@@ -27,14 +26,14 @@ class WalletRepositoryTest {
     private val context get() = ApplicationProvider.getApplicationContext<Context>()
 
     @Before fun setUp() {
-        database = Room.inMemoryDatabaseBuilder(context, WalletDatabase::class.java).build()
+        database = Room.inMemoryDatabaseBuilder(context, WalletDatabase::class.java).addCallback(V2CategorySeeds.callback).build()
         repository = WalletRepository(database)
     }
     @After fun tearDown() { database.close() }
     private suspend fun snapshot(): Ledger = withTimeout(5_000) { repository.ledger.first() }
     private fun entry(account: Long, type: RecordType = RecordType.EXPENSE, destination: Long? = null) =
         WalletRecord(type = type, amountMinor = 2_500, accountId = account, destinationAccountId = destination,
-            category = if (type == RecordType.TRANSFER) null else Category.SALARY, occurredAt = at, description = "Payment")
+            categoryId = if (type == RecordType.TRANSFER) null else "SALARY", occurredAt = at, description = "Payment")
 
     @Test fun transferEditAndDeleteRecalculateBothSides() = runBlocking {
         val source = repository.saveAccount(Account(name = "Source", openingBalanceMinor = 10_000))
@@ -66,13 +65,13 @@ class WalletRepositoryTest {
         val id = repository.saveRecord(original)
         assertEquals(BigInteger.valueOf(-2_500), snapshot().balances[one])
         repository.saveRecord(original.copy(id = id, type = RecordType.INCOME, accountId = two,
-            occurredAt = at.plusDays(1), category = Category.SALARY, note = "Edited"))
+            occurredAt = at.plusDays(1), categoryId = "SALARY", note = "Edited"))
         val edited = snapshot()
         assertEquals(BigInteger.ZERO, edited.balances[one])
         assertEquals(BigInteger.valueOf(2_500), edited.balances[two])
         assertEquals(BigInteger.ZERO, edited.totals(at.toLocalDate()).expense)
         assertEquals(BigInteger.valueOf(2_500), edited.totals(at.plusDays(1).toLocalDate()).income)
-        repository.saveRecord(edited.records.single().copy(type = RecordType.TRANSFER, destinationAccountId = one, category = null))
+        repository.saveRecord(edited.records.single().copy(type = RecordType.TRANSFER, destinationAccountId = one, categoryId = null))
         assertEquals(BigInteger.valueOf(-2_500), snapshot().balances[two])
         assertEquals(BigInteger.valueOf(2_500), snapshot().balances[one])
         assertEquals(BigInteger.ZERO, snapshot().totals(at.plusDays(1).toLocalDate()).income)
@@ -91,7 +90,7 @@ class WalletRepositoryTest {
     @Test fun invalidWritesAreRejectedWithoutPartialChanges() = runBlocking {
         val id = repository.saveAccount(Account(name = "Cash", openingBalanceMinor = 0))
         val invalid = listOf(entry(id).copy(amountMinor = 0), entry(id).copy(amountMinor = -1),
-            entry(id).copy(category = null), entry(id).copy(description = " "), entry(999),
+            entry(id).copy(categoryId = null), entry(id).copy(description = " "), entry(999),
             entry(id, RecordType.TRANSFER, id), entry(id, RecordType.TRANSFER, 999),
             entry(id).copy(destinationAccountId = id), entry(id).copy(id = 999))
         invalid.forEach { record ->
@@ -124,12 +123,12 @@ class WalletRepositoryTest {
         val name = "wallet-persistence-test.db"
         context.deleteDatabase(name)
         try {
-            val disk = Room.databaseBuilder(context, WalletDatabase::class.java, name).build()
+            val disk = Room.databaseBuilder(context, WalletDatabase::class.java, name).addCallback(V2CategorySeeds.callback).build()
             val stored = WalletRepository(disk)
             val account = stored.saveAccount(Account(name = "Saved", openingBalanceMinor = -100))
             stored.saveRecord(entry(account).copy(note = "Persisted note"))
             disk.close()
-            val reopened = Room.databaseBuilder(context, WalletDatabase::class.java, name).build()
+            val reopened = Room.databaseBuilder(context, WalletDatabase::class.java, name).addCallback(V2CategorySeeds.callback).build()
             try {
                 val result = withTimeout(5_000) { WalletRepository(reopened).ledger.first() }
                 assertEquals("Persisted note", result.records.single().note)

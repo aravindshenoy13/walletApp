@@ -129,6 +129,7 @@ class CategoryEditorActivity : AppCompatActivity() {
         binding.colorChoices.columnCount = if (resources.configuration.screenWidthDp >= 600) 8 else 4
         CategoryCatalog.colors.forEach { choice ->
             val button = Button(this).apply {
+                backgroundTintList = null
                 layoutParams = gridParams(48)
                 minWidth = 0; minimumWidth = 0; setPadding(0,0,0,0)
                 setTextColor(Color.BLACK); textSize = 18f

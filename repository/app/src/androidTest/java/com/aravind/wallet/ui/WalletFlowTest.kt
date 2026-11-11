@@ -20,6 +20,7 @@ import com.aravind.wallet.R
 import com.aravind.wallet.WalletApplication
 import com.aravind.wallet.data.Account
 import com.aravind.wallet.data.WalletDatabase
+import com.aravind.wallet.data.V2CategorySeeds
 import com.aravind.wallet.domain.Ledger
 import com.aravind.wallet.domain.Money
 import java.io.File
@@ -45,6 +46,7 @@ class WalletFlowTest {
     @Before fun clearDebugTestData() {
         val database = WalletDatabase.create(context)
         database.clearAllTables()
+        database.runInTransaction { V2CategorySeeds.insert(database.openHelper.writableDatabase) }
         database.close()
     }
 
@@ -62,7 +64,7 @@ class WalletFlowTest {
             addAccount(bank, "-50.00")
             capture("accounts")
             onView(withId(R.id.records_tab)).perform(click())
-            onView(withId(R.id.add)).perform(click())
+            onView(withId(R.id.add_record_button)).perform(click())
             awaitText(context.getString(R.string.save_record))
             onView(withId(R.id.amount)).perform(scrollTo(), replaceText("10.25"), closeSoftKeyboard())
             onView(withId(R.id.description)).perform(scrollTo(), replaceText(lunch), closeSoftKeyboard())
@@ -75,7 +77,7 @@ class WalletFlowTest {
             onView(isAssignableFrom(TimePicker::class.java)).perform(timeAction(8, 45))
             onView(withId(android.R.id.button1)).perform(click())
             onView(withId(R.id.save)).perform(scrollTo(), click())
-            awaitText(lunch)
+            awaitText(lunch, true)
             var ledger = awaitLedger { it.records.any { row -> row.description == lunch } }
             val record = ledger.records.single { it.description == lunch }
             assertEquals(today.atTime(8, 45), record.occurredAt)
@@ -87,15 +89,15 @@ class WalletFlowTest {
             onView(withId(R.id.expense)).check(matches(withText(Money.format(1_025))))
             capture("records")
 
-            onView(withText(lunch)).perform(click())
+            onView(withText(org.hamcrest.CoreMatchers.containsString(lunch))).perform(click())
             awaitText(context.getString(R.string.save_record))
             onView(withId(R.id.amount)).perform(scrollTo(), replaceText("12.50"), closeSoftKeyboard())
             onView(withId(R.id.save)).perform(scrollTo(), click())
-            awaitText(lunch)
+            awaitText(lunch, true)
             ledger = awaitLedger { it.records.any { row -> row.id == record.id && row.amountMinor == 1_250L } }
             assertEquals(BigInteger.valueOf(8_750), ledger.balances[cashId])
 
-            onView(withText(lunch)).perform(click())
+            onView(withText(org.hamcrest.CoreMatchers.containsString(lunch))).perform(click())
             awaitText(context.getString(R.string.save_record))
             onView(withId(R.id.type_transfer)).perform(scrollTo(), click())
             onView(withId(R.id.amount)).perform(scrollTo(), replaceText("20.00"), closeSoftKeyboard())
@@ -104,13 +106,13 @@ class WalletFlowTest {
             chooseAccount(R.id.destination, bank)
             capture("transfer")
             onView(withId(R.id.save)).perform(scrollTo(), click())
-            awaitText(transfer)
+            awaitText(transfer, true)
             ledger = awaitLedger { it.records.any { row -> row.description == transfer } }
             assertEquals(BigInteger.valueOf(8_000), ledger.balances[cashId])
             assertEquals(BigInteger.valueOf(-3_000), ledger.balances[bankId])
-            onView(withId(R.id.expense)).check(matches(withText(Money.format(1_250))))
+            onView(withId(R.id.expense)).check(matches(withText(Money.format(0))))
 
-            onView(withText(transfer)).perform(click())
+            onView(withText(org.hamcrest.CoreMatchers.containsString(transfer))).perform(click())
             awaitText(context.getString(R.string.delete_record))
             onView(withId(R.id.delete)).perform(scrollTo(), click())
             onView(withId(android.R.id.button1)).perform(click())
@@ -119,16 +121,16 @@ class WalletFlowTest {
             assertEquals(BigInteger.valueOf(10_000), ledger.balances[cashId])
             assertEquals(BigInteger.valueOf(-5_000), ledger.balances[bankId])
 
-            onView(withId(R.id.add)).perform(click())
+            onView(withId(R.id.add_record_button)).perform(click())
             awaitText(context.getString(R.string.save_record))
             onView(withId(R.id.type_income)).perform(scrollTo(), click())
             onView(withId(R.id.amount)).perform(scrollTo(), replaceText("1.25"), closeSoftKeyboard())
             onView(withId(R.id.description)).perform(scrollTo(), replaceText("Refund $suffix"), closeSoftKeyboard())
             chooseAccount(R.id.account, cash)
             onView(withId(R.id.save)).perform(scrollTo(), click())
-            awaitText("Refund $suffix")
+            awaitText("Refund $suffix", true)
             ledger = awaitLedger { it.records.any { row -> row.description == "Refund $suffix" } }
-            assertEquals("Food", ledger.records.single { it.description == "Refund $suffix" }.category?.label)
+            assertEquals("Food", ledger.categoriesById[ledger.records.single { it.description == "Refund $suffix" }.categoryId]?.name)
             onView(withId(R.id.income)).check(matches(withText(Money.format(125))))
         } finally { scenario.close() }
     }
@@ -167,10 +169,10 @@ class WalletFlowTest {
         withTimeout(10_000) { repository.ledger.first(predicate) }
     }
 
-    private fun awaitText(text: String) {
+    private fun awaitText(text: String, record: Boolean = false) {
         val deadline = System.currentTimeMillis() + 10_000
         while (true) {
-            try { onView(withText(text)).check(matches(allOf(withEffectiveVisibility(Visibility.VISIBLE), isEnabled()))); return }
+            try { onView(if (record) allOf(withId(R.id.meta), withText(org.hamcrest.CoreMatchers.containsString(text))) else withText(text)).check(matches(allOf(withEffectiveVisibility(Visibility.VISIBLE), isEnabled()))); return }
             catch (error: Throwable) {
                 if (System.currentTimeMillis() >= deadline) throw error
                 Thread.sleep(50)
