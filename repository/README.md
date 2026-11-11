@@ -82,3 +82,10 @@ Final accepted V3 is preserved at tag `wallet-v3-2026-11-12-r01`, with a standal
 V4 development adds Settings, persistent dark mode, compact expandable search, app icons, additional category icons, selected-account CSV exports, and full JSON backup/empty-wallet restore. CSV import is removed from product scope. See [V4 implementation notes](../V4-PLAN.md). The frozen V3 archive remains under `archives/wallet-v3-2026-11-12-r01/`.
 
 V4 checkpoint validation: 23 JVM tests and 32 API 37 instrumentation tests passed; lint has zero errors. Installable development APK: `dist/wallet-v4-dev-debug.apk`. Optimized release APK: `dist/wallet-v4-dev-release-unsigned.apk` (requires signing). CSV export and full-backup restore remain supported; CSV import is not included.
+
+
+## V4.1 — Analysis views
+
+Analysis now uses a drop-down for Calendar, Category Breakdown, and Flow Graph. Calendar retains the full-month/all-account scope; detailed views share independent date-range and account controls. The category wheel shows only negative category net values, sized by magnitude, with signed amounts in the accompanying list. Transfers, zero values, and positive-net categories are excluded from the wheel. Flow Graph retains Net/Income/Expenses. State survives recreation. No database migration or new runtime dependency is needed.
+
+V4.1 validation: 23 JVM tests and 33 API 37 Android tests passed; lint has zero errors. APKs: `dist/wallet-v4.1-debug.apk` and `dist/wallet-v4.1-release-unsigned.apk` (release requires signing). See [V4.1 notes](../V4.1-PLAN.md).

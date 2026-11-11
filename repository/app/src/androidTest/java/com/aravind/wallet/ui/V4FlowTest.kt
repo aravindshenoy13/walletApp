@@ -25,6 +25,7 @@ class V4FlowTest {
             onView(withText("Dark mode")).check(matches(isDisplayed())).perform(click())
             onView(withText("Dark mode")).check(matches(isChecked())).perform(click())
             onView(withText("Export CSV")).check(matches(isDisplayed()))
+            onView(withText("Back · Settings")).perform(click())
         }
     }
     @Test fun additionalIconSelection() {

@@ -158,7 +158,14 @@ class WalletFlowTest {
     }
 
     private fun addAccount(name: String, balance: String) {
-        onView(withId(R.id.add)).perform(click())
+        onView(withId(R.id.add)).perform(object : androidx.test.espresso.ViewAction {
+            override fun getConstraints() = isDisplayed()
+            override fun getDescription() = "Wait for the account header layout before tapping"
+            override fun perform(ui: androidx.test.espresso.UiController, view: android.view.View) {
+                ui.loopMainThreadForAtLeast(100)
+                check(view.isEnabled)
+            }
+        }, click())
         awaitText(context.getString(R.string.save_account))
         onView(withId(R.id.name)).perform(replaceText(name), closeSoftKeyboard())
         onView(withId(R.id.opening_balance)).perform(replaceText(balance), closeSoftKeyboard())

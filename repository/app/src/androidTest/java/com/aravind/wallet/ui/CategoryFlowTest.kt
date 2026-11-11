@@ -135,6 +135,7 @@ class CategoryFlowTest {
             await(withText(app.getString(R.string.choose_save)))
             onView(withId(R.id.save)).check(matches(isEnabled()))
             onView(withId(R.id.back)).perform(click())
+            onView(withText("Back · Settings")).perform(click())
             val end = repository.snapshot()
             assertEquals(BigInteger.valueOf(7400), end.balances[account])
             assertEquals("Legacy note", end.records.single { it.id == record }.note)

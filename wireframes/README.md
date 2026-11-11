@@ -1,5 +1,9 @@
 # WalletApp wireframes
 
+## V4.1 confirmed implementation decision
+
+- The user chose a Net-only wheel containing negative-net categories only. Slices use absolute negative values; zero and positive categories are omitted. This supersedes the all-category Expenses example and unresolved mixed-sign proposal in revision 01. Flow Graph keeps Net/Income/Expenses.
+
 ## V4.1 revision 01
 
 - `wallet-v4.1-wireframe-r01.html` shows the Calendar, Category Breakdown, and Flow Graph views and an open view selector. These are static sketches.
