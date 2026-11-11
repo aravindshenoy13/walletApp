@@ -18,13 +18,12 @@
 - V1 has a built-in category set. Users cannot add categories in V1.
 - Do not include analysis/overview, budgets, or account-specific transaction/history views in V1.
 
-### V2 — Categories and CSV
+### V2 — Categories and CSV export
 
 - Add, edit, and manage custom categories.
 - Add category icons alongside category management.
 - Filter records by category.
-- Import and export transactions as CSV.
-- CSV column format and import details are intentionally undecided; confirm them with the user before implementing CSV import.
+- Export transactions as CSV.
 
 ### V3 — Analysis and overview
 
@@ -38,6 +37,8 @@
 
 ### V4 — Full backup, restore, dark mode, and app-wide icons
 
+- Import transactions from CSV.
+- CSV column format and import details are intentionally undecided; confirm them with the user before implementing CSV import.
 - Back up and restore accounts, opening balances, categories, and transactions.
 - Keep this distinct from transaction CSV import/export unless the user chooses to combine them.
 - Add dark mode.
@@ -52,6 +53,6 @@
 
 ## Scope reminders
 
-- CSV import handling (format, duplicate detection, row validation) is for V2 and requires later product decisions.
+- CSV export is for V2. CSV import handling (format, duplicate detection, row validation) is for V4 and requires later product decisions.
 - Full backup/restore is V4; exporting transactions as CSV alone is not a full backup.
 - Budgets and app lock are not in the roadmap.
