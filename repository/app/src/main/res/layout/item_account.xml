@@ -1,14 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="80dp" android:orientation="vertical" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true" android:paddingTop="12dp">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="top">
-        <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
-            <TextView android:id="@+id/description" android:drawableStart="@drawable/ic_account" android:drawableTint="@color/icon_stroke" android:drawablePadding="4dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingEnd="8dp" android:textSize="16sp" />
-            <TextView android:id="@+id/meta" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="6dp" android:textColor="@color/quiet" android:textSize="13sp" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true" android:paddingTop="12dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
+        <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:paddingEnd="12dp">
+            <TextView android:id="@+id/description" android:drawablePadding="8dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="16sp" />
+            <TextView android:id="@+id/amount" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="8dp" android:textSize="18sp" />
         </LinearLayout>
-        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:layout_marginEnd="8dp" android:orientation="vertical" android:gravity="end">
-            <TextView android:id="@+id/amount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:maxWidth="220dp" android:gravity="end" android:textSize="16sp" />
-            <Button android:id="@+id/edit_account" android:drawableStart="@drawable/ic_edit" android:drawableTint="@color/icon_stroke" android:drawablePadding="4dp" style="@style/PlainButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="48dp" android:paddingHorizontal="8dp" android:text="@string/edit" />
-        </LinearLayout>
+        <Button android:id="@+id/edit_account" style="@style/PlainButton" android:drawableStart="@drawable/ic_edit" android:drawableTint="@color/icon_stroke" android:drawablePadding="8dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/edit" />
     </LinearLayout>
     <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="12dp" android:background="@color/line" />
 </LinearLayout>

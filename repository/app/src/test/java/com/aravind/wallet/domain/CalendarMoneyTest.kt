@@ -12,6 +12,15 @@ class CalendarMoneyTest {
         assertEquals("+₹1.2K", Money.compactNet(BigInteger.valueOf(120000)))
         assertEquals("−₹25K", Money.compactNet(BigInteger.valueOf(-2500000)))
     }
+    @Test fun lakhBoundariesKeepRoundingAndSigns() {
+        assertEquals("+₹99.9K", Money.compactNet(BigInteger("9994900")))
+        assertEquals("+₹1L", Money.compactNet(BigInteger("9995000")))
+        assertEquals("+₹1L", Money.compactNet(BigInteger("10000000")))
+        assertEquals("−₹1.23L", Money.compactNet(BigInteger("-12345678")))
+        assertEquals("+₹9.99L", Money.compactNet(BigInteger("99949900")))
+        assertEquals("+₹1M", Money.compactNet(BigInteger("99950000")))
+        assertEquals("−₹1M", Money.compactNet(BigInteger("-100000000")))
+    }
     @Test fun roundingPromotesUnitsAndLargeTotalsRemainShort() {
         assertEquals("+₹1K", Money.compactNet(BigInteger.valueOf(99999)))
         assertEquals("+₹1M", Money.compactNet(BigInteger.valueOf(99999999)))

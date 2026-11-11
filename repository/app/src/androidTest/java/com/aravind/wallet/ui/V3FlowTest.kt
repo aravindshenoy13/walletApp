@@ -88,23 +88,21 @@ class V3FlowTest {
             onView(withId(R.id.open_search)).check(matches(isDisplayed()))
         }
     }
-    @Test fun monthlyOverviewStaysIndependentOfDetailedRangeAndAccount() {
+    @Test fun monthlyOverviewStaysIndependentOfDetailedRange() {
         ActivityScenario.launch(MainActivity::class.java).use { scenario ->
             onView(withId(R.id.analysis_tab)).perform(click())
             await(allOf(withId(R.id.period_income), withText(Money.format(22500))))
             onView(withId(R.id.analysis_view)).perform(click())
             onView(withText("Flow Graph")).perform(click())
             onView(withId(R.id.range_income)).perform(scrollTo()).check(matches(withText(Money.format(22500))))
-            onView(withId(R.id.analysis_account)).perform(scrollTo(), click())
-            onView(withText("Bank")).perform(click())
             scenario.recreate()
             onView(withId(R.id.analysis_view)).check(matches(withSpinnerText("Flow Graph")))
             onView(withId(R.id.analysis_view)).perform(click())
-            onView(withText("Category Breakdown")).perform(click())
+            onView(withText("Category Expense Graph")).perform(click())
             onView(withId(R.id.breakdown_mode)).check(matches(withEffectiveVisibility(Visibility.GONE)))
             onView(withId(R.id.wheel_panel)).check(matches(isDisplayed()))
             onView(withId(R.id.analysis_view)).perform(click())
-            onView(withText("Calendar")).perform(click())
+            onView(withText("Daily Breakdown")).perform(click())
             onView(withId(R.id.period_income)).check(matches(withText(Money.format(22500))))
             onView(withId(R.id.previous_month)).perform(click())
             onView(withId(R.id.period_income)).check(matches(withText(Money.format(99999))))
@@ -117,7 +115,7 @@ class V3FlowTest {
             onView(withId(R.id.analysis_tab)).perform(click())
             await(withId(R.id.period_income))
             onView(withId(R.id.analysis_view)).perform(click())
-            onView(withText("Category Breakdown")).perform(click())
+            onView(withText("Category Expense Graph")).perform(click())
             fun checkWheel() { scenario.onActivity { activity ->
                 val list = activity.findViewById<android.widget.LinearLayout>(R.id.breakdown_list)
                 assertEquals(1, list.childCount)
@@ -138,7 +136,7 @@ class V3FlowTest {
             await(withText("Transfer to Bank"))
             capture("v3-account-history")
             onView(withId(R.id.history_list)).perform(scrollLast())
-            await(withText(app.getString(R.string.opening_balance_label)))
+            onView(withText(app.getString(R.string.opening_balance_label))).check(doesNotExist())
             onView(withId(R.id.back)).perform(click())
             await(withText("Bank")); onView(allOf(withText("Bank"),isDisplayed())).perform(click())
             await(withText("Transfer from Cash"))

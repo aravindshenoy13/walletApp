@@ -21,6 +21,8 @@ import com.aravind.wallet.databinding.ActivityMainBinding
 import com.aravind.wallet.domain.Ledger
 import com.aravind.wallet.domain.Money
 import com.aravind.wallet.domain.searchRecords
+import com.aravind.wallet.domain.analyze
+import java.time.YearMonth
 import java.time.LocalDate
 import java.time.ZoneId
 import kotlinx.coroutines.delay
@@ -31,6 +33,10 @@ class MainActivity : AppCompatActivity() {
     private enum class Tab { RECORDS, ANALYSIS, ACCOUNTS, CATEGORIES }
     private lateinit var binding: ActivityMainBinding
     private val model: WalletViewModel by viewModels()
+    private val dateChanged = object : android.content.BroadcastReceiver() {
+        override fun onReceive(context: android.content.Context?, intent: Intent?) { render() }
+    }
+    private var monthlySummary = false
     private var searchExpanded = false
     private var searchBackRegistered = false
     private val searchBack by lazy { android.window.OnBackInvokedCallback { dismissSearch() } }
@@ -66,6 +72,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         tab = savedInstanceState?.getString("tab")?.let { runCatching { Tab.valueOf(it) }.getOrNull() }
             ?: if (savedInstanceState?.getBoolean("accounts") == true) Tab.ACCOUNTS else Tab.RECORDS
+        monthlySummary = savedInstanceState?.getBoolean("monthlySummary") ?: false
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         applyInsets(binding.root)
@@ -73,6 +80,7 @@ class MainActivity : AppCompatActivity() {
             rangePicker.launch(Intent(this, DateRangeActivity::class.java).putExtra("start", start.toString()).putExtra("end", end.toString()))
         }
         searchExpanded = savedInstanceState?.getBoolean("searchExpanded") ?: false
+        binding.todayDate.setOnClickListener { monthlySummary = !monthlySummary; render() }
         binding.settings.setOnClickListener { startActivity(Intent(this, SettingsActivity::class.java)) }
         if (searchExpanded) registerSearchBack()
         binding.openSearch.setOnClickListener { searchExpanded = true; registerSearchBack(); render(); binding.recordSearch.requestFocus(); (getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager).showSoftInput(binding.recordSearch, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT) }
@@ -156,7 +164,16 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    override fun onStart() {
+        super.onStart()
+        androidx.core.content.ContextCompat.registerReceiver(this, dateChanged,
+            android.content.IntentFilter().apply {
+                addAction(Intent.ACTION_DATE_CHANGED); addAction(Intent.ACTION_TIME_CHANGED); addAction(Intent.ACTION_TIMEZONE_CHANGED)
+            }, androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED)
+    }
+
     override fun onStop() {
+        unregisterReceiver(dateChanged)
         if (!isChangingConfigurations) dismissSearch()
         super.onStop()
     }
@@ -180,13 +197,16 @@ class MainActivity : AppCompatActivity() {
         accountsPanel.isVisible = ledger != null && tab == Tab.ACCOUNTS
         categoriesPanel.isVisible = ledger != null && tab == Tab.CATEGORIES
         analysisPanel.root.isVisible = ledger != null && tab == Tab.ANALYSIS
-        todayDate.text = getString(R.string.today_date, today.display())
+        val month = YearMonth.from(today)
+        todayDate.text = if (monthlySummary) getString(R.string.records_month, month.atDay(1).display(), month.atEndOfMonth().display())
+            else getString(R.string.today_date, today.display())
+        todayDate.contentDescription = getString(R.string.summary_toggle, todayDate.text, getString(if (monthlySummary) R.string.today_summary_title else R.string.this_month))
         val current = ledger ?: return@with
         val matching = current.searchRecords(recordSearch.text.toString())
         recordsAdapter.show(current, matching)
         recordCount.text = if (recordSearch.text.isNullOrBlank()) getString(R.string.all_records)
             else resources.getQuantityString(R.plurals.matching_records, matching.size, matching.size)
-        val totals = current.totals(today)
+        val totals = if (monthlySummary) current.analyze(month.atDay(1), month.atEndOfMonth()).totals else current.totals(today)
         income.text = Money.format(totals.income)
         expense.text = Money.format(totals.expense)
         net.showNet(totals.net)
@@ -215,6 +235,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean("monthlySummary", monthlySummary)
         outState.putBoolean("searchExpanded", searchExpanded)
         outState.putString("tab", tab.name)
         analysis.save(outState)

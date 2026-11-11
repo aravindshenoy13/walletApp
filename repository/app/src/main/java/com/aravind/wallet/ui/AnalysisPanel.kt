@@ -24,12 +24,10 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
     private var calendarMonth = saved?.getString("calendarMonth")?.let(YearMonth::parse) ?: YearMonth.now()
     private val calendar = MonthlyCalendar(binding.calendarGrid)
     private var custom = saved?.getBoolean("analysisCustom") ?: false
-    private var accountId = saved?.getLong("analysisAccount")?.takeIf { it != 0L }
     private var breakdown = saved?.getString("analysisBreakdown")?.let(BreakdownMode::valueOf) ?: BreakdownMode.NET
     private val wheel = CategoryWheelView(activity)
     private var viewIndex = saved?.getInt("analysisView") ?: 0
     private var ledger: Ledger? = null
-    private var accounts = emptyList<Pair<Long?, String>>()
     init {
         binding.wheelPanel.addView(wheel, android.widget.LinearLayout.LayoutParams(-1, (280 * activity.resources.displayMetrics.density).toInt()))
         binding.analysisView.adapter = ArrayAdapter(activity, android.R.layout.simple_spinner_item, activity.resources.getStringArray(R.array.analysis_views)) .apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
@@ -46,19 +44,10 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
         binding.breakdownMode.setOnCheckedChangeListener { _, id ->
             breakdown = when(id) { R.id.breakdown_income -> BreakdownMode.INCOME; R.id.breakdown_expense -> BreakdownMode.EXPENSE; else -> BreakdownMode.NET }; render()
         }
-        binding.analysisAccount.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selected = accounts.getOrNull(position)?.first
-                if (selected != accountId) { accountId = selected; render() }
-            }
-        }
     }
     fun open() {
         start = LocalDate.now().withDayOfMonth(1); end = LocalDate.now(); custom = false
         calendarMonth = YearMonth.now()
-        accountId = null
-        binding.analysisAccount.setSelection(0)
         breakdown = BreakdownMode.NET
         binding.breakdownMode.check(R.id.breakdown_net)
         render()
@@ -69,13 +58,6 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
     }
     fun show(ledger: Ledger) {
         this.ledger = ledger
-        val choices = listOf(null to activity.getString(R.string.all_accounts)) + ledger.accounts.map { it.id to it.name }
-        if (choices != accounts) {
-            accounts = choices
-            if (choices.none { it.first == accountId }) accountId = null
-            binding.analysisAccount.adapter = ArrayAdapter(activity, android.R.layout.simple_spinner_item, choices.map { it.second }) .apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
-            binding.analysisAccount.setSelection(choices.indexOfFirst { it.first == accountId }.coerceAtLeast(0))
-        }
         render()
     }
     private fun render() {
@@ -84,10 +66,12 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
         binding.flowPanel.isVisible = viewIndex == 2
         binding.wheelPanel.isVisible = viewIndex == 1
         binding.breakdownMode.isVisible = viewIndex == 2
+        binding.categoryHeading.isVisible = viewIndex == 1
+        binding.breakdownList.isVisible = viewIndex == 1
         binding.modeLabel.isVisible = viewIndex == 2
         val activeMode = if (viewIndex == 1) BreakdownMode.NET else breakdown
         val current = ledger ?: return
-        val data = current.analyze(start, end, accountId)
+        val data = current.analyze(start, end)
         binding.periodLabel.setText(if (custom) R.string.custom_range else R.string.this_month)
         binding.periodDates.text = activity.getString(R.string.date_range, start.display(), end.display())
         val monthly = current.analyze(calendarMonth.atDay(1), calendarMonth.atEndOfMonth())
@@ -106,14 +90,14 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
             current.categoriesById[id]?.let { it to totals.value(activeMode) }
         }.filter { if (viewIndex == 1) it.second.signum() < 0 else it.second.signum() != 0 }.sortedWith(compareByDescending<Pair<com.aravind.wallet.data.WalletCategory, java.math.BigInteger>> { it.second.abs() }.thenBy { it.first.name })
         wheel.show(values)
-        binding.noCategoryValues.isVisible = values.isEmpty()
-        values.forEach { (category, value) ->
+        binding.noCategoryValues.isVisible = viewIndex == 1 && values.isEmpty()
+        if (viewIndex == 1) values.forEach { (category, value) ->
             val row = ItemRecordBinding.inflate(activity.layoutInflater, binding.breakdownList, false)
             row.root.minimumHeight = 0
             row.root.setOnClickListener {
                 activity.startActivity(Intent(activity, CategoryHistoryActivity::class.java)
                     .putExtra("category", category.id).putExtra("start", start.toString()).putExtra("end", end.toString())
-                    .putExtra("account", accountId ?: 0L).putExtra("mode", activeMode.name))
+                    .putExtra("mode", activeMode.name))
             }
             row.description.text = category.name
             row.badge.showCategory(category.iconKey, category.backgroundColorKey)
@@ -130,7 +114,7 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
         out.putInt("analysisView", viewIndex)
         out.putString("calendarMonth", calendarMonth.toString())
         out.putString("analysisStart", start.toString()); out.putString("analysisEnd", end.toString())
-        out.putBoolean("analysisCustom", custom); out.putLong("analysisAccount", accountId ?: 0L)
+        out.putBoolean("analysisCustom", custom)
         out.putString("analysisBreakdown", breakdown.name)
     }
 }

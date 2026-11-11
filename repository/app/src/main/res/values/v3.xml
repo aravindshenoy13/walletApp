@@ -34,7 +34,7 @@
     <string name="calendar_scope">All accounts · income minus expenses · transfers excluded</string>
     <string name="previous_month">Previous month</string>
     <string name="next_month">Next month</string>
-    <string name="calendar_legend">Green: positive · Red: negative · —: no transactions. Rounded amounts: K = thousand, M = million, B = billion, T = trillion.</string>
+    <string name="calendar_legend">Green: positive · Red: negative · —: no transactions. Rounded amounts: K = thousand, L = lakh, M = million, B = billion, T = trillion.</string>
     <string name="calendar_day_summary">%1$s. Net %2$s.</string>
     <string name="calendar_empty_day">%1$s. No income or expenses.</string>
     <string name="monthly_overview">Monthly overview · all accounts</string>

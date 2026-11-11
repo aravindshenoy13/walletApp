@@ -3,7 +3,7 @@
     <string name="app_name">Wallet</string>
     <string name="records">Records</string>
     <string name="accounts">Accounts</string>
-    <string name="add_record">+ Add record</string>
+    <string name="add_record">Add record</string>
     <string name="add_account">Add account</string>
     <string name="new_record">Add record</string>
     <string name="edit_record">Edit record</string>

@@ -1,0 +1,10 @@
+<resources>
+    <string name="today_summary_title">Today</string>
+    <string name="records_month">This month · %1$s – %2$s</string>
+    <string name="summary_toggle">%1$s. Tap to show %2$s totals.</string>
+    <string name="wheel_negative_net">Negative net</string>
+    <string name="wheel_accessibility">Negative net by category. %1$s</string>
+    <string name="wheel_percentage">%1$s: %2$s</string>
+    <string name="additional_icons">Additional Icons</string>
+    <string name="use_selected_icon">Use selected icon</string>
+</resources>

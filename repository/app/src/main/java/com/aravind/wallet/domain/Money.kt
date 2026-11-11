@@ -26,7 +26,7 @@ object Money {
     fun compactNet(minor: BigInteger): String {
         if (minor.signum() == 0) return "₹0"
         val amount = BigDecimal(minor.abs(), 2).round(MathContext(3))
-        val units = listOf(12 to "T", 9 to "B", 6 to "M", 3 to "K", 0 to "")
+        val units = listOf(12 to "T", 9 to "B", 6 to "M", 5 to "L", 3 to "K", 0 to "")
         val text = if (amount >= BigDecimal("1E15")) amount.stripTrailingZeros().toString()
         else {
             val (power, suffix) = units.first { amount >= BigDecimal.TEN.pow(it.first) || it.first == 0 }

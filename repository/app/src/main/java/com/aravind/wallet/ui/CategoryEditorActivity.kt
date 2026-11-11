@@ -115,21 +115,17 @@ class CategoryEditorActivity : AppCompatActivity() {
                 gravity = Gravity.CENTER
                 isClickable = true
                 isFocusable = true
-                minimumHeight = dp(88)
+                minimumHeight = dp(64)
                 setPadding(dp(4), dp(8), dp(4), dp(8))
-                layoutParams = gridParams(88)
+                layoutParams = gridParams(64)
                 setOnClickListener { icon = choice.key; updatePreview() }
             }
             val badge = ImageView(this).apply { layoutParams = LinearLayout.LayoutParams(dp(36), dp(36)); setPadding(dp(6),dp(6),dp(6),dp(6)); importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO }
             cell.addView(badge)
-            cell.addView(TextView(this).apply {
-                text = choice.label; gravity = Gravity.CENTER; setTextColor(getColor(R.color.ink)); textSize = 13f
-                importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
-            })
             binding.iconChoices.addView(cell)
             iconButtons[choice.key] = cell to badge
         }
-        val more = Button(this).apply { text = "Additional Icons"; isAllCaps = false; setOnClickListener { moreIcons.launch(android.content.Intent(this@CategoryEditorActivity, AdditionalIconsActivity::class.java).putExtra("icon", icon).putExtra("color", color)) } }
+        val more = Button(this, null, 0, R.style.OutlineButton).apply { text = getString(R.string.additional_icons); isAllCaps = false; setOnClickListener { moreIcons.launch(android.content.Intent(this@CategoryEditorActivity, AdditionalIconsActivity::class.java).putExtra("icon", icon).putExtra("color", color)) } }
         (binding.iconChoices.parent as android.view.ViewGroup).addView(more, (binding.iconChoices.parent as android.view.ViewGroup).indexOfChild(binding.iconChoices) + 1)
         binding.colorChoices.columnCount = if (resources.configuration.screenWidthDp >= 600) 8 else 4
         CategoryCatalog.colors.forEach { choice ->
@@ -155,7 +151,6 @@ class CategoryEditorActivity : AppCompatActivity() {
             val selected = key == icon
             views.first.isSelected = selected
             androidx.core.view.ViewCompat.setStateDescription(views.first, if (selected) "Selected" else "Not selected")
-            ((views.first as LinearLayout).getChildAt(1) as TextView).text = CategoryCatalog.icons.first { it.key == key }.label
             views.first.contentDescription = selectedDescription(getString(R.string.icon_accessibility, CategoryCatalog.icons.first { it.key == key }.label), selected)
             views.first.setBackgroundResource(R.drawable.selection_surface)
             views.second.showCategory(key, color)

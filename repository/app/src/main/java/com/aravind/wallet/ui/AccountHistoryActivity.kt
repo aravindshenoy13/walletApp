@@ -35,7 +35,7 @@ class AccountHistoryActivity : AppCompatActivity() {
                             binding.title.text = account.name
                             binding.title.showAccountIcon(account.iconKey)
                             binding.currentBalance.showBalance(state.ledger.balances.getValue(id))
-                            adapter.show(state.ledger, state.ledger.accountRecords(id), id, opening = true)
+                            adapter.show(state.ledger, state.ledger.accountRecords(id), id)
                         }
                     }
                 }

@@ -15,6 +15,25 @@ class AnalysisTest {
     private fun record(id: Long, type: RecordType, amount: Long, account: Long = 1, date: LocalDate = day, description: String = "Lunch") =
         WalletRecord(id,type,amount,account,if(type == RecordType.TRANSFER) 2 else null,if(type == RecordType.TRANSFER) null else "FOOD",date.atTime(12,0),description,"")
 
+    @Test fun fullMonthIncludesFutureDatesAndRollsAtYearAndLeapMonthBoundaries() {
+        val december = LocalDate.of(2026, 12, 31)
+        val january = december.plusDays(1)
+        val leap = LocalDate.of(2028, 2, 29)
+        val ledger = Ledger(accounts, listOf(
+            record(1, RecordType.INCOME, 100, date = december),
+            record(2, RecordType.EXPENSE, 25, 2, date = january),
+            record(3, RecordType.INCOME, 200, date = january.withDayOfMonth(31)),
+            record(4, RecordType.TRANSFER, 99999, date = january),
+            record(5, RecordType.EXPENSE, 75, date = leap)
+        ), categories)
+        fun month(date: LocalDate) = ledger.analyze(date.withDayOfMonth(1), date.withDayOfMonth(date.lengthOfMonth())).totals
+        assertEquals(BigInteger.valueOf(100), month(december).net)
+        assertEquals(BigInteger.valueOf(-25), ledger.totals(january).net)
+        assertEquals(BigInteger.valueOf(175), month(january).net)
+        assertEquals(BigInteger.valueOf(-75), month(leap.withDayOfMonth(1)).net)
+        assertEquals(BigInteger.ZERO, month(leap.plusDays(1)).net)
+        assertEquals(5, ledger.records.size)
+    }
     @Test fun inclusiveRangeExcludesTransfersAndCountsReimbursementsInSameCategory() {
         val ledger = Ledger(accounts,listOf(record(1,RecordType.EXPENSE,10000),record(2,RecordType.INCOME,2500),
             record(3,RecordType.INCOME,1000,2,date=day.minusDays(1)), record(4,RecordType.TRANSFER,99999),

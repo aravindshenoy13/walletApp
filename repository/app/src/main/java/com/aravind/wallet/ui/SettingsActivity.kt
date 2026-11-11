@@ -47,16 +47,18 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         actions = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(16), dp(8), dp(16), dp(16)) }
         val scroll = ScrollView(this).apply { addView(actions) }; setContentView(scroll); applyInsets(scroll)
-        val header = LinearLayout(this).apply { gravity = android.view.Gravity.CENTER_VERTICAL }
+        val header = LinearLayout(this).apply { gravity = android.view.Gravity.CENTER_VERTICAL; minimumHeight = dp(56) }
         header.addView(Button(this, null, 0, R.style.PlainButton).apply {
             text = "Back"; setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_back, 0, 0, 0)
             setOnClickListener { finish() }
         })
         header.addView(TextView(this).apply { text = "Settings"; textSize = 20f; setPadding(dp(8), 0, 0, 0) })
         actions.addView(header)
-        actions.addView(android.view.View(this).apply { setBackgroundColor(getColor(R.color.line)) }, LinearLayout.LayoutParams(-1, dp(1)))
+        actions.addView(android.view.View(this).apply { setBackgroundColor(getColor(R.color.ink)) }, LinearLayout.LayoutParams(-1, dp(1)))
         val prefs = getSharedPreferences("appearance", MODE_PRIVATE)
         actions.addView(CheckBox(this).apply {
+            setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_dark_mode, 0, 0, 0)
+            compoundDrawablePadding = dp(8)
             text = "Dark mode"; isChecked = prefs.getBoolean("dark", false)
             setOnCheckedChangeListener { _, checked -> prefs.edit().putBoolean("dark", checked).apply(); AppCompatDelegate.setDefaultNightMode(if (checked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO) }
         })

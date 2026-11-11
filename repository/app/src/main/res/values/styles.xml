@@ -35,6 +35,13 @@
         <item name="android:minHeight">48dp</item>
     </style>
     <style name="Theme.Wallet" parent="Theme.Wallet.Base" />
+    <style name="ScreenHeader">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="android:paddingHorizontal">8dp</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
     <style name="FormLabel">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -53,6 +60,9 @@
         <item name="android:minHeight">48dp</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/ink</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:paddingHorizontal">12dp</item>
     </style>
     <style name="OutlineButton" parent="PlainButton">
         <item name="android:background">@drawable/action_outline</item>

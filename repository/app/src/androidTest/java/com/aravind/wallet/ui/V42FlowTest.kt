@@ -114,8 +114,8 @@ class V42FlowTest {
                 onView(withId(R.id.analysis_tab)).perform(click())
                 await(withId(R.id.analysis_view))
                 onView(withId(R.id.analysis_view)).perform(click())
-                await(withText("Category Breakdown"))
-                onView(withText("Category Breakdown")).perform(click())
+                await(withText("Category Expense Graph"))
+                onView(withText("Category Expense Graph")).perform(click())
                 capture(scenario, "$theme-wheel")
             }
             ActivityScenario.launch(SettingsActivity::class.java).use { scenario -> capture(scenario, "$theme-settings") }
