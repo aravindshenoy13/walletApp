@@ -86,6 +86,14 @@
 - Remove visible labels beneath category icon choices and add an icon for the Dark mode setting.
 - See [V4.3-PLAN.md](V4.3-PLAN.md) for the detailed scope, implementation order, assumptions, and validation.
 
+### V4.3.1 — Visual refinements
+
+- Group Analysis totals in one themed box and match Daily Breakdown summary sizing to the graph views.
+- Remove the Records date-heading box, restore thinner calendar borders, brighten dark-mode category colors, and simplify the Today/month toggle.
+- Use unfilled red Delete, green Save, and blue Add actions; use light-mode transfer colors in both themes.
+- Remove the visible Built-in category label and make category rows more compact.
+- See [V4.3.1-PLAN.md](V4.3.1-PLAN.md) for the implementation details.
+
 ## Business rules
 
 - Transaction direction and category are separate concepts: income and expense entries can share a category.
