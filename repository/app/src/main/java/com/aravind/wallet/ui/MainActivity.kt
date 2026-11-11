@@ -32,6 +32,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val model: WalletViewModel by viewModels()
     private var searchExpanded = false
+    private var searchBackRegistered = false
+    private val searchBack by lazy { android.window.OnBackInvokedCallback { dismissSearch() } }
+    private fun registerSearchBack() {
+        if (android.os.Build.VERSION.SDK_INT >= 33 && !searchBackRegistered) {
+            onBackInvokedDispatcher.registerOnBackInvokedCallback(android.window.OnBackInvokedDispatcher.PRIORITY_OVERLAY, searchBack)
+            searchBackRegistered = true
+        }
+    }
     private var tab = Tab.RECORDS
     private var ledger: Ledger? = null
     private lateinit var analysis: AnalysisPanel
@@ -66,7 +74,8 @@ class MainActivity : AppCompatActivity() {
         }
         searchExpanded = savedInstanceState?.getBoolean("searchExpanded") ?: false
         binding.settings.setOnClickListener { startActivity(Intent(this, SettingsActivity::class.java)) }
-        binding.openSearch.setOnClickListener { searchExpanded = true; render(); binding.recordSearch.requestFocus(); (getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager).showSoftInput(binding.recordSearch, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT) }
+        if (searchExpanded) registerSearchBack()
+        binding.openSearch.setOnClickListener { searchExpanded = true; registerSearchBack(); render(); binding.recordSearch.requestFocus(); (getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager).showSoftInput(binding.recordSearch, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT) }
         binding.recordSearch.doAfterTextChanged { render() }
         binding.clearSearch.setOnClickListener { binding.recordSearch.text?.clear(); binding.recordSearch.requestFocus() }
         binding.recordSearch.dismiss = { dismissSearch() }
@@ -122,6 +131,10 @@ class MainActivity : AppCompatActivity() {
     private fun dismissSearch() {
         if (!searchExpanded) return
         searchExpanded = false
+        if (android.os.Build.VERSION.SDK_INT >= 33 && searchBackRegistered) {
+            onBackInvokedDispatcher.unregisterOnBackInvokedCallback(searchBack)
+            searchBackRegistered = false
+        }
         binding.recordSearch.text?.clear()
         binding.recordSearch.clearFocus()
         (getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager)
@@ -136,6 +149,11 @@ class MainActivity : AppCompatActivity() {
             if (!bounds.contains(event.rawX.toInt(), event.rawY.toInt())) dismissSearch()
         }
         return super.dispatchTouchEvent(event)
+    }
+
+    override fun onDestroy() {
+        if (android.os.Build.VERSION.SDK_INT >= 33 && searchBackRegistered) onBackInvokedDispatcher.unregisterOnBackInvokedCallback(searchBack)
+        super.onDestroy()
     }
 
     override fun onStop() {

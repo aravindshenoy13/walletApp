@@ -123,8 +123,8 @@ class RecordEditorActivity : AppCompatActivity() {
         originalCategoryId = record?.categoryId
         preservedNote = record?.note.orEmpty()
         val names = accounts.map { it.name }
-        binding.account.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, names)
-        binding.destination.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, names)
+        binding.account.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, names) .apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+        binding.destination.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, names) .apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
         val sourceId = draft?.getLong("source") ?: record?.accountId
         val destinationId = draft?.getLong("destination") ?: record?.destinationAccountId
         binding.account.setSelection(accounts.indexOfFirst { it.id == sourceId }.coerceAtLeast(0))

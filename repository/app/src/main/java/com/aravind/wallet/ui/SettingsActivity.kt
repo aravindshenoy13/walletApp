@@ -68,6 +68,7 @@ class SettingsActivity : AppCompatActivity() {
         layoutParams = LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(12) }
         val icon = when (label) { "Export CSV" -> com.aravind.wallet.R.drawable.ic_expense; "Back up data" -> com.aravind.wallet.R.drawable.ic_save; "Restore backup" -> com.aravind.wallet.R.drawable.ic_back; else -> com.aravind.wallet.R.drawable.ic_back }
         setCompoundDrawablesRelativeWithIntrinsicBounds(icon, 0, 0, 0)
+        compoundDrawablePadding = dp(8); setTextColor(getColor(R.color.ink))
         setOnClickListener { clicked() } }) }
     private fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()
     private fun message(text: String) { AlertDialog.Builder(this).setMessage(text).setPositiveButton("OK", null).show() }

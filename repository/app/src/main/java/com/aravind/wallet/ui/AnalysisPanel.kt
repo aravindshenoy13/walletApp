@@ -32,7 +32,7 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
     private var accounts = emptyList<Pair<Long?, String>>()
     init {
         binding.wheelPanel.addView(wheel, android.widget.LinearLayout.LayoutParams(-1, (280 * activity.resources.displayMetrics.density).toInt()))
-        binding.analysisView.adapter = ArrayAdapter(activity, android.R.layout.simple_spinner_dropdown_item, activity.resources.getStringArray(R.array.analysis_views))
+        binding.analysisView.adapter = ArrayAdapter(activity, android.R.layout.simple_spinner_item, activity.resources.getStringArray(R.array.analysis_views)) .apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
         binding.analysisView.setSelection(viewIndex)
         binding.analysisView.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) = Unit
@@ -73,7 +73,7 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
         if (choices != accounts) {
             accounts = choices
             if (choices.none { it.first == accountId }) accountId = null
-            binding.analysisAccount.adapter = ArrayAdapter(activity, android.R.layout.simple_spinner_dropdown_item, choices.map { it.second })
+            binding.analysisAccount.adapter = ArrayAdapter(activity, android.R.layout.simple_spinner_item, choices.map { it.second }) .apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
             binding.analysisAccount.setSelection(choices.indexOfFirst { it.first == accountId }.coerceAtLeast(0))
         }
         render()

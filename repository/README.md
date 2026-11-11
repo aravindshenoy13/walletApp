@@ -95,3 +95,5 @@ V4.1 validation: 23 JVM tests and 33 API 37 Android tests passed; lint has zero 
 V4.2 uses outlined selection states, a menu icon beside Wallet, themed Settings/dropdowns, readable dark-mode category badges and wheel slices, and neutral positive account balances. Records search clears and collapses on Back, Done, outside tap, or leaving; Clear keeps the empty search field open.
 
 Accounts offer bank, cash and card icons as visual labels only. Existing accounts upgrade non-destructively to bank icons through Room schema 3. New full backups use format 2 and retain icons; V4 format-1 backups remain restorable with bank defaults. CSV is unchanged. See ../V4.2-PLAN.md for implementation and validation.
+
+Validation: 23 JVM tests and all 38 API 37 Android tests passed; three V4.2 UI tests also passed at 360 dp with 130% text in light/dark themes. Debug and R8 release builds passed; lint reported zero errors and 54 warnings. Installable APK: dist/wallet-v4.2-debug.apk. Unsigned release and checksums are alongside it. The standalone archive is ../backups/wallet-v4.2-2026-11-12-r01/.
