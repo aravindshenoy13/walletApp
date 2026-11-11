@@ -21,6 +21,7 @@
 ### V2 — Categories, CSV, and date ranges
 
 - Add, edit, and manage custom categories.
+- Add category icons alongside category management.
 - Filter records by category.
 - Import and export transactions as CSV.
 - Add totals for a selected date range in addition to V1's single-date totals.
