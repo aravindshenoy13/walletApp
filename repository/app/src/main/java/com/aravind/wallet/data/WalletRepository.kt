@@ -54,7 +54,6 @@ class WalletRepository(private val database: WalletDatabase) {
 
     suspend fun saveRecord(record: WalletRecord): Long = database.withTransaction {
         require(record.amountMinor > 0) { "Enter an amount greater than zero." }
-        require(record.description.isNotBlank()) { "Enter a description or payee." }
         require(record.description.trim().length <= 120) { "Use at most 120 characters for the description." }
         require(record.note.trim().length <= 1000) { "Use at most 1,000 characters for the note." }
         require(record.occurredAt.year in 1..9999) { "Choose a valid occurrence date." }

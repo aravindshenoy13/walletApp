@@ -70,6 +70,12 @@ class CsvExporterTest {
         assertEquals(1, writer.toString().count { it == '\n' })
     }
 
+    @Test fun optionalDescriptionExportsAnEmptyFinalColumn() {
+        val writer = StringWriter()
+        CsvExporter.write(Ledger(accounts, listOf(entry(1).copy(description = "")), categories), writer)
+        assertTrue(writer.toString().endsWith(",Food,\r\n"))
+    }
+
     @Test fun writeFailureReachesCallerInsteadOfReportingSuccess() {
         val broken = object : Writer() {
             override fun write(value: CharArray, offset: Int, count: Int) { throw IOException("Full") }

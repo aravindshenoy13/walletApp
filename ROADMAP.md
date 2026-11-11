@@ -9,7 +9,7 @@
 - Every transaction records its occurrence date and time.
 - Support income, expense, and transfer transaction types.
 - Income and expense transactions have a category. A category can be used for either income or expense; it is not restricted to one direction.
-- Include a transaction description/payee. A separate note field is not included.
+- Include an optional transaction description/payee. A separate note field is not included.
 - A transfer moves value between two accounts and is excluded from income and expense totals. A card payment is represented as a transfer between accounts.
 - Transactions change the relevant account balances.
 - Show transactions grouped by date.

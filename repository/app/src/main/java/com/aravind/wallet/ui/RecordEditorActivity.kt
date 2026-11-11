@@ -188,11 +188,6 @@ class RecordEditorActivity : AppCompatActivity() {
             binding.amount.requestFocus()
             return
         }
-        if (binding.description.text.isNullOrBlank()) {
-            binding.description.error = "Enter a description or payee."
-            binding.description.requestFocus()
-            return
-        }
         val source = accounts.getOrNull(binding.account.selectedItemPosition)?.id
         val destination = if (type == RecordType.TRANSFER) accounts.getOrNull(binding.destination.selectedItemPosition)?.id else null
         if (source == null) { showError("Choose an account."); return }

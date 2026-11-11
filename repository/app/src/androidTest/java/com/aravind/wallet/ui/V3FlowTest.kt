@@ -24,6 +24,8 @@ import com.aravind.wallet.domain.RecordType
 import java.io.File
 import java.time.LocalDate
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeout
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.Matcher
 import org.junit.Assert.*
@@ -59,6 +61,7 @@ class V3FlowTest {
         ActivityScenario.launch(MainActivity::class.java).use { scenario ->
             await(withId(R.id.record_search))
             await(allOf(withId(R.id.income),withText(Money.format(22500))))
+            assertColor(R.id.net, R.color.income_amount)
             onView(withId(R.id.record_search)).perform(replaceText("lUnCh"),closeSoftKeyboard())
             await(withText("1 matching record"))
             awaitRecords(2)
@@ -96,11 +99,14 @@ class V3FlowTest {
             onData(equalTo("Cash")).perform(click())
             await(allOf(withId(R.id.period_income),withText(Money.format(2500))))
             onView(withId(R.id.period_net)).check(matches(withText(Money.format(-7500))))
+            assertColor(R.id.period_net, R.color.expense_amount)
+            capture("v3-negative-net")
             scenario.recreate()
             await(allOf(withId(R.id.period_income),withText(Money.format(2500))))
             onView(withId(R.id.flow_income)).check(matches(isChecked()))
             onView(withId(R.id.custom_range)).perform(scrollTo(),click())
             await(withId(R.id.start_date))
+            capture("v3-custom-range")
             setDate(R.id.start_date,old)
             setDate(R.id.end_date,old)
             onView(withId(R.id.apply)).perform(click())
@@ -115,6 +121,7 @@ class V3FlowTest {
     @Test fun accountRowsOpenHistoryAndSeparateEditAction() {
         ActivityScenario.launch(MainActivity::class.java).use {
             await(withId(R.id.accounts_tab)); onView(withId(R.id.accounts_tab)).perform(click())
+            await(withText("Cash")); capture("v3-accounts-refined")
             await(withText("Cash")); onView(allOf(withText("Cash"),isDisplayed())).perform(click())
             await(allOf(withId(R.id.current_balance),withText(Money.format(187499))))
             await(withText("Transfer to Bank"))
@@ -139,6 +146,22 @@ class V3FlowTest {
             scenario.recreate()
             onView(withId(R.id.start_date)).check(matches(withText(today.display())))
             onView(withId(R.id.end_date)).check(matches(withText(today.minusDays(1).display())))
+        }
+    }
+    @Test fun recordCanBeSavedWithoutDescription() = runBlocking {
+        ActivityScenario.launch<RecordEditorActivity>(Intent(app,RecordEditorActivity::class.java)).use {
+            await(withId(R.id.save))
+            onView(withId(R.id.amount)).perform(scrollTo(),replaceText("12.34"),closeSoftKeyboard())
+            onView(withId(R.id.description)).check(matches(withText("")))
+            onView(withId(R.id.save)).perform(scrollTo(),click())
+            val result = withTimeout(12000) { app.repository.ledger.first { ledger -> ledger.records.any { row -> row.amountMinor == 1234L && row.description.isEmpty() } } }
+            assertEquals("", result.records.single { row -> row.amountMinor == 1234L }.description)
+        }
+    }
+    private fun assertColor(id: Int, color: Int) {
+        onView(withId(id)).check { view, error ->
+            if (error != null) throw error
+            assertEquals(app.getColor(color), (view as android.widget.TextView).currentTextColor)
         }
     }
     private fun setDate(id: Int,date: LocalDate) {

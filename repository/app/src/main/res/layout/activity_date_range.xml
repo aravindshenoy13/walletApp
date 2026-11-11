@@ -1,10 +1,17 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="16dp">
-    <Button android:id="@+id/back" style="@style/PlainButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/back" />
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/custom_range" android:textSize="20sp" />
-    <TextView style="@style/FormLabel" android:text="@string/range_from" android:labelFor="@id/start_date" />
-    <Button android:id="@+id/start_date" style="@style/OutlineButton" android:layout_width="match_parent" android:layout_height="wrap_content" />
-    <TextView style="@style/FormLabel" android:text="@string/range_to" android:labelFor="@id/end_date" />
-    <Button android:id="@+id/end_date" style="@style/OutlineButton" android:layout_width="match_parent" android:layout_height="wrap_content" />
-    <TextView android:id="@+id/error" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/invalid_range" android:textColor="@color/error" android:visibility="gone" android:accessibilityLiveRegion="polite" />
-    <Button android:id="@+id/apply" style="@style/OutlineButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/apply_range" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="56dp" android:paddingHorizontal="8dp" android:gravity="center_vertical">
+        <Button android:id="@+id/back" style="@style/PlainButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/back" />
+        <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:paddingHorizontal="8dp" android:text="@string/custom_range" android:textColor="@color/ink" android:textSize="20sp" android:textStyle="bold" />
+    </LinearLayout>
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="24dp">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/range_help" android:textSize="14sp" android:textColor="@color/quiet" android:layout_marginBottom="12dp" />
+            <TextView style="@style/FormLabel" android:text="@string/range_from" android:labelFor="@id/start_date" />
+            <Button android:id="@+id/start_date" style="@style/PlainButton" android:layout_width="match_parent" android:layout_height="64dp" android:layout_marginTop="8dp" android:paddingHorizontal="16dp" android:gravity="start|center_vertical" android:textSize="16sp" android:textColor="@color/ink" android:background="@drawable/date_field_background" android:backgroundTint="@null" app:backgroundTint="@null" android:drawableStart="@drawable/ic_calendar" android:drawablePadding="12dp" />
+            <TextView style="@style/FormLabel" android:layout_marginTop="24dp" android:text="@string/range_to" android:labelFor="@id/end_date" />
+            <Button android:id="@+id/end_date" style="@style/PlainButton" android:layout_width="match_parent" android:layout_height="64dp" android:layout_marginTop="8dp" android:paddingHorizontal="16dp" android:gravity="start|center_vertical" android:textSize="16sp" android:textColor="@color/ink" android:background="@drawable/date_field_background" android:backgroundTint="@null" app:backgroundTint="@null" android:drawableStart="@drawable/ic_calendar" android:drawablePadding="12dp" />
+            <TextView android:id="@+id/error" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="@string/invalid_range" android:textColor="@color/error" android:visibility="gone" android:accessibilityLiveRegion="polite" />
+            <Button android:id="@+id/apply" style="@style/PlainButton" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="32dp" android:background="@drawable/primary_action_background" android:backgroundTint="@null" app:backgroundTint="@null" android:textColor="@android:color/white" android:text="@string/apply_range" />
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

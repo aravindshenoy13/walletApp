@@ -104,9 +104,9 @@ class RecordsAdapter(private val edit: (Long) -> Unit) :
                     RecordType.TRANSFER -> R.color.transfer_amount
                 }))
                 val time = record.occurredAt.format(DateTimeFormatter.ofPattern("HH:mm"))
-                meta.text = if (record.type == RecordType.TRANSFER)
-                    context.getString(R.string.transfer_row_meta, time, row.source, row.destination, record.description)
-                else context.getString(R.string.record_meta, time, row.source, record.description)
+                meta.text = listOf(time, if (record.type == RecordType.TRANSFER)
+                    context.getString(R.string.transfer_accounts, row.source, row.destination) else row.source,
+                    record.description).filter { it.isNotBlank() }.joinToString(" · ")
                 root.setOnClickListener { edit(record.id) }
             }
         }

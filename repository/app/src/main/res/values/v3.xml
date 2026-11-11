@@ -1,5 +1,7 @@
 <resources>
     <string name="analysis">Analysis</string>
+    <string name="range_help">Choose the period for your analysis.</string>
+    <string name="transfer_accounts">%1$s → %2$s</string>
     <string name="edit_account_named">Edit %s</string>
     <string name="search_records">Search records</string>
     <string name="clear_search">Clear search</string>

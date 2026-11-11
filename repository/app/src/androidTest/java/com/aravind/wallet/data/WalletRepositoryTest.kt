@@ -90,7 +90,7 @@ class WalletRepositoryTest {
     @Test fun invalidWritesAreRejectedWithoutPartialChanges() = runBlocking {
         val id = repository.saveAccount(Account(name = "Cash", openingBalanceMinor = 0))
         val invalid = listOf(entry(id).copy(amountMinor = 0), entry(id).copy(amountMinor = -1),
-            entry(id).copy(categoryId = null), entry(id).copy(description = " "), entry(999),
+            entry(id).copy(categoryId = null), entry(id).copy(description = "x".repeat(121)), entry(999),
             entry(id, RecordType.TRANSFER, id), entry(id, RecordType.TRANSFER, 999),
             entry(id).copy(destinationAccountId = id), entry(id).copy(id = 999))
         invalid.forEach { record ->
@@ -108,6 +108,21 @@ class WalletRepositoryTest {
         val second = async { runCatching { repository.saveAccount(Account(name = "one", openingBalanceMinor = 0)) } }
         assertEquals(1, listOf(first.await(), second.await()).count { it.isSuccess })
         assertEquals(1, snapshot().accounts.size)
+    }
+
+    @Test fun optionalDescriptionsAreTrimmedAndPersistForEveryRecordType() = runBlocking {
+        val source = repository.saveAccount(Account(name = "Cash", openingBalanceMinor = 10000))
+        val destination = repository.saveAccount(Account(name = "Bank", openingBalanceMinor = 0))
+        RecordType.entries.forEach { type ->
+            val record = entry(source, type, if (type == RecordType.TRANSFER) destination else null).copy(description = "  ")
+            val id = repository.saveRecord(record)
+            repository.saveRecord(record.copy(id = id, description = ""))
+        }
+        val ledger = snapshot()
+        assertEquals(3, ledger.records.size)
+        assertTrue(ledger.records.all { it.description == "" })
+        assertEquals(BigInteger.valueOf(7500), ledger.balances[source])
+        assertEquals(BigInteger.valueOf(2500), ledger.balances[destination])
     }
 
     @Test fun orderingUsesOccurrenceTimeThenIdRatherThanCreationOrder() = runBlocking {

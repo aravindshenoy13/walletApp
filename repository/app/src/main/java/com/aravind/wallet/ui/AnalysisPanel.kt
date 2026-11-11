@@ -71,7 +71,7 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
         binding.periodDates.text = activity.getString(R.string.date_range, start.display(), end.display())
         binding.periodIncome.text = Money.format(data.totals.income)
         binding.periodExpense.text = Money.format(data.totals.expense)
-        binding.periodNet.text = Money.format(data.totals.net)
+        binding.periodNet.showNet(data.totals.net)
         binding.flowGraph.show(start, end, data, flow)
         binding.breakdownList.removeAllViews()
         val values = data.categories.mapNotNull { (id, totals) ->

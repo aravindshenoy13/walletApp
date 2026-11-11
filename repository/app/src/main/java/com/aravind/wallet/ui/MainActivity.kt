@@ -134,7 +134,7 @@ class MainActivity : AppCompatActivity() {
         val totals = current.totals(today)
         income.text = Money.format(totals.income)
         expense.text = Money.format(totals.expense)
-        net.text = Money.format(totals.net)
+        net.showNet(totals.net)
         totalBalance.text = Money.format(current.totalBalance)
         emptyAccounts.isVisible = current.accounts.isEmpty()
         val emptyMessage = when {

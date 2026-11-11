@@ -27,7 +27,7 @@
     <string name="account">Account</string>
     <string name="from_account">From account</string>
     <string name="to_account">To account</string>
-    <string name="description">Description / payee</string>
+    <string name="description">Description / payee (optional)</string>
     <string name="date">Date occurred</string>
     <string name="time">Time occurred</string>
     <string name="save_record">Save record</string>
