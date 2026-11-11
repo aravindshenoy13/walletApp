@@ -76,6 +76,16 @@
 - Add selectable bank, cash, and card account icons as visual labels, with persistent storage and backward-compatible backup/restore.
 - See [V4.2-PLAN.md](V4.2-PLAN.md) for the detailed scope, implementation order, assumptions, and validation.
 
+### V4.3 — Records and analysis refinements
+
+- Improve search spacing, Records day headings, duplicate add icons, account-row layout, and consistent buttons and top bars.
+- Let the Records summary toggle between Today and the current month. Keep opening balance visible only in account editing.
+- Rename the Analysis views to Daily Breakdown, Category Expense Graph, and Flow Graph; remove the Detailed analysis heading, account filtering for the graph and wheel, and the category list beneath Flow Graph.
+- Show the active range before a more prominent Custom range button, box Analysis summary groups, and improve calendar borders in both themes.
+- Add lakh (L) compact formatting, clearer wheel-sector outlines, and press-and-hold percentage display.
+- Remove visible labels beneath category icon choices and add an icon for the Dark mode setting.
+- See [V4.3-PLAN.md](V4.3-PLAN.md) for the detailed scope, implementation order, assumptions, and validation.
+
 ## Business rules
 
 - Transaction direction and category are separate concepts: income and expense entries can share a category.
