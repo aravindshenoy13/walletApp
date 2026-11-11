@@ -35,11 +35,12 @@
 - Show an account balance for a past date.
 - Confirm graph modes, account filters, and category total calculations with the user before implementing them.
 
-### V4 — Full backup, restore, and dark mode
+### V4 — Full backup, restore, dark mode, and app-wide icons
 
 - Back up and restore accounts, opening balances, categories, and transactions.
 - Keep this distinct from transaction CSV import/export unless the user chooses to combine them.
 - Add dark mode.
+- Add icons throughout the app, including navigation, actions, accounts, and transaction types, building on V2's category icons.
 
 ## Business rules
 
