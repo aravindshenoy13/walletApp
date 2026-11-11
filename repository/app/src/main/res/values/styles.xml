@@ -2,7 +2,9 @@
 <resources>
     <style name="Theme.Wallet.Base" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="radioButtonStyle">@style/SquareRadio</item>
-        <item name="android:listChoiceIndicatorSingle">?android:attr/listChoiceIndicatorMultiple</item>
+        <item name="checkboxStyle">@style/WireCheckbox</item>
+        <item name="android:checkboxStyle">@style/WireCheckbox</item>
+        <item name="spinnerStyle">@style/WireSpinner</item>
         <item name="colorPrimary">@color/ink</item>
         <item name="colorPrimaryDark">@color/ink</item>
         <item name="colorAccent">@color/ink</item>
@@ -16,7 +18,22 @@
         <item name="android:windowLightStatusBar">@bool/light_system_bars</item>
         <item name="android:windowActionModeOverlay">true</item>
     </style>
-    <style name="SquareRadio" parent="Widget.AppCompat.CompoundButton.RadioButton"><item name="android:button">?android:attr/listChoiceIndicatorMultiple</item><item name="buttonCompat">@null</item></style>
+    <style name="SquareRadio" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:button">@null</item><item name="buttonCompat">@null</item>
+        <item name="android:background">@drawable/selection_surface</item>
+        <item name="android:gravity">center</item><item name="android:minHeight">48dp</item>
+        <item name="android:padding">8dp</item>
+    </style>
+    <style name="WireCheckbox" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:button">@null</item><item name="buttonCompat">@null</item>
+        <item name="android:background">@drawable/selection_surface</item>
+        <item name="android:minHeight">48dp</item><item name="android:padding">12dp</item>
+    </style>
+    <style name="WireSpinner" parent="Widget.AppCompat.Spinner">
+        <item name="android:background">@drawable/dropdown_background</item>
+        <item name="android:paddingStart">8dp</item><item name="android:paddingEnd">32dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
     <style name="Theme.Wallet" parent="Theme.Wallet.Base" />
     <style name="FormLabel">
         <item name="android:layout_width">match_parent</item>

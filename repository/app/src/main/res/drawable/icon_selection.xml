@@ -1,0 +1,1 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android"><item android:state_checked="true" android:drawable="@drawable/selected_surface"/><item android:state_focused="true" android:drawable="@drawable/selected_surface"/><item><shape><solid android:color="@color/paper"/></shape></item></selector>

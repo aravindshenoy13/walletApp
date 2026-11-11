@@ -33,7 +33,8 @@ class AccountHistoryActivity : AppCompatActivity() {
                         val account = state.ledger.accountsById[id]
                         if (account == null) finish() else {
                             binding.title.text = account.name
-                            binding.currentBalance.text = Money.format(state.ledger.balances.getValue(id))
+                            binding.title.showAccountIcon(account.iconKey)
+                            binding.currentBalance.showBalance(state.ledger.balances.getValue(id))
                             adapter.show(state.ledger, state.ledger.accountRecords(id), id, opening = true)
                         }
                     }

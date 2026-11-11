@@ -19,6 +19,7 @@ class AccountEditorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAccountEditorBinding
     private val model: WalletViewModel by viewModels()
     private var initialized = false
+    private var icon = "bank"
     private var draft: Bundle? = null
     private val accountId get() = intent.getLongExtra("id", 0)
 
@@ -32,6 +33,9 @@ class AccountEditorActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this) { if (model.operation.value != Operation.Working) finish() }
         binding.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.save.setOnClickListener { save() }
+        binding.accountIcon.setOnCheckedChangeListener { _, id ->
+            icon = when (id) { R.id.icon_cash -> "cash"; R.id.icon_card -> "card"; else -> "bank" }
+        }
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
@@ -67,6 +71,8 @@ class AccountEditorActivity : AppCompatActivity() {
         }
         binding.name.setText(draft?.getString("name") ?: account?.name.orEmpty())
         binding.openingBalance.setText(draft?.getString("balance") ?: Money.input(account?.openingBalanceMinor ?: 0))
+        icon = draft?.getString("icon") ?: account?.iconKey ?: "bank"
+        binding.accountIcon.check(when(icon) { "cash" -> R.id.icon_cash; "card" -> R.id.icon_card; else -> R.id.icon_bank })
         initialized = true
         binding.loading.isVisible = false
         binding.form.isVisible = true
@@ -87,7 +93,7 @@ class AccountEditorActivity : AppCompatActivity() {
             binding.openingBalance.requestFocus()
             return
         }
-        model.saveAccount(Account(accountId, binding.name.text.toString(), balance))
+        model.saveAccount(Account(accountId, binding.name.text.toString(), balance, icon))
     }
 
     private fun updateEnabled() {
@@ -104,6 +110,7 @@ class AccountEditorActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putBundle("draft", if (initialized) Bundle().apply {
+            putString("icon", icon)
             putString("name", binding.name.text.toString())
             putString("balance", binding.openingBalance.text.toString())
         } else draft)

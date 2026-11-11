@@ -68,7 +68,8 @@ class RecordsAdapter(private val edit: (Long) -> Unit) :
         when (val row = getItem(position)) {
             is RecordRow.Opening -> (holder as OpeningHolder).binding.apply {
                 description.setText(R.string.opening_balance_label)
-                amount.text = Money.format(row.account.openingBalanceMinor)
+                amount.showBalance(BigInteger.valueOf(row.account.openingBalanceMinor))
+                description.showAccountIcon(row.account.iconKey)
                 meta.isVisible = false; editAccount.isVisible = false
                 root.isClickable = false; root.isFocusable = false
             }
@@ -128,7 +129,8 @@ class AccountsAdapter(private val history: (Long) -> Unit, private val edit: (Lo
         val row = getItem(position)
         holder.binding.apply {
             description.text = row.account.name
-            amount.showNet(row.balance)
+            amount.showBalance(row.balance)
+            description.showAccountIcon(row.account.iconKey)
             meta.text = root.context.getString(R.string.opening_balance_value, Money.format(row.account.openingBalanceMinor))
             root.setOnClickListener { history(row.account.id) }
             editAccount.contentDescription = root.context.getString(R.string.edit_account_named, row.account.name)

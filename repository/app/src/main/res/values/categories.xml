@@ -5,7 +5,7 @@
     <string name="search_categories">Search categories</string>
     <string name="no_categories_found">No categories found.</string>
     <string name="category_selection">Category: %1$s. Choose category.</string>
-    <string name="add_category">+ Add category</string>
+    <string name="add_category">Add category</string>
     <string name="new_category">Add category</string>
     <string name="edit_category">Edit category</string>
     <string name="category_name">Category name</string>

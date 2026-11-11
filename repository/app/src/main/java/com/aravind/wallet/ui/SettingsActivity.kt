@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
 import com.aravind.wallet.WalletApplication
+import com.aravind.wallet.R
 import com.aravind.wallet.data.WalletBackup
 import kotlinx.coroutines.*
 
@@ -44,9 +45,16 @@ class SettingsActivity : AppCompatActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        actions = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(24, 16, 24, 16) }
+        actions = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(16), dp(8), dp(16), dp(16)) }
         val scroll = ScrollView(this).apply { addView(actions) }; setContentView(scroll); applyInsets(scroll)
-        button("Back · Settings") { finish() }
+        val header = LinearLayout(this).apply { gravity = android.view.Gravity.CENTER_VERTICAL }
+        header.addView(Button(this, null, 0, R.style.PlainButton).apply {
+            text = "Back"; setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_back, 0, 0, 0)
+            setOnClickListener { finish() }
+        })
+        header.addView(TextView(this).apply { text = "Settings"; textSize = 20f; setPadding(dp(8), 0, 0, 0) })
+        actions.addView(header)
+        actions.addView(android.view.View(this).apply { setBackgroundColor(getColor(R.color.line)) }, LinearLayout.LayoutParams(-1, dp(1)))
         val prefs = getSharedPreferences("appearance", MODE_PRIVATE)
         actions.addView(CheckBox(this).apply {
             text = "Dark mode"; isChecked = prefs.getBoolean("dark", false)
@@ -56,10 +64,12 @@ class SettingsActivity : AppCompatActivity() {
         button("Back up data") { save.launch("wallet-backup-${java.time.LocalDate.now()}.json") }
         button("Restore backup") { restore.launch(arrayOf("application/json", "text/plain", "application/octet-stream")) }
     }
-    private fun button(label: String, clicked: () -> Unit) { actions.addView(Button(this).apply { text = label; isAllCaps = false
+    private fun button(label: String, clicked: () -> Unit) { actions.addView(Button(this, null, 0, R.style.OutlineButton).apply { text = label; isAllCaps = false; gravity = android.view.Gravity.START or android.view.Gravity.CENTER_VERTICAL
+        layoutParams = LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(12) }
         val icon = when (label) { "Export CSV" -> com.aravind.wallet.R.drawable.ic_expense; "Back up data" -> com.aravind.wallet.R.drawable.ic_save; "Restore backup" -> com.aravind.wallet.R.drawable.ic_back; else -> com.aravind.wallet.R.drawable.ic_back }
         setCompoundDrawablesRelativeWithIntrinsicBounds(icon, 0, 0, 0)
         setOnClickListener { clicked() } }) }
+    private fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()
     private fun message(text: String) { AlertDialog.Builder(this).setMessage(text).setPositiveButton("OK", null).show() }
     private fun work(block: suspend () -> Unit) {
         if (busy) return

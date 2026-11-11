@@ -8,9 +8,9 @@ import java.time.LocalDateTime
 /** Versioned JSON; minor units and IDs are strings to retain full 64-bit precision. */
 object WalletBackup {
     fun encode(ledger: Ledger): String = JSONObject().apply {
-        put("format", "wallet-full-backup"); put("version", 1); put("currency", "INR")
+        put("format", "wallet-full-backup"); put("version", 2); put("currency", "INR")
         put("accounts", JSONArray().apply { ledger.accounts.forEach { a -> put(JSONObject().apply {
-            put("id", a.id.toString()); put("name", a.name); put("opening", a.openingBalanceMinor.toString())
+            put("id", a.id.toString()); put("name", a.name); put("opening", a.openingBalanceMinor.toString()); put("icon", a.iconKey)
         }) } })
         put("categories", JSONArray().apply { ledger.categories.forEach { c -> put(JSONObject().apply {
             put("id", c.id); put("name", c.name); put("icon", c.iconKey); put("color", c.backgroundColorKey)
@@ -26,14 +26,14 @@ object WalletBackup {
 
     fun decode(text: String): Ledger {
         val root = JSONObject(text)
-        require(root.getString("format") == "wallet-full-backup" && root.getInt("version") == 1 && root.getString("currency") == "INR") { "Unsupported backup format." }
+        require(root.getString("format") == "wallet-full-backup" && root.getInt("version") in 1..2 && root.getString("currency") == "INR") { "Unsupported backup format." }
         fun rows(key: String): List<JSONObject> = root.getJSONArray(key).let { a -> (0 until a.length()).map(a::getJSONObject) }
-        val accounts = rows("accounts").map { Account(it.getString("id").toLong(), it.getString("name"), it.getString("opening").toLong()) }
+        val accounts = rows("accounts").map { Account(it.getString("id").toLong(), it.getString("name"), it.getString("opening").toLong(), if (root.getInt("version") == 1) "bank" else it.getString("icon")) }
         val categories = rows("categories").map { WalletCategory(it.getString("id"), it.getString("name"), it.getString("icon"), it.getString("color"), it.getBoolean("builtIn"), it.getBoolean("archived")) }
         val records = rows("records").map { WalletRecord(it.getString("id").toLong(), RecordType.valueOf(it.getString("type")), it.getString("amount").toLong(), it.getString("account").toLong(),
             if (it.isNull("destination")) null else it.getString("destination").toLong(), if (it.isNull("category")) null else it.getString("category"),
             LocalDateTime.parse(it.getString("occurredAt")), it.getString("description"), it.getString("note")) }
-        require(accounts.all { it.id > 0 && it.name.isNotBlank() && it.name.length <= 80 }) { "Invalid account." }
+        require(accounts.all { it.iconKey in setOf("bank", "cash", "card") && it.id > 0 && it.name.isNotBlank() && it.name.length <= 80 }) { "Invalid account." }
         require(accounts.map { it.id }.distinct().size == accounts.size && accounts.map { it.name.lowercase(java.util.Locale.ROOT) }.distinct().size == accounts.size) { "Duplicate accounts." }
         require(categories.isNotEmpty() && categories.any { !it.isArchived }) { "Backup must contain active categories." }
         require(categories.all { c -> c.id.isNotBlank() && c.name.isNotBlank() && c.name.length <= 80 && CategoryCatalog.icons.any { it.key == c.iconKey } && CategoryCatalog.colors.any { it.key == c.backgroundColorKey } }) { "Invalid category." }

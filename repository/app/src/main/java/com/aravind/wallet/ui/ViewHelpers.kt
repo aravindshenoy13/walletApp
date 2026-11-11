@@ -43,6 +43,20 @@ fun TextView.showNet(value: BigInteger) {
     }))
 }
 
+fun TextView.showBalance(value: BigInteger) {
+    text = Money.format(value)
+    setTextColor(context.getColor(if (value.signum() < 0) R.color.expense_amount else R.color.ink))
+}
+
+fun TextView.showAccountIcon(key: String) {
+    setCompoundDrawablesRelativeWithIntrinsicBounds(when (key) {
+        "cash" -> R.drawable.ic_cash; "card" -> R.drawable.ic_card; else -> R.drawable.ic_bank
+    }, 0, 0, 0)
+    androidx.core.widget.TextViewCompat.setCompoundDrawableTintList(this,
+        android.content.res.ColorStateList.valueOf(context.getColor(R.color.icon_stroke)))
+    compoundDrawablePadding = (6 * resources.displayMetrics.density).toInt()
+}
+
 fun View.enableTree(enabled: Boolean) {
     isEnabled = enabled
     if (this is ViewGroup) for (index in 0 until childCount) getChildAt(index).enableTree(enabled)

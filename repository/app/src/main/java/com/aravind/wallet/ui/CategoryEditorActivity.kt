@@ -154,19 +154,21 @@ class CategoryEditorActivity : AppCompatActivity() {
         iconButtons.forEach { (key, views) ->
             val selected = key == icon
             views.first.isSelected = selected
-            ((views.first as LinearLayout).getChildAt(1) as TextView).text = (if (selected) "\u2611 " else "\u2610 ") + CategoryCatalog.icons.first { it.key == key }.label
+            androidx.core.view.ViewCompat.setStateDescription(views.first, if (selected) "Selected" else "Not selected")
+            ((views.first as LinearLayout).getChildAt(1) as TextView).text = CategoryCatalog.icons.first { it.key == key }.label
             views.first.contentDescription = selectedDescription(getString(R.string.icon_accessibility, CategoryCatalog.icons.first { it.key == key }.label), selected)
-            views.first.background = GradientDrawable().apply { setColor(getColor(R.color.paper)); setStroke(dp(if (selected) 2 else 1), getColor(if (selected) R.color.ink else R.color.line)) }
+            views.first.setBackgroundResource(R.drawable.selection_surface)
             views.second.showCategory(key, color)
         }
         colorButtons.forEach { (key, button) ->
             val selected = key == color
-            button.text = if (selected) "\u2611" else "\u2610"
+            button.text = ""
+            androidx.core.view.ViewCompat.setStateDescription(button, if (selected) "Selected" else "Not selected")
             button.isSelected = selected
             button.contentDescription = selectedDescription(getString(R.string.color_accessibility, key), selected)
             button.background = GradientDrawable().apply {
-                setColor(Color.parseColor(CategoryCatalog.colors.first { it.key == key }.hex))
-                setStroke(dp(if (selected) 3 else 1), getColor(if (selected) R.color.ink else R.color.quiet))
+                setColor(categoryDisplayColor(this@CategoryEditorActivity, key))
+                setStroke(dp(if (selected) 4 else 1), getColor(if (selected) R.color.ink else R.color.line))
             }
         }
         binding.previewBadge.showCategory(icon, color)

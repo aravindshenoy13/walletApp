@@ -33,8 +33,12 @@ class CategoryWheelView(context: Context) : View(context) {
             var start = -90f
             values.forEachIndexed { index, (category, value) ->
                 val sweep = if (index == values.lastIndex) 270f-start else BigDecimal(value.abs()).divide(BigDecimal(total), MathContext.DECIMAL64).toFloat()*360f
-                paint.color = Color.parseColor(CategoryCatalog.colors.first { it.key == category.backgroundColorKey }.hex)
-                canvas.drawArc(bounds, start, sweep, true, paint); start += sweep
+                paint.color = categoryDisplayColor(context, category.backgroundColorKey)
+                canvas.drawArc(bounds, start, sweep, true, paint)
+                paint.style = Paint.Style.STROKE; paint.strokeWidth = 2f * resources.displayMetrics.density
+                paint.color = context.getColor(R.color.paper)
+                canvas.drawArc(bounds, start, sweep, true, paint)
+                paint.style = Paint.Style.FILL; start += sweep
             }
         }
         paint.color = context.getColor(R.color.paper); canvas.drawCircle(cx,cy,radius*0.55f,paint)

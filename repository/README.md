@@ -89,3 +89,9 @@ V4 checkpoint validation: 23 JVM tests and 32 API 37 instrumentation tests passe
 Analysis now uses a drop-down for Calendar, Category Breakdown, and Flow Graph. Calendar retains the full-month/all-account scope; detailed views share independent date-range and account controls. The category wheel shows only negative category net values, sized by magnitude, with signed amounts in the accompanying list. Transfers, zero values, and positive-net categories are excluded from the wheel. Flow Graph retains Net/Income/Expenses. State survives recreation. No database migration or new runtime dependency is needed.
 
 V4.1 validation: 23 JVM tests and 33 API 37 Android tests passed; lint has zero errors. APKs: `dist/wallet-v4.1-debug.apk` and `dist/wallet-v4.1-release-unsigned.apk` (release requires signing). See [V4.1 notes](../V4.1-PLAN.md).
+
+## V4.2 — visual refinements and account icons
+
+V4.2 uses outlined selection states, a menu icon beside Wallet, themed Settings/dropdowns, readable dark-mode category badges and wheel slices, and neutral positive account balances. Records search clears and collapses on Back, Done, outside tap, or leaving; Clear keeps the empty search field open.
+
+Accounts offer bank, cash and card icons as visual labels only. Existing accounts upgrade non-destructively to bank icons through Room schema 3. New full backups use format 2 and retain icons; V4 format-1 backups remain restorable with bank defaults. CSV is unchanged. See ../V4.2-PLAN.md for implementation and validation.

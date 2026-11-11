@@ -32,7 +32,7 @@ interface WalletDao {
     @Query("DELETE FROM records WHERE id = :id") suspend fun deleteRecord(id: Long): Int
 }
 
-@Database(entities = [Account::class, WalletRecord::class, WalletCategory::class], version = 2, exportSchema = true)
+@Database(entities = [Account::class, WalletRecord::class, WalletCategory::class], version = 3, exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class WalletDatabase : RoomDatabase() {
     abstract fun walletDao(): WalletDao
@@ -40,6 +40,6 @@ abstract class WalletDatabase : RoomDatabase() {
     companion object {
         fun create(context: Context): WalletDatabase = Room.databaseBuilder(
             context.applicationContext, WalletDatabase::class.java, "wallet.db",
-        ).addMigrations(MIGRATION_1_2).addCallback(V2CategorySeeds.callback).build()
+        ).addMigrations(MIGRATION_1_2, MIGRATION_2_3).addCallback(V2CategorySeeds.callback).build()
     }
 }

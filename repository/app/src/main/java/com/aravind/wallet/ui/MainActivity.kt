@@ -3,6 +3,9 @@ package com.aravind.wallet.ui
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
+import androidx.activity.addCallback
+import android.view.MotionEvent
+import android.graphics.Rect
 import androidx.activity.viewModels
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -65,7 +68,12 @@ class MainActivity : AppCompatActivity() {
         binding.settings.setOnClickListener { startActivity(Intent(this, SettingsActivity::class.java)) }
         binding.openSearch.setOnClickListener { searchExpanded = true; render(); binding.recordSearch.requestFocus(); (getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager).showSoftInput(binding.recordSearch, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT) }
         binding.recordSearch.doAfterTextChanged { render() }
-        binding.clearSearch.setOnClickListener { binding.recordSearch.text.clear(); searchExpanded = false; (getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager).hideSoftInputFromWindow(binding.recordSearch.windowToken, 0); render() }
+        binding.clearSearch.setOnClickListener { binding.recordSearch.text?.clear(); binding.recordSearch.requestFocus() }
+        binding.recordSearch.dismiss = { dismissSearch() }
+        binding.recordSearch.setOnEditorActionListener { _, action, _ ->
+            if (action == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) { dismissSearch(); true } else false
+        }
+        onBackPressedDispatcher.addCallback(this) { if (searchExpanded) dismissSearch() else finish() }
         binding.recordList.layoutManager = LinearLayoutManager(this)
         binding.recordList.adapter = recordsAdapter
         binding.accountList.layoutManager = LinearLayoutManager(this)
@@ -111,6 +119,30 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun dismissSearch() {
+        if (!searchExpanded) return
+        searchExpanded = false
+        binding.recordSearch.text?.clear()
+        binding.recordSearch.clearFocus()
+        (getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager)
+            .hideSoftInputFromWindow(binding.recordSearch.windowToken, 0)
+        render()
+    }
+
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        if (searchExpanded && event.action == MotionEvent.ACTION_DOWN) {
+            val bounds = Rect()
+            binding.searchBox.getGlobalVisibleRect(bounds)
+            if (!bounds.contains(event.rawX.toInt(), event.rawY.toInt())) dismissSearch()
+        }
+        return super.dispatchTouchEvent(event)
+    }
+
+    override fun onStop() {
+        if (!isChangingConfigurations) dismissSearch()
+        super.onStop()
+    }
+
     override fun onResume() { super.onResume(); render() }
 
     private fun render() = with(binding) {
@@ -120,7 +152,7 @@ class MainActivity : AppCompatActivity() {
         add.isVisible = tab == Tab.ACCOUNTS || tab == Tab.CATEGORIES
         searchBox.isVisible = tab == Tab.RECORDS && searchExpanded
         openSearch.isVisible = tab == Tab.RECORDS && !searchExpanded
-        clearSearch.isEnabled = recordSearch.text.isNotEmpty()
+        clearSearch.isEnabled = !recordSearch.text.isNullOrEmpty()
         export.isVisible = false
         listOf(recordsTab to Tab.RECORDS, analysisTab to Tab.ANALYSIS, accountsTab to Tab.ACCOUNTS, categoriesTab to Tab.CATEGORIES).forEach { (button, target) ->
             button.setTypeface(null, if (tab == target) Typeface.BOLD else Typeface.NORMAL)
@@ -134,16 +166,16 @@ class MainActivity : AppCompatActivity() {
         val current = ledger ?: return@with
         val matching = current.searchRecords(recordSearch.text.toString())
         recordsAdapter.show(current, matching)
-        recordCount.text = if (recordSearch.text.isBlank()) getString(R.string.all_records)
+        recordCount.text = if (recordSearch.text.isNullOrBlank()) getString(R.string.all_records)
             else resources.getQuantityString(R.plurals.matching_records, matching.size, matching.size)
         val totals = current.totals(today)
         income.text = Money.format(totals.income)
         expense.text = Money.format(totals.expense)
         net.showNet(totals.net)
-        totalBalance.text = Money.format(current.totalBalance)
+        totalBalance.showBalance(current.totalBalance)
         emptyAccounts.isVisible = current.accounts.isEmpty()
         val emptyMessage = when {
-            recordSearch.text.isNotBlank() && matching.isEmpty() -> R.string.no_matches
+            !recordSearch.text.isNullOrBlank() && matching.isEmpty() -> R.string.no_matches
             current.accounts.isEmpty() -> R.string.no_accounts
             current.records.isEmpty() -> R.string.no_records
             current.records.none { it.occurredAt.toLocalDate() == today } -> R.string.no_records_today

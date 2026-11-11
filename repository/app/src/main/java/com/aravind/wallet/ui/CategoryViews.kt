@@ -17,6 +17,20 @@ import com.aravind.wallet.databinding.ItemCategoryBinding
 import com.aravind.wallet.databinding.ItemCategoryChoiceBinding
 import com.aravind.wallet.domain.CategoryCatalog
 
+fun categoryDisplayColor(context: Context, key: String): Int {
+    val color = Color.parseColor(CategoryCatalog.colors.find { it.key == key }?.hex ?: "#C9DEF5")
+    val dark = context.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK == android.content.res.Configuration.UI_MODE_NIGHT_YES
+    // Keep white line art readable on pastel backgrounds without changing saved colors.
+    if (!dark) return color
+    var displayed = color
+    var shade = 0f
+    while (androidx.core.graphics.ColorUtils.calculateContrast(Color.WHITE, displayed) < 4.5 && shade < 1f) {
+        shade += 0.05f
+        displayed = androidx.core.graphics.ColorUtils.blendARGB(color, Color.BLACK, shade.coerceAtMost(1f))
+    }
+    return displayed
+}
+
 fun ImageView.showCategory(iconKey: String, colorKey: String) {
     setImageResource(when (iconKey) {
         "plane" -> R.drawable.ic_category_plane
@@ -35,7 +49,7 @@ fun ImageView.showCategory(iconKey: String, colorKey: String) {
     })
     imageTintList = android.content.res.ColorStateList.valueOf(context.getColor(R.color.icon_stroke))
     background = GradientDrawable().apply {
-        setColor(Color.parseColor(CategoryCatalog.colors.find { it.key == colorKey }?.hex ?: "#C9DEF5"))
+        setColor(categoryDisplayColor(context, colorKey))
         cornerRadius = 4 * resources.displayMetrics.density
     }
 }

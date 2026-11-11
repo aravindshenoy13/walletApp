@@ -83,6 +83,8 @@ class V3FlowTest {
             onView(withId(R.id.clear_search)).perform(click())
             await(withText(app.getString(R.string.all_records)))
             awaitRecords(7)
+            onView(withId(R.id.record_search)).check(matches(withText("")))
+            androidx.test.espresso.Espresso.pressBack()
             onView(withId(R.id.open_search)).check(matches(isDisplayed()))
         }
     }

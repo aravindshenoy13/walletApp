@@ -19,8 +19,8 @@ class AdditionalIconsActivity : AppCompatActivity() {
         val checks = mutableListOf<CheckBox>()
         CategoryCatalog.icons.drop(6).forEach { choice ->
             val cell = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; gravity = Gravity.CENTER; layoutParams = GridLayout.LayoutParams(GridLayout.spec(GridLayout.UNDEFINED), GridLayout.spec(GridLayout.UNDEFINED, 1f)).apply { width = 0 } }
-            cell.addView(ImageView(this).apply { showCategory(choice.key, intent.getStringExtra("color") ?: "Sky") }, LinearLayout.LayoutParams(64, 64))
-            val check = CheckBox(this).apply { text = choice.label; isChecked = selected == choice.key; tag = choice.key }
+            cell.addView(ImageView(this).apply { showCategory(choice.key, intent.getStringExtra("color") ?: "Sky"); val inset = (8 * resources.displayMetrics.density).toInt(); setPadding(inset,inset,inset,inset) }, LinearLayout.LayoutParams((48 * resources.displayMetrics.density).toInt(), (48 * resources.displayMetrics.density).toInt()))
+            val check = CheckBox(this).apply { text = choice.label; setBackgroundResource(com.aravind.wallet.R.drawable.icon_selection); isChecked = selected == choice.key; tag = choice.key }
             checks.add(check); cell.addView(check); grid.addView(cell)
             check.setOnClickListener { selected = choice.key; intent.putExtra("icon", selected); checks.forEach { it.isChecked = it.tag == selected } }
         }

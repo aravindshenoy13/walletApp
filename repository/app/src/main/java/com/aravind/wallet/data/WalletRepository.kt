@@ -38,6 +38,7 @@ class WalletRepository(private val database: WalletDatabase) {
     }
 
     suspend fun saveAccount(account: Account): Long = database.withTransaction {
+        require(account.iconKey in setOf("bank", "cash", "card")) { "Choose an account icon." }
         val name = account.name.trim()
         require(name.isNotEmpty()) { "Enter an account name." }
         require(name.length <= 80) { "Use at most 80 characters for the account name." }

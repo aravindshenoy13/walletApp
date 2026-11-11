@@ -17,6 +17,7 @@ data class Account(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
     val openingBalanceMinor: Long,
+    @ColumnInfo(defaultValue = "'bank'") val iconKey: String = "bank",
 )
 
 @Entity(tableName = "categories")

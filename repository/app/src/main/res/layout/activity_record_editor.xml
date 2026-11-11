@@ -11,7 +11,7 @@
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="top">
                 <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
                     <TextView android:id="@+id/account_label" style="@style/FormLabel" android:layout_marginTop="0dp" android:text="@string/account" android:labelFor="@id/account" />
-                    <Spinner android:id="@+id/account" style="@style/FormField" android:spinnerMode="dropdown" android:layout_marginTop="4dp" />
+                    <Spinner android:paddingEnd="32dp" android:paddingStart="8dp" android:id="@+id/account" style="@style/FormField" android:spinnerMode="dropdown" android:layout_marginTop="4dp" />
                 </LinearLayout>
                 <Space android:layout_width="12dp" android:layout_height="1dp" />
                 <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
@@ -21,7 +21,7 @@
                         <TextView android:id="@+id/category_name" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:paddingStart="8dp" android:paddingEnd="0dp" android:textSize="16sp" android:textColor="@color/ink" />
                     </LinearLayout>
                     <TextView android:id="@+id/destination_label" style="@style/FormLabel" android:layout_marginTop="0dp" android:text="@string/to_account" android:labelFor="@id/destination" android:visibility="gone" />
-                    <Spinner android:id="@+id/destination" style="@style/FormField" android:spinnerMode="dropdown" android:layout_marginTop="4dp" android:visibility="gone" />
+                    <Spinner android:paddingEnd="32dp" android:paddingStart="8dp" android:id="@+id/destination" style="@style/FormField" android:spinnerMode="dropdown" android:layout_marginTop="4dp" android:visibility="gone" />
                 </LinearLayout>
             </LinearLayout>
             <RadioGroup android:id="@+id/type" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:orientation="horizontal" android:checkedButton="@id/type_expense">
