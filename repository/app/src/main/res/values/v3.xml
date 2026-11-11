@@ -41,5 +41,5 @@
     <string name="detailed_analysis">Detailed analysis</string>
     <string name="detail_scope">Account and custom range apply to the totals, graph and categories below.</string>
     <string name="range_totals">Selected range totals · transfers excluded</string>
-    <string name="shared_analysis_view">View · graph and categories</string>
+    <string name="shared_analysis_view">Flow view</string>
 </resources>

@@ -33,11 +33,11 @@ class V4FlowTest {
     @Test fun additionalIconSelection() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         ActivityScenario.launch<AdditionalIconsActivity>(Intent(context, AdditionalIconsActivity::class.java).putExtra("icon", "plane").putExtra("color", "Peach")).use { scenario ->
-            onView(withText("Travel")).check(matches(isChecked()))
-            onView(withText("Music")).perform(click()).check(matches(isChecked()))
-            onView(withText("Travel")).check(matches(isNotChecked()))
+            onView(withContentDescription("Travel icon")).check(matches(isSelected()))
+            onView(withContentDescription("Music icon")).perform(click()).check(matches(isSelected()))
+            onView(withContentDescription("Travel icon")).check(matches(org.hamcrest.CoreMatchers.not(isSelected())))
             scenario.recreate()
-            onView(withText("Music")).check(matches(isChecked()))
+            onView(withContentDescription("Music icon")).check(matches(isSelected()))
         }
     }
 }

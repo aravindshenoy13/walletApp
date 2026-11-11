@@ -1,6 +1,25 @@
-# Wallet V3
+# Wallet V4.3
 
 A personal, on-device INR transaction tracker for Android 8.0 (API 26) and later. Built with Kotlin, native Android Views/XML, and Room. The product scope is defined in [ROADMAP.md](../ROADMAP.md); the simple appearance follows [V3 wireframe revision 03](../wireframes/wallet-v3-wireframe-r03.html) and the subsequently confirmed decisions in the wireframe README.
+
+## Current V4.3 behavior
+
+- Tap the outlined **Today** summary on Records to switch to the full current calendar month, including future-dated transactions in that month. Tap again for Today. Rotation retains the selection; date changes refresh the totals. Search and the dated list remain independent of the summary. Transfers are excluded.
+- Accounts show their name, icon, current balance, and separate Edit action. Opening balance remains editable and included in balances/backups, but is hidden from the list and transaction history.
+- Analysis offers **Daily Breakdown**, **Category Expense Graph**, and **Flow Graph**. Daily Breakdown shows a full month with month arrows. The other views share a custom range, initially month-to-date, across all accounts. The active dates appear above Custom range; each summary group has an outline.
+- Flow Graph retains Net/Income/Expenses and has no category list. Category Expense Graph shows only categories with negative net, proportional to their absolute values, with its own list and all-account category history. Hold a wheel sector to see its percentage; release or cancel to dismiss. The hole and outside do not select sectors. Screen readers retain exact category values and percentages.
+- Compact INR labels use K (thousand), L (lakh), M, B, and T. L applies at 100,000 through below 1,000,000 after the existing three-significant-digit rounding. Accounting amounts remain exact.
+- Category icon choices show icons without visible names; accessibility labels and independent color selection remain. Settings includes a Dark mode icon. Buttons, secondary headers, day headings, calendar borders, and wheel outlines follow both themes.
+
+No database or backup format change is required: Room schema 3 and full-backup format 2 remain, including format-1 restore support. All data remains on-device. See [V4.3 plan and validation](../V4.3-PLAN.md).
+
+V4.3 verification: 25 JVM tests and all 42 Android cases passed across the regression run and targeted retries; all four new V4.3 cases also passed at 130% text in both themes. Debug and optimized release builds passed. Lint: zero errors, 47 warnings. See the plan for retry details and validation limits.
+
+Artifacts: [installable V4.3 debug APK](dist/wallet-v4.3-debug.apk), [unsigned optimized release](dist/wallet-v4.3-release-unsigned.apk), and [SHA-256 checksums](dist/wallet-v4.3-SHA256SUMS.txt).
+
+## Earlier version behavior and implementation history
+
+The sections below describe earlier version checkpoints; current behavior above supersedes their Records summary, Analysis account filters/view names, and opening-balance visibility.
 
 ## Using the app
 

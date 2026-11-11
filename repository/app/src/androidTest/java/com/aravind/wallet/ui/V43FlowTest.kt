@@ -87,8 +87,22 @@ class V43FlowTest {
             scenario.recreate()
             onView(withId(R.id.analysis_view)).check(matches(withSpinnerText("Category Expense Graph")))
             onView(withId(R.id.custom_range)).perform(scrollTo(), click())
+            for (id in listOf(R.id.start_date, R.id.end_date)) {
+                onView(withId(id)).perform(click())
+                onView(isAssignableFrom(android.widget.DatePicker::class.java)).perform(object : androidx.test.espresso.ViewAction {
+                    override fun getConstraints() = isAssignableFrom(android.widget.DatePicker::class.java)
+                    override fun getDescription() = "Choose today's date"
+                    override fun perform(ui: androidx.test.espresso.UiController, view: View) {
+                        (view as android.widget.DatePicker).updateDate(today.year, today.monthValue - 1, today.dayOfMonth)
+                        ui.loopMainThreadUntilIdle()
+                    }
+                })
+                onView(withId(android.R.id.button1)).perform(click())
+            }
             onView(withId(R.id.apply)).perform(click())
             await(R.id.analysis_view)
+            val expectedExpense = if (today.dayOfMonth == 1) 6000L else 4000L
+            onView(withId(R.id.range_expense)).check(matches(withText(Money.format(expectedExpense))))
             onView(withText("Other")).perform(scrollTo(), click())
             await(R.id.total, Money.format(-1000))
             onView(withId(R.id.scope)).check(matches(withText(app.getString(R.string.category_history_scope, app.getString(R.string.all_accounts), app.getString(R.string.net)))))

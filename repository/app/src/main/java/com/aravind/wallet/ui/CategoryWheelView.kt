@@ -23,7 +23,10 @@ class CategoryWheelView(context: Context) : View(context) {
     private var sweeps = emptyList<Float>()
     private var total = BigInteger.ZERO
     private var pressedSector: Int? = null
-    init { isClickable = true; isFocusable = true; importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES }
+    init {
+        isClickable = true; isFocusable = true; importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
+        contentDescription = context.getString(R.string.wheel_accessibility, context.getString(R.string.no_category_values))
+    }
 
     fun show(values: List<Pair<WalletCategory, BigInteger>>) {
         val negative = values.filter { it.second.signum() < 0 }
