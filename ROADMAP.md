@@ -28,6 +28,7 @@
 ### V3 — Analysis and overview
 
 - Filter records by one category at a time.
+- Add search at the top right of the Records page. Match transaction description/payee, amount, or category, and filter the records directly on the same page.
 - Add day-by-day income and expense flow graphs.
 - Add category analysis and a spending overview.
 - Allow viewing one account's transactions and balance.
