@@ -1,0 +1,179 @@
+<style>
+  #wallet-v1-wireframes {
+    color-scheme: light dark;
+    --paper: light-dark(#fff, #181818);
+    --ink: light-dark(#222, #eee);
+    --line: light-dark(#999, #858585);
+    --quiet: light-dark(#555, #b9b9b9);
+    color: var(--ink);
+    font: 14px/1.45 Arial, sans-serif;
+  }
+  #wallet-v1-wireframes * { box-sizing: border-box; }
+  #wallet-v1-wireframes .wf-board {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px 22px;
+  }
+  #wallet-v1-wireframes .wf-caption { margin: 0 0 10px; font-size: 14px; font-weight: 400; }
+  #wallet-v1-wireframes section { display: flex; flex-direction: column; min-width: 0; }
+  #wallet-v1-wireframes .wf-phone {
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 474px;
+  }
+  #wallet-v1-wireframes .wf-header {
+    min-height: 52px;
+    padding: 14px;
+    border-bottom: 1px solid var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  #wallet-v1-wireframes .wf-body { flex: 1; padding: 14px; }
+  #wallet-v1-wireframes .wf-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  #wallet-v1-wireframes .wf-row > :first-child { min-width: 0; }
+  #wallet-v1-wireframes .wf-row > :last-child { flex-shrink: 0; }
+  #wallet-v1-wireframes .wf-month { text-align: center; border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 14px; }
+  #wallet-v1-wireframes .wf-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
+  #wallet-v1-wireframes .wf-muted { color: var(--quiet); font-size: 12px; }
+  #wallet-v1-wireframes .wf-date { margin: 18px 0 2px; color: var(--quiet); font-size: 12px; }
+  #wallet-v1-wireframes .wf-item { padding: 11px 0; border-bottom: 1px solid var(--line); }
+  #wallet-v1-wireframes .wf-action { border: 1px solid var(--ink); padding: 8px 12px; text-align: center; margin-top: 20px; }
+  #wallet-v1-wireframes .wf-nav {
+    border-top: 1px solid var(--ink);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 12px 8px;
+    font-size: 11px;
+    color: var(--quiet);
+  }
+  #wallet-v1-wireframes .wf-current { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+  #wallet-v1-wireframes .wf-label { margin: 14px 0 5px; font-size: 12px; color: var(--quiet); }
+  #wallet-v1-wireframes .wf-field { border: 1px solid var(--line); padding: 8px 10px; min-height: 38px; }
+  #wallet-v1-wireframes .wf-choice { display: flex; gap: 20px; padding: 4px 0 8px; }
+  #wallet-v1-wireframes .wf-total { border: 1px solid var(--line); padding: 12px; margin: 14px 0; }
+  #wallet-v1-wireframes .wf-total .wf-row + .wf-row { margin-top: 5px; }
+  #wallet-v1-wireframes .wf-group { margin: 18px 0 2px; }
+  #wallet-v1-wireframes p { margin: 0; }
+  @media (max-width: 850px) {
+    #wallet-v1-wireframes .wf-board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 570px) {
+    #wallet-v1-wireframes .wf-board { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+    #wallet-v1-wireframes .wf-phone { min-height: 450px; }
+  }
+</style>
+<div id="wallet-v1-wireframes">
+  <div class="wf-board">
+    <section aria-label="Records screen wireframe">
+      <h2 class="wf-caption">01 / Records</h2>
+      <div class="wf-phone">
+        <div class="wf-header"><span>Wallet</span><span>+ Add record</span></div>
+        <div class="wf-body">
+          <div class="wf-month">&lt; &nbsp; November 2026 &nbsp; &gt;</div>
+          <div class="wf-summary">
+            <div><p class="wf-muted">Income</p><p>₹50,000</p></div>
+            <div><p class="wf-muted">Expenses</p><p>₹8,500</p></div>
+          </div>
+          <div class="wf-date">11 Nov · Today</div>
+          <div class="wf-item"><div class="wf-row"><span>Food</span><span>− ₹250</span></div><p class="wf-muted">13:30 · Cash · Lunch</p></div>
+          <div class="wf-item"><div class="wf-row"><span>Groceries</span><span>− ₹750</span></div><p class="wf-muted">10:15 · Bank · Weekly shop</p></div>
+          <div class="wf-date">Earlier this month</div>
+          <div class="wf-item"><div class="wf-row"><span>Rent</span><span>− ₹7,500</span></div><p class="wf-muted">09:00 · Bank</p></div>
+          <div class="wf-item"><div class="wf-row"><span>Salary</span><span>+ ₹50,000</span></div><p class="wf-muted">08:00 · Bank</p></div>
+        </div>
+        <div class="wf-nav"><span class="wf-current">Records</span><span>Analysis</span><span>Budgets</span><span>Accounts</span><span>Categories</span></div>
+      </div>
+    </section>
+
+    <section aria-label="Add record screen wireframe">
+      <h2 class="wf-caption">02 / Add record</h2>
+      <div class="wf-phone">
+        <div class="wf-header"><span>&lt; Back</span><span>Add record</span></div>
+        <div class="wf-body">
+          <div class="wf-choice"><span class="wf-current">Expense</span><span>Income</span></div>
+          <div class="wf-label">Amount</div><div class="wf-field">₹ 250</div>
+          <div class="wf-label">Category</div><div class="wf-field wf-row"><span>Food</span><span>⌄</span></div>
+          <div class="wf-label">Account</div><div class="wf-field wf-row"><span>Cash</span><span>⌄</span></div>
+          <div class="wf-label">Date</div><div class="wf-field">11 Nov 2026</div>
+          <div class="wf-label">Time occurred</div><div class="wf-field">13:30</div>
+          <div class="wf-label">Note · optional</div><div class="wf-field">Lunch</div>
+          <div class="wf-action">Save record</div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label="Analysis screen wireframe">
+      <h2 class="wf-caption">03 / Analysis</h2>
+      <div class="wf-phone">
+        <div class="wf-header"><span>Analysis</span></div>
+        <div class="wf-body">
+          <div class="wf-month">&lt; &nbsp; November 2026 &nbsp; &gt;</div>
+          <div class="wf-total">
+            <div class="wf-row"><span>Income</span><span>₹50,000</span></div>
+            <div class="wf-row"><span>Expenses</span><span>₹8,500</span></div>
+            <div class="wf-row"><span>Net this month</span><span>₹41,500</span></div>
+          </div>
+          <div class="wf-group">Expenses by category</div>
+          <div class="wf-item wf-row"><span>Rent</span><span>₹7,500</span></div>
+          <div class="wf-item wf-row"><span>Groceries</span><span>₹750</span></div>
+          <div class="wf-item wf-row"><span>Food</span><span>₹250</span></div>
+        </div>
+        <div class="wf-nav"><span>Records</span><span class="wf-current">Analysis</span><span>Budgets</span><span>Accounts</span><span>Categories</span></div>
+      </div>
+    </section>
+
+    <section aria-label="Budgets screen wireframe">
+      <h2 class="wf-caption">04 / Budgets</h2>
+      <div class="wf-phone">
+        <div class="wf-header"><span>Budgets</span><span>+ Add budget</span></div>
+        <div class="wf-body">
+          <div class="wf-month">&lt; &nbsp; November 2026 &nbsp; &gt;</div>
+          <div class="wf-total"><p class="wf-muted">Monthly spending limit</p><p>₹20,000</p><div class="wf-row" style="margin-top: 10px"><span>Spent ₹8,500</span><span>Left ₹11,500</span></div></div>
+          <div class="wf-group">Category limits</div>
+          <div class="wf-item"><div class="wf-row"><span>Rent</span><span>Edit</span></div><p class="wf-muted">₹7,500 spent / ₹8,000 limit</p></div>
+          <div class="wf-item"><div class="wf-row"><span>Groceries</span><span>Edit</span></div><p class="wf-muted">₹750 spent / ₹4,000 limit</p></div>
+          <div class="wf-item"><div class="wf-row"><span>Food</span><span>Edit</span></div><p class="wf-muted">₹250 spent / ₹3,000 limit</p></div>
+        </div>
+        <div class="wf-nav"><span>Records</span><span>Analysis</span><span class="wf-current">Budgets</span><span>Accounts</span><span>Categories</span></div>
+      </div>
+    </section>
+
+    <section aria-label="Accounts screen wireframe">
+      <h2 class="wf-caption">05 / Accounts</h2>
+      <div class="wf-phone">
+        <div class="wf-header"><span>Accounts</span><span>+ Add account</span></div>
+        <div class="wf-body">
+          <div class="wf-total"><p class="wf-muted">Total balance</p><p>₹41,500</p></div>
+          <div class="wf-item"><div class="wf-row"><span>Cash</span><span>₹2,000</span></div><p class="wf-muted">Edit account</p></div>
+          <div class="wf-item"><div class="wf-row"><span>Bank</span><span>₹39,500</span></div><p class="wf-muted">Edit account</p></div>
+        </div>
+        <div class="wf-nav"><span>Records</span><span>Analysis</span><span>Budgets</span><span class="wf-current">Accounts</span><span>Categories</span></div>
+      </div>
+    </section>
+
+    <section aria-label="Categories screen wireframe">
+      <h2 class="wf-caption">06 / Categories</h2>
+      <div class="wf-phone">
+        <div class="wf-header"><span>Categories</span><span>+ Add category</span></div>
+        <div class="wf-body">
+          <div class="wf-group">Expense categories</div>
+          <div class="wf-item wf-row"><span>Food</span><span>Edit</span></div>
+          <div class="wf-item wf-row"><span>Groceries</span><span>Edit</span></div>
+          <div class="wf-item wf-row"><span>Rent</span><span>Edit</span></div>
+          <div class="wf-item wf-row"><span>Transport</span><span>Edit</span></div>
+          <div class="wf-group">Income categories</div>
+          <div class="wf-item wf-row"><span>Salary</span><span>Edit</span></div>
+          <div class="wf-item wf-row"><span>Other income</span><span>Edit</span></div>
+        </div>
+        <div class="wf-nav"><span>Records</span><span>Analysis</span><span>Budgets</span><span>Accounts</span><span class="wf-current">Categories</span></div>
+      </div>
+    </section>
+  </div>
+</div>
