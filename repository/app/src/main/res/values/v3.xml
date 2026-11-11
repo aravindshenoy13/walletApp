@@ -1,0 +1,29 @@
+<resources>
+    <string name="analysis">Analysis</string>
+    <string name="edit_account_named">Edit %s</string>
+    <string name="search_records">Search records</string>
+    <string name="clear_search">Clear search</string>
+    <string name="no_matches">No matching records.</string>
+    <plurals name="matching_records"><item quantity="one">%d matching record</item><item quantity="other">%d matching records</item></plurals>
+    <string name="this_month">This month</string>
+    <string name="custom_range">Custom range</string>
+    <string name="date_range">%1$s – %2$s</string>
+    <string name="range_from">From</string>
+    <string name="range_to">To</string>
+    <string name="apply_range">Apply range</string>
+    <string name="invalid_range">End date must be on or after start date.</string>
+    <string name="all_accounts">All accounts</string>
+    <string name="daily_flow">Daily flow</string>
+    <string name="both_series">Both</string>
+    <string name="flow_modes">Daily flow series</string>
+    <string name="breakdown_modes">Category breakdown values</string>
+    <string name="flow_legend">Income: green · Expenses: red</string>
+    <string name="category_breakdown">By category</string>
+    <string name="no_category_values">No category values for this view and period.</string>
+    <string name="current_balance">Current balance</string>
+    <string name="opening_balance_label">Opening balance</string>
+    <string name="history_hint">Tap an account to view transactions and balance. Use Edit to change the account.</string>
+    <string name="transfer_from">Transfer from %s</string>
+    <string name="transfer_to">Transfer to %s</string>
+    <string name="graph_summary">Daily flow from %1$s to %2$s. Income %3$s. Expenses %4$s.</string>
+</resources>

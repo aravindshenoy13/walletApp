@@ -9,6 +9,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Wallet">
+        <activity android:name=".ui.AccountHistoryActivity" android:exported="false" />
+        <activity android:name=".ui.DateRangeActivity" android:exported="false" />
         <activity android:name=".ui.CategoryPickerActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.CategoryEditorActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.ExportActivity" android:exported="false" />

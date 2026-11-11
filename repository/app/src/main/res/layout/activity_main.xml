@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent"
-    android:orientation="vertical">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:paddingHorizontal="16dp">
+    android:orientation="vertical" android:focusableInTouchMode="true">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:minHeight="48dp" android:paddingHorizontal="16dp">
         <TextView android:id="@+id/title" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/app_name" android:textSize="20sp" android:textStyle="bold" />
-        <Button android:id="@+id/export" style="@style/PlainButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/export_csv" android:enabled="false" />
+                <LinearLayout android:id="@+id/search_box" android:layout_width="0dp" android:layout_weight="2" android:layout_height="wrap_content" android:gravity="center_vertical" android:background="@drawable/action_outline">
+            <ImageView android:layout_width="20dp" android:layout_height="20dp" android:layout_marginStart="8dp" android:src="@drawable/ic_search" android:importantForAccessibility="no" />
+            <EditText android:id="@+id/record_search" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:minHeight="48dp" android:padding="8dp" android:hint="@string/search_records" android:inputType="text" android:maxLines="1" android:textSize="14sp" android:importantForAutofill="no" android:imeOptions="actionDone" />
+            <Button android:id="@+id/clear_search" style="@style/PlainButton" android:layout_width="48dp" android:layout_height="48dp" android:minWidth="0dp" android:padding="0dp" android:text="×" android:contentDescription="@string/clear_search" />
+        </LinearLayout>
         <Button android:id="@+id/add" style="@style/PlainButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/add_record" android:enabled="false" />
     </LinearLayout>
     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/ink" />
@@ -12,7 +16,7 @@
     <TextView android:id="@+id/error" android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="16dp" android:textColor="@color/error" android:accessibilityLiveRegion="polite" android:visibility="gone" />
     <LinearLayout android:id="@+id/records_panel" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="vertical" android:visibility="gone">
         <TextView android:id="@+id/today_date" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center" android:paddingHorizontal="16dp" android:paddingVertical="12dp" android:textColor="@color/quiet" android:textSize="14sp" />
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingHorizontal="16dp" android:orientation="vertical">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingHorizontal="16dp" android:orientation="vertical" android:focusableInTouchMode="true">
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="3dp">
                 <TextView style="@style/SummaryLabel" android:text="@string/income" android:textColor="@color/income_amount" />
                 <TextView android:id="@+id/income" style="@style/SummaryValue" android:textColor="@color/income_amount" />
@@ -26,18 +30,20 @@
                 <TextView android:id="@+id/net" style="@style/SummaryValue" android:textStyle="bold" />
             </LinearLayout>
             <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="12dp" android:background="@color/line" />
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="12dp" android:text="@string/all_records" android:textSize="14sp" android:textColor="@color/quiet" />
+            <TextView android:id="@+id/record_count" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="12dp" android:text="@string/all_records" android:textSize="14sp" android:textColor="@color/quiet" />
             <TextView android:id="@+id/empty_records" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="12dp" android:textSize="16sp" android:visibility="gone" />
         </LinearLayout>
         <androidx.recyclerview.widget.RecyclerView android:id="@+id/record_list" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:clipToPadding="false" android:paddingHorizontal="16dp" android:paddingBottom="16dp" />
         <Button android:id="@+id/add_record_button" style="@style/OutlineButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginHorizontal="16dp" android:layout_marginBottom="12dp" android:text="@string/add_record" android:enabled="false" />
+        <Button android:id="@+id/export" style="@style/PlainButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/export_csv" android:enabled="false" />
     </LinearLayout>
+    <include android:id="@+id/analysis_panel" layout="@layout/panel_analysis" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:visibility="gone" />
     <LinearLayout android:id="@+id/accounts_panel" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="vertical" android:padding="16dp" android:visibility="gone">
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/total_balance" android:textSize="14sp" android:textColor="@color/quiet" />
         <TextView android:id="@+id/total_balance" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="24sp" android:paddingVertical="8dp" android:textIsSelectable="true" />
         <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/line" />
         <TextView android:id="@+id/empty_accounts" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="16dp" android:text="@string/no_accounts" android:visibility="gone" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="12dp" android:text="@string/edit_account_hint" android:textColor="@color/quiet" android:textSize="12sp" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="12dp" android:text="@string/history_hint" android:textColor="@color/quiet" android:textSize="12sp" />
         <androidx.recyclerview.widget.RecyclerView android:id="@+id/account_list" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:clipToPadding="false" />
     </LinearLayout>
     <LinearLayout android:id="@+id/categories_panel" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="vertical" android:padding="16dp" android:visibility="gone">
@@ -46,8 +52,9 @@
     </LinearLayout>
     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/ink" />
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
-        <Button android:id="@+id/records_tab" style="@style/PlainButton" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/records" />
-        <Button android:id="@+id/accounts_tab" style="@style/PlainButton" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/accounts" />
-        <Button android:id="@+id/categories_tab" style="@style/PlainButton" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/categories" />
+        <Button android:id="@+id/records_tab" style="@style/PlainButton" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/records" android:textSize="12sp" />
+        <Button android:id="@+id/analysis_tab" style="@style/PlainButton" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/analysis" android:textSize="12sp" />
+        <Button android:id="@+id/accounts_tab" style="@style/PlainButton" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/accounts" android:textSize="12sp" />
+        <Button android:id="@+id/categories_tab" style="@style/PlainButton" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/categories" android:textSize="12sp" />
     </LinearLayout>
 </LinearLayout>

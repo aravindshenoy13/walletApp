@@ -1,0 +1,10 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="16dp">
+    <Button android:id="@+id/back" style="@style/PlainButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/back" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/custom_range" android:textSize="20sp" />
+    <TextView style="@style/FormLabel" android:text="@string/range_from" android:labelFor="@id/start_date" />
+    <Button android:id="@+id/start_date" style="@style/OutlineButton" android:layout_width="match_parent" android:layout_height="wrap_content" />
+    <TextView style="@style/FormLabel" android:text="@string/range_to" android:labelFor="@id/end_date" />
+    <Button android:id="@+id/end_date" style="@style/OutlineButton" android:layout_width="match_parent" android:layout_height="wrap_content" />
+    <TextView android:id="@+id/error" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/invalid_range" android:textColor="@color/error" android:visibility="gone" android:accessibilityLiveRegion="polite" />
+    <Button android:id="@+id/apply" style="@style/OutlineButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/apply_range" />
+</LinearLayout>

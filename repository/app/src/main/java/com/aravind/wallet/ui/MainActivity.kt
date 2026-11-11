@@ -4,9 +4,11 @@ import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -15,6 +17,7 @@ import com.aravind.wallet.R
 import com.aravind.wallet.databinding.ActivityMainBinding
 import com.aravind.wallet.domain.Ledger
 import com.aravind.wallet.domain.Money
+import com.aravind.wallet.domain.searchRecords
 import java.time.LocalDate
 import java.time.ZoneId
 import kotlinx.coroutines.delay
@@ -22,15 +25,25 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-    private enum class Tab { RECORDS, ACCOUNTS, CATEGORIES }
+    private enum class Tab { RECORDS, ANALYSIS, ACCOUNTS, CATEGORIES }
     private lateinit var binding: ActivityMainBinding
     private val model: WalletViewModel by viewModels()
     private var tab = Tab.RECORDS
     private var ledger: Ledger? = null
+    private lateinit var analysis: AnalysisPanel
+    private val rangePicker = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val start = result.data?.getStringExtra("start")?.let(LocalDate::parse)
+            val end = result.data?.getStringExtra("end")?.let(LocalDate::parse)
+            if (start != null && end != null) analysis.range(start, end)
+        }
+    }
     private val recordsAdapter = RecordsAdapter { id ->
         startActivity(Intent(this, RecordEditorActivity::class.java).putExtra("id", id))
     }
-    private val accountsAdapter = AccountsAdapter { id ->
+    private val accountsAdapter = AccountsAdapter({ id ->
+        startActivity(Intent(this, AccountHistoryActivity::class.java).putExtra("id", id))
+    }) { id ->
         startActivity(Intent(this, AccountEditorActivity::class.java).putExtra("id", id))
     }
     private val categoriesAdapter = CategoriesAdapter { id ->
@@ -44,6 +57,11 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         applyInsets(binding.root)
+        analysis = AnalysisPanel(this, binding.analysisPanel, savedInstanceState) { start, end ->
+            rangePicker.launch(Intent(this, DateRangeActivity::class.java).putExtra("start", start.toString()).putExtra("end", end.toString()))
+        }
+        binding.recordSearch.doAfterTextChanged { render() }
+        binding.clearSearch.setOnClickListener { binding.recordSearch.text.clear() }
         binding.recordList.layoutManager = LinearLayoutManager(this)
         binding.recordList.adapter = recordsAdapter
         binding.accountList.layoutManager = LinearLayoutManager(this)
@@ -51,6 +69,7 @@ class MainActivity : AppCompatActivity() {
         binding.categoryList.layoutManager = LinearLayoutManager(this)
         binding.categoryList.adapter = categoriesAdapter
         binding.recordsTab.setOnClickListener { tab = Tab.RECORDS; render() }
+        binding.analysisTab.setOnClickListener { tab = Tab.ANALYSIS; analysis.open(); render() }
         binding.accountsTab.setOnClickListener { tab = Tab.ACCOUNTS; render() }
         binding.categoriesTab.setOnClickListener { tab = Tab.CATEGORIES; render() }
         binding.add.setOnClickListener {
@@ -67,7 +86,7 @@ class MainActivity : AppCompatActivity() {
                     binding.error.setText(R.string.load_failed)
                     if (state is LedgerState.Ready) {
                         ledger = state.ledger
-                        recordsAdapter.show(state.ledger)
+                        analysis.show(state.ledger)
                         accountsAdapter.submitList(state.ledger.accounts.map { AccountRow(it, state.ledger.balances.getValue(it.id)) })
                         categoriesAdapter.submitList(state.ledger.categories)
                     }
@@ -92,19 +111,26 @@ class MainActivity : AppCompatActivity() {
 
     private fun render() = with(binding) {
         val today = LocalDate.now()
-        title.setText(when (tab) { Tab.RECORDS -> R.string.app_name; Tab.ACCOUNTS -> R.string.accounts; Tab.CATEGORIES -> R.string.categories })
+        title.setText(when (tab) { Tab.RECORDS -> R.string.app_name; Tab.ANALYSIS -> R.string.analysis; Tab.ACCOUNTS -> R.string.accounts; Tab.CATEGORIES -> R.string.categories })
         add.setText(if (tab == Tab.CATEGORIES) R.string.add_category else R.string.add_account)
-        add.isVisible = tab != Tab.RECORDS
+        add.isVisible = tab == Tab.ACCOUNTS || tab == Tab.CATEGORIES
+        searchBox.isVisible = tab == Tab.RECORDS
+        clearSearch.isEnabled = recordSearch.text.isNotEmpty()
         export.isVisible = tab == Tab.RECORDS
-        listOf(recordsTab to Tab.RECORDS, accountsTab to Tab.ACCOUNTS, categoriesTab to Tab.CATEGORIES).forEach { (button, target) ->
+        listOf(recordsTab to Tab.RECORDS, analysisTab to Tab.ANALYSIS, accountsTab to Tab.ACCOUNTS, categoriesTab to Tab.CATEGORIES).forEach { (button, target) ->
             button.setTypeface(null, if (tab == target) Typeface.BOLD else Typeface.NORMAL)
             button.isSelected = tab == target
         }
         recordsPanel.isVisible = ledger != null && tab == Tab.RECORDS
         accountsPanel.isVisible = ledger != null && tab == Tab.ACCOUNTS
         categoriesPanel.isVisible = ledger != null && tab == Tab.CATEGORIES
+        analysisPanel.root.isVisible = ledger != null && tab == Tab.ANALYSIS
         todayDate.text = getString(R.string.today_date, today.display())
         val current = ledger ?: return@with
+        val matching = current.searchRecords(recordSearch.text.toString())
+        recordsAdapter.show(current, matching)
+        recordCount.text = if (recordSearch.text.isBlank()) getString(R.string.all_records)
+            else resources.getQuantityString(R.plurals.matching_records, matching.size, matching.size)
         val totals = current.totals(today)
         income.text = Money.format(totals.income)
         expense.text = Money.format(totals.expense)
@@ -112,6 +138,7 @@ class MainActivity : AppCompatActivity() {
         totalBalance.text = Money.format(current.totalBalance)
         emptyAccounts.isVisible = current.accounts.isEmpty()
         val emptyMessage = when {
+            recordSearch.text.isNotBlank() && matching.isEmpty() -> R.string.no_matches
             current.accounts.isEmpty() -> R.string.no_accounts
             current.records.isEmpty() -> R.string.no_records
             current.records.none { it.occurredAt.toLocalDate() == today } -> R.string.no_records_today
@@ -134,6 +161,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("tab", tab.name)
+        analysis.save(outState)
         super.onSaveInstanceState(outState)
     }
 }
