@@ -65,6 +65,17 @@
 - Add a Net-only wheel chart showing only categories with negative net cash flow. Size slices by the absolute negative net amounts; exclude zero and positive categories.
 - Add a drop-down in the Analysis tab to switch between Calendar, Category Breakdown (wheel chart), and Flow Graph views.
 
+### V4.2 — Visual refinements and account icons
+
+- Replace default checkbox/tick appearances with clear wireframe-style selection states while preserving single- and multi-select behavior.
+- Fit and align transaction-type icons; replace the Settings gear with a three-line menu icon; remove the duplicate plus on Add category.
+- Improve category icon and wheel-chart contrast in dark mode and restyle the Settings screen to match the app.
+- Add thin, theme-aware outlines to dropdowns and remove redundant explanatory text.
+- Collapse Records search when it is dismissed and return it to its normal state.
+- Show positive and zero account balances in the normal text color and negative balances in red.
+- Add selectable bank, cash, and card account icons as visual labels, with persistent storage and backward-compatible backup/restore.
+- See [V4.2-PLAN.md](V4.2-PLAN.md) for the detailed scope, implementation order, assumptions, and validation.
+
 ## Business rules
 
 - Transaction direction and category are separate concepts: income and expense entries can share a category.
