@@ -6,9 +6,6 @@
 *.iml
 local.properties
 
-# Previous repository setup files
-/repository/
-
 # Android build output
 .gradle/
 .gradle-user-home/

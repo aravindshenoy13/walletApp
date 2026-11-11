@@ -1,6 +1,6 @@
 # Wallet V1
 
-A personal, on-device INR transaction tracker for Android 8.0 (API 26) and later. Built with Kotlin, native Android Views/XML, and Room. The product scope is defined in [ROADMAP.md](ROADMAP.md); the simple appearance follows wireframe revision 02.
+A personal, on-device INR transaction tracker for Android 8.0 (API 26) and later. Built with Kotlin, native Android Views/XML, and Room. The product scope is defined in [ROADMAP.md](../ROADMAP.md); the simple appearance follows [wireframe revision 02](../wireframes/wallet-v1-wireframe-r02.html).
 
 ## Using the app
 
@@ -13,7 +13,9 @@ V1 has no analysis, budgets, custom categories, category filters, CSV, date-rang
 
 ## Build and install
 
-Open this directory in Android Studio with Android SDK Platform 37 and Build Tools 36.0.0 installed. Use JDK 17 or a compatible newer JDK. The checked-in wrapper downloads Gradle 9.7.1 and verifies its SHA-256; AGP 9.5.1 supplies built-in Kotlin support. Dependencies are pinned. A first build needs internet access to download build tools and libraries.
+`WalletApp/repository/` is the Android project root. Open this folder in Android Studio and run all commands below from it. App source, Gradle configuration, caches, build output, and APKs belong here; planning documents and wireframes remain in the parent WalletApp directory.
+
+Build with Android SDK Platform 37 and Build Tools 36.0.0 installed. Use JDK 17 or a compatible newer JDK. The checked-in wrapper downloads Gradle 9.7.1 and verifies its SHA-256; AGP 9.5.1 supplies built-in Kotlin support. Dependencies are pinned. A first build needs internet access to download build tools and libraries.
 
 Configure the SDK location through Android Studio, `ANDROID_HOME`, or an untracked `local.properties` file. A Windows example is `sdk.dir=C\:/Users/your-name/AppData/Local/Android/Sdk`.
 
@@ -44,4 +46,4 @@ Verified on 11 November 2026: all 6 JVM tests and 9 instrumented tests passed on
 - Database schema version 1 is checked in under `app/schemas/`. There is no destructive-migration fallback.
 - Editors keep drafts across recreation and keep writes in a ViewModel to prevent double saves during rotation.
 
-The implementation does not change the roadmap, agent requirements, or earlier wireframes.
+The roadmap and earlier wireframes remain in the parent WalletApp directory.

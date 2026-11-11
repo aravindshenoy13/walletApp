@@ -1,0 +1,24 @@
+.env
+.env.*
+!.env.example
+.idea/
+*.iml
+local.properties
+
+# Local build tools, caches, and generated output
+.gradle/
+.gradle-user-home/
+.kotlin/
+.tools/
+**/build/
+*.apk
+*.aab
+*.jks
+*.keystore
+
+# Preserve existing repository setup remnants without tracking them
+/HEAD
+/config
+/description
+/hooks/
+/info/
