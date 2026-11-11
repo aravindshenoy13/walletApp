@@ -23,19 +23,27 @@
 - Add, edit, and manage custom categories.
 - Allow renaming, changing icons, and archiving all categories, including the built-in categories.
 - Add category icons alongside category management.
+- Each category icon can use any of 16 background colors: 8 normal (dark) colors and 8 pastel colors. Choose the icon and its background color independently.
+- Present all 16 colors in one selector labeled "Background color", without separate color-group headings.
+- Use simple line-art category icons. In light mode the line art is black; when dark mode is added in V4, the line art is white. V2 assumes light mode.
 - Export transactions as CSV.
 
-### V3 — Analysis and overview
+### V3 — Analysis, search, and account history
 
-- Filter records by one category at a time.
-- Add search at the top right of the Records page. Match transaction description/payee, amount, or category, and filter the records directly on the same page.
-- Add day-by-day income and expense flow graphs.
-- Add category analysis and a spending overview.
-- Allow viewing one account's transactions and balance.
-- Show an account balance for a past date.
-- Add income, expense, and net totals for a selected date or date range in the Analysis tab.
-- Keep historical date selection and analysis controls out of the Records tab.
-- Confirm graph modes, account filters, and category total calculations with the user before implementing them.
+- Keep a compact Records search field visible in the top-right header with a magnifying-glass icon. Filter the transaction list on the same page as the user types; match description/payee or amount only. Include a clear action. Do not search category names or add a category filter. Today's summary totals remain independent of search results.
+- Add an Analysis tab. Each time it opens, default to the first day of the current month through today and show income, expense, and net totals for that range.
+- Add a custom start/end date range. Applying it updates the totals, daily flow graph, and category breakdown together. Keep historical date selection and analysis controls out of Records.
+- Show daily income and expense as two colored series together by default, with controls to switch to income-only or expense-only. Use the existing muted pastel green and red semantic colors.
+- Show a per-category overview directly below the graph. Its default value is net cash flow per category (income minus expenses). Allow switching the breakdown to income-only or expense-only. Transfers are excluded. Reimbursements remain income in the same category and therefore increase that category's net value. Hide categories with no value in the active view and range.
+- Add an Analysis account selector for All accounts or one selected account at a time. The selection applies to totals, graph, and category breakdown.
+- Keep the Accounts list and current total balance. Tapping an account opens its dated transaction history and current balance; show an Edit action on the account row. Account history includes transfers in the appropriate direction and the opening balance. Do not add a past-date balance screen.
+
+#### V3 implementation order
+
+1. Add the compact header search and live same-page filtering without changing today's summary.
+2. Add the Analysis navigation and month-to-date period state, custom range picker, and account scope.
+3. Add period totals, the switchable daily flow graph, and the net/income/expense category breakdown.
+4. Change account-row navigation to history, add the separate Edit action, and build the account detail list.
 
 ### V4 — Full backup, restore, dark mode, and app-wide icons
 
@@ -47,6 +55,7 @@
 - Add dark mode.
 - Add a Settings button next to the "Wallet" title for dark mode, CSV export, CSV import, and other options to be decided later.
 - Add icons throughout the app, including navigation, actions, accounts, and transaction types, building on V2's category icons.
+- Add more icons to the category icon selection.
 
 ## Business rules
 
