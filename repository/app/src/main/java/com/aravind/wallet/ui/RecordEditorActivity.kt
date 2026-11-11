@@ -33,6 +33,7 @@ class RecordEditorActivity : AppCompatActivity() {
     private var initialized = false
     private var draft: Bundle? = null
     private var accounts = emptyList<Account>()
+    private var preservedNote = ""
     private var occurredAt = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES)
     private val recordId get() = intent.getLongExtra("id", 0)
     private val type: RecordType get() = when (binding.type.checkedRadioButtonId) {
@@ -102,6 +103,7 @@ class RecordEditorActivity : AppCompatActivity() {
             return
         }
         accounts = ledger.accounts
+        preservedNote = record?.note.orEmpty()
         val names = accounts.map { it.name }
         binding.account.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, names)
         binding.destination.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, names)
@@ -121,7 +123,6 @@ class RecordEditorActivity : AppCompatActivity() {
         binding.category.setSelection(Category.entries.indexOf(category))
         binding.amount.setText(draft?.getString("amount") ?: record?.let { Money.input(it.amountMinor) }.orEmpty())
         binding.description.setText(draft?.getString("description") ?: record?.description.orEmpty())
-        binding.note.setText(draft?.getString("note") ?: record?.note.orEmpty())
         occurredAt = draft?.getString("occurredAt")?.let(LocalDateTime::parse) ?: record?.occurredAt
             ?: LocalDateTime.of(intent.getStringExtra("date")?.let(LocalDate::parse) ?: LocalDate.now(),
                 LocalTime.now().truncatedTo(ChronoUnit.MINUTES))
@@ -173,7 +174,7 @@ class RecordEditorActivity : AppCompatActivity() {
         model.saveRecord(WalletRecord(
             id = recordId, type = type, amountMinor = amount, accountId = source, destinationAccountId = destination,
             category = if (type == RecordType.TRANSFER) null else Category.entries[binding.category.selectedItemPosition],
-            occurredAt = occurredAt, description = binding.description.text.toString(), note = binding.note.text.toString(),
+            occurredAt = occurredAt, description = binding.description.text.toString(), note = preservedNote,
         ))
     }
 
@@ -196,7 +197,6 @@ class RecordEditorActivity : AppCompatActivity() {
             putString("type", type.name)
             putString("amount", binding.amount.text.toString())
             putString("description", binding.description.text.toString())
-            putString("note", binding.note.text.toString())
             putString("occurredAt", occurredAt.toString())
             putString("category", Category.entries[binding.category.selectedItemPosition].name)
             putLong("source", accounts.getOrNull(binding.account.selectedItemPosition)?.id ?: 0)

@@ -8,28 +8,40 @@
     <ProgressBar android:id="@+id/loading" android:layout_width="48dp" android:layout_height="48dp" android:layout_gravity="center_horizontal" android:contentDescription="@string/loading" />
     <ScrollView android:id="@+id/scroll" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true">
         <LinearLayout android:id="@+id/form" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp" android:visibility="gone">
-            <RadioGroup android:id="@+id/type" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:checkedButton="@id/type_expense">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="top">
+                <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
+                    <TextView android:id="@+id/account_label" style="@style/FormLabel" android:layout_marginTop="0dp" android:text="@string/account" android:labelFor="@id/account" />
+                    <Spinner android:id="@+id/account" style="@style/FormField" android:spinnerMode="dropdown" android:layout_marginTop="4dp" />
+                </LinearLayout>
+                <Space android:layout_width="12dp" android:layout_height="1dp" />
+                <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
+                    <TextView android:id="@+id/category_label" style="@style/FormLabel" android:layout_marginTop="0dp" android:text="@string/category" android:labelFor="@id/category" />
+                    <Spinner android:id="@+id/category" style="@style/FormField" android:spinnerMode="dropdown" android:layout_marginTop="4dp" />
+                    <TextView android:id="@+id/destination_label" style="@style/FormLabel" android:layout_marginTop="0dp" android:text="@string/to_account" android:labelFor="@id/destination" android:visibility="gone" />
+                    <Spinner android:id="@+id/destination" style="@style/FormField" android:spinnerMode="dropdown" android:layout_marginTop="4dp" android:visibility="gone" />
+                </LinearLayout>
+            </LinearLayout>
+            <RadioGroup android:id="@+id/type" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:orientation="horizontal" android:checkedButton="@id/type_expense">
                 <RadioButton android:id="@+id/type_expense" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:minHeight="48dp" android:text="@string/expense" android:textSize="14sp" />
                 <RadioButton android:id="@+id/type_income" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:minHeight="48dp" android:text="@string/income" android:textSize="14sp" />
                 <RadioButton android:id="@+id/type_transfer" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:minHeight="48dp" android:text="@string/transfer" android:textSize="14sp" />
             </RadioGroup>
+            <TextView android:id="@+id/transfer_help" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="8dp" android:text="@string/transfer_help" android:textSize="14sp" android:textColor="@color/quiet" android:visibility="gone" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="top">
+                <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
+                    <TextView style="@style/FormLabel" android:text="@string/date" android:labelFor="@id/date" />
+                    <Button android:id="@+id/date" style="@style/OutlineButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:gravity="start|center_vertical" />
+                </LinearLayout>
+                <Space android:layout_width="12dp" android:layout_height="1dp" />
+                <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
+                    <TextView style="@style/FormLabel" android:text="@string/time" android:labelFor="@id/time" />
+                    <Button android:id="@+id/time" style="@style/OutlineButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:gravity="start|center_vertical" />
+                </LinearLayout>
+            </LinearLayout>
             <TextView style="@style/FormLabel" android:text="@string/amount" android:labelFor="@id/amount" />
             <EditText android:id="@+id/amount" style="@style/FormField" android:inputType="numberDecimal" android:digits="0123456789." android:maxLength="22" android:maxLines="1" android:importantForAutofill="no" />
             <TextView style="@style/FormLabel" android:text="@string/description" android:labelFor="@id/description" />
             <EditText android:id="@+id/description" style="@style/FormField" android:inputType="textCapSentences" android:maxLength="120" android:maxLines="2" android:importantForAutofill="no" />
-            <TextView android:id="@+id/category_label" style="@style/FormLabel" android:text="@string/category" android:labelFor="@id/category" />
-            <Spinner android:id="@+id/category" style="@style/FormField" android:spinnerMode="dropdown" />
-            <TextView android:id="@+id/account_label" style="@style/FormLabel" android:text="@string/account" android:labelFor="@id/account" />
-            <Spinner android:id="@+id/account" style="@style/FormField" android:spinnerMode="dropdown" />
-            <TextView android:id="@+id/destination_label" style="@style/FormLabel" android:text="@string/to_account" android:labelFor="@id/destination" android:visibility="gone" />
-            <Spinner android:id="@+id/destination" style="@style/FormField" android:spinnerMode="dropdown" android:visibility="gone" />
-            <TextView android:id="@+id/transfer_help" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="8dp" android:text="@string/transfer_help" android:textSize="14sp" android:textColor="@color/quiet" android:visibility="gone" />
-            <TextView style="@style/FormLabel" android:text="@string/date" android:labelFor="@id/date" />
-            <Button android:id="@+id/date" style="@style/OutlineButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:gravity="start|center_vertical" />
-            <TextView style="@style/FormLabel" android:text="@string/time" android:labelFor="@id/time" />
-            <Button android:id="@+id/time" style="@style/OutlineButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:gravity="start|center_vertical" />
-            <TextView style="@style/FormLabel" android:text="@string/note" android:labelFor="@id/note" />
-            <EditText android:id="@+id/note" style="@style/FormField" android:inputType="textCapSentences|textMultiLine" android:maxLength="1000" android:minLines="2" android:gravity="top|start" android:importantForAutofill="no" />
             <TextView android:id="@+id/error" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:textColor="@color/error" android:accessibilityLiveRegion="polite" android:visibility="gone" />
             <Button android:id="@+id/save" style="@style/OutlineButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/save_record" />
             <Button android:id="@+id/delete" style="@style/PlainButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/delete_record" android:visibility="gone" />

@@ -5,6 +5,5 @@
         <TextView android:id="@+id/amount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:maxWidth="180dp" android:gravity="end" android:textSize="16sp" />
     </LinearLayout>
     <TextView android:id="@+id/meta" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="4dp" android:textColor="@color/quiet" android:textSize="13sp" />
-    <TextView android:id="@+id/note" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="4dp" android:textColor="@color/quiet" android:textSize="13sp" android:visibility="gone" />
     <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="12dp" android:background="@color/line" />
 </LinearLayout>

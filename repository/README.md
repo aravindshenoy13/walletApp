@@ -5,9 +5,9 @@ A personal, on-device INR transaction tracker for Android 8.0 (API 26) and later
 ## Using the app
 
 1. Open **Accounts** and add an account with a name and opening balance. All accounts behave identically, including accounts with negative balances.
-2. Open **Records** and choose **+ Add record**. Enter an expense, income, or transfer with an amount, description/payee, occurrence date/time, and optional note. Income and expenses use the same built-in category list. Transfers require two different accounts.
+2. Open **Records** and choose **+ Add record**. Enter an expense, income, or transfer with an account, category when applicable, amount, description/payee, and occurrence date/time. Income and expenses use the same built-in category list. Transfers require two different accounts.
 3. Tap a record to edit it or delete it. Balances recalculate after every change. Tap an account to edit its name or opening balance.
-4. Use the date picker, day arrows, **Today**, or a record's date heading to select the day for income, expense, and net totals. The list below always shows all records grouped by occurrence date, newest first. Transfers are excluded from those totals.
+4. The Records summary always shows today's income, expense, and net totals. The list below shows all records grouped by occurrence date, newest first. Date headings do not change the summary. Transfers are excluded from income and expense totals.
 
 V1 has no analysis, budgets, custom categories, category filters, CSV, date-range totals, account history screens, or backup/restore controls. No sample accounts or transactions are inserted at startup.
 

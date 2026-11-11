@@ -9,22 +9,21 @@
 - Every transaction records its occurrence date and time.
 - Support income, expense, and transfer transaction types.
 - Income and expense transactions have a category. A category can be used for either income or expense; it is not restricted to one direction.
-- Include a transaction description/payee and an optional note.
+- Include a transaction description/payee. A separate note field is not included.
 - A transfer moves value between two accounts and is excluded from income and expense totals. A card payment is represented as a transfer between accounts.
 - Transactions change the relevant account balances.
 - Show transactions grouped by date.
-- For one selected date, show income total, expense total, and net total. V1 totals are for that date, not a date range.
+- On the Records tab, always show income, expense, and net totals for the current day. Do not provide date navigation or date selection on this tab.
 - Store data locally on the device.
 - V1 has a built-in category set. Users cannot add categories in V1.
 - Do not include analysis/overview, budgets, or account-specific transaction/history views in V1.
 
-### V2 — Categories, CSV, and date ranges
+### V2 — Categories and CSV
 
 - Add, edit, and manage custom categories.
 - Add category icons alongside category management.
 - Filter records by category.
 - Import and export transactions as CSV.
-- Add totals for a selected date range in addition to V1's single-date totals.
 - CSV column format and import details are intentionally undecided; confirm them with the user before implementing CSV import.
 
 ### V3 — Analysis and overview
@@ -33,6 +32,8 @@
 - Add category analysis and a spending overview.
 - Allow viewing one account's transactions and balance.
 - Show an account balance for a past date.
+- Add income, expense, and net totals for a selected date or date range in the Analysis tab.
+- Keep historical date selection and analysis controls out of the Records tab.
 - Confirm graph modes, account filters, and category total calculations with the user before implementing them.
 
 ### V4 — Full backup, restore, dark mode, and app-wide icons

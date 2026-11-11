@@ -2,7 +2,6 @@ package com.aravind.wallet.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -23,7 +22,7 @@ sealed interface RecordRow {
     data class Entry(val record: WalletRecord, val source: String, val destination: String?) : RecordRow
 }
 
-class RecordsAdapter(private val edit: (Long) -> Unit, private val selectDate: (LocalDate) -> Unit) :
+class RecordsAdapter(private val edit: (Long) -> Unit) :
     ListAdapter<RecordRow, RecyclerView.ViewHolder>(object : DiffUtil.ItemCallback<RecordRow>() {
         override fun areItemsTheSame(old: RecordRow, new: RecordRow): Boolean = when {
             old is RecordRow.Date && new is RecordRow.Date -> old.date == new.date
@@ -60,7 +59,6 @@ class RecordsAdapter(private val edit: (Long) -> Unit, private val selectDate: (
         when (val row = getItem(position)) {
             is RecordRow.Date -> (holder as DateHolder).binding.apply {
                 dateLabel.text = row.date.display()
-                root.setOnClickListener { selectDate(row.date) }
             }
             is RecordRow.Entry -> (holder as RecordHolder).binding.apply {
                 val record = row.record
@@ -71,12 +69,15 @@ class RecordsAdapter(private val edit: (Long) -> Unit, private val selectDate: (
                     RecordType.INCOME -> R.string.income_amount
                     RecordType.TRANSFER -> R.string.transfer_amount
                 }, Money.format(record.amountMinor))
+                amount.setTextColor(context.getColor(when (record.type) {
+                    RecordType.INCOME -> R.color.income_amount
+                    RecordType.EXPENSE -> R.color.expense_amount
+                    RecordType.TRANSFER -> R.color.ink
+                }))
                 val time = record.occurredAt.format(DateTimeFormatter.ofPattern("HH:mm"))
                 meta.text = if (record.type == RecordType.TRANSFER)
                     context.getString(R.string.transfer_meta, time, row.source, row.destination)
                 else context.getString(R.string.record_meta, time, record.category?.label, row.source)
-                note.text = record.note
-                note.isVisible = record.note.isNotBlank()
                 root.setOnClickListener { edit(record.id) }
             }
         }
@@ -99,8 +100,8 @@ class AccountsAdapter(private val edit: (Long) -> Unit) :
         holder.binding.apply {
             description.text = row.account.name
             amount.text = Money.format(row.balance)
+            amount.setTextColor(root.context.getColor(R.color.ink))
             meta.text = root.context.getString(R.string.opening_balance_value, Money.format(row.account.openingBalanceMinor))
-            note.isVisible = false
             root.setOnClickListener { edit(row.account.id) }
         }
     }

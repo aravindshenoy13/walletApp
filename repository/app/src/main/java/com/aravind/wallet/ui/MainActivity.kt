@@ -21,12 +21,10 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val model: WalletViewModel by viewModels()
-    private var selectedDate = LocalDate.now()
     private var accountsTab = false
     private var ledger: Ledger? = null
     private val recordsAdapter = RecordsAdapter(
         edit = { id -> startActivity(Intent(this, RecordEditorActivity::class.java).putExtra("id", id)) },
-        selectDate = { date -> setDate(date, scroll = false) },
     )
     private val accountsAdapter = AccountsAdapter { id ->
         startActivity(Intent(this, AccountEditorActivity::class.java).putExtra("id", id))
@@ -34,7 +32,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        selectedDate = savedInstanceState?.getString("date")?.let(LocalDate::parse) ?: LocalDate.now()
         accountsTab = savedInstanceState?.getBoolean("accounts") ?: false
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -45,10 +42,6 @@ class MainActivity : AppCompatActivity() {
         binding.accountList.adapter = accountsAdapter
         binding.recordsTab.setOnClickListener { accountsTab = false; render() }
         binding.accountsTab.setOnClickListener { accountsTab = true; render() }
-        binding.previousDate.setOnClickListener { if (selectedDate > LocalDate.of(1, 1, 1)) setDate(selectedDate.minusDays(1)) }
-        binding.nextDate.setOnClickListener { if (selectedDate < LocalDate.of(9999, 12, 31)) setDate(selectedDate.plusDays(1)) }
-        binding.today.setOnClickListener { setDate(LocalDate.now()) }
-        binding.selectedDate.setOnClickListener { chooseDate(selectedDate) { setDate(it) } }
         binding.add.setOnClickListener { add() }
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -68,16 +61,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setDate(date: LocalDate, scroll: Boolean = true) {
-        selectedDate = date
+    override fun onResume() {
+        super.onResume()
         render()
-        if (scroll) {
-            val position = recordsAdapter.currentList.indexOfFirst { it is RecordRow.Date && it.date == date }
-            if (position >= 0) binding.recordList.scrollToPosition(position)
-        }
     }
 
     private fun render() = with(binding) {
+        val today = LocalDate.now()
         val showingAccounts = this@MainActivity.accountsTab
         title.setText(if (showingAccounts) R.string.accounts else R.string.app_name)
         add.setText(if (showingAccounts) R.string.add_account else R.string.add_record)
@@ -87,9 +77,9 @@ class MainActivity : AppCompatActivity() {
         accountsTab.isSelected = showingAccounts
         recordsPanel.isVisible = ledger != null && !showingAccounts
         accountsPanel.isVisible = ledger != null && showingAccounts
-        selectedDate.text = this@MainActivity.selectedDate.display()
+        todayDate.text = getString(R.string.today_date, today.display())
         val current = ledger ?: return@with
-        val totals = current.totals(this@MainActivity.selectedDate)
+        val totals = current.totals(today)
         income.text = Money.format(totals.income)
         expense.text = Money.format(totals.expense)
         net.text = Money.format(totals.net)
@@ -98,7 +88,7 @@ class MainActivity : AppCompatActivity() {
         val emptyMessage = when {
             current.accounts.isEmpty() -> R.string.no_accounts
             current.records.isEmpty() -> R.string.no_records
-            current.records.none { it.occurredAt.toLocalDate() == this@MainActivity.selectedDate } -> R.string.no_records_on_date
+            current.records.none { it.occurredAt.toLocalDate() == today } -> R.string.no_records_today
             else -> null
         }
         emptyRecords.isVisible = emptyMessage != null
@@ -117,11 +107,10 @@ class MainActivity : AppCompatActivity() {
                     accountsTab = true
                     startActivity(Intent(this, AccountEditorActivity::class.java))
                 }.show()
-        } else startActivity(Intent(this, RecordEditorActivity::class.java).putExtra("date", selectedDate.toString()))
+        } else startActivity(Intent(this, RecordEditorActivity::class.java).putExtra("date", LocalDate.now().toString()))
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putString("date", selectedDate.toString())
         outState.putBoolean("accounts", accountsTab)
         super.onSaveInstanceState(outState)
     }

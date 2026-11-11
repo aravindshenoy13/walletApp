@@ -24,6 +24,7 @@ import com.aravind.wallet.domain.Ledger
 import com.aravind.wallet.domain.Money
 import java.io.File
 import java.math.BigInteger
+import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -66,26 +67,23 @@ class WalletFlowTest {
             onView(withId(R.id.amount)).perform(scrollTo(), replaceText("10.25"), closeSoftKeyboard())
             onView(withId(R.id.description)).perform(scrollTo(), replaceText(lunch), closeSoftKeyboard())
             chooseAccount(R.id.account, cash)
+            val today = LocalDate.now()
             onView(withId(R.id.date)).perform(scrollTo(), click())
-            onView(isAssignableFrom(DatePicker::class.java)).perform(dateAction(2026, 10, 10))
+            onView(isAssignableFrom(DatePicker::class.java)).perform(dateAction(today.year, today.monthValue - 1, today.dayOfMonth))
             onView(withId(android.R.id.button1)).perform(click())
             onView(withId(R.id.time)).perform(scrollTo(), click())
             onView(isAssignableFrom(TimePicker::class.java)).perform(timeAction(8, 45))
             onView(withId(android.R.id.button1)).perform(click())
-            onView(withId(R.id.note)).perform(scrollTo(), replaceText("Optional note"), closeSoftKeyboard())
             onView(withId(R.id.save)).perform(scrollTo(), click())
             awaitText(lunch)
             var ledger = awaitLedger { it.records.any { row -> row.description == lunch } }
             val record = ledger.records.single { it.description == lunch }
-            assertEquals(LocalDateTime.of(2026, 11, 10, 8, 45), record.occurredAt)
-            assertEquals("Optional note", record.note)
+            assertEquals(today.atTime(8, 45), record.occurredAt)
+            assertEquals("", record.note)
             val cashId = ledger.accounts.single { it.name == cash }.id
             val bankId = ledger.accounts.single { it.name == bank }.id
             assertEquals(BigInteger.valueOf(8_975), ledger.balances[cashId])
 
-            onView(withId(R.id.selected_date)).perform(click())
-            onView(isAssignableFrom(DatePicker::class.java)).perform(dateAction(2026, 10, 10))
-            onView(withId(android.R.id.button1)).perform(click())
             onView(withId(R.id.expense)).check(matches(withText(Money.format(1_025))))
             capture("records")
 
@@ -110,7 +108,7 @@ class WalletFlowTest {
             ledger = awaitLedger { it.records.any { row -> row.description == transfer } }
             assertEquals(BigInteger.valueOf(8_000), ledger.balances[cashId])
             assertEquals(BigInteger.valueOf(-3_000), ledger.balances[bankId])
-            onView(withId(R.id.expense)).check(matches(withText(Money.format(0))))
+            onView(withId(R.id.expense)).check(matches(withText(Money.format(1_250))))
 
             onView(withText(transfer)).perform(click())
             awaitText(context.getString(R.string.delete_record))
@@ -143,13 +141,11 @@ class WalletFlowTest {
             onView(withId(R.id.type_income)).perform(click())
             onView(withId(R.id.amount)).perform(scrollTo(), replaceText("123.45"), closeSoftKeyboard())
             onView(withId(R.id.description)).perform(scrollTo(), replaceText("Unsaved draft"), closeSoftKeyboard())
-            onView(withId(R.id.note)).perform(scrollTo(), replaceText("Keep this note"), closeSoftKeyboard())
             scenario.recreate()
             awaitText(context.getString(R.string.save_record))
             onView(withId(R.id.type_income)).check(matches(isChecked()))
             onView(withId(R.id.amount)).check(matches(withText("123.45")))
             onView(withId(R.id.description)).check(matches(withText("Unsaved draft")))
-            onView(withId(R.id.note)).check(matches(withText("Keep this note")))
         } finally { scenario.close() }
     }
 

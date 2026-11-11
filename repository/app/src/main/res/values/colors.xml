@@ -5,6 +5,8 @@
     <color name="quiet">#595959</color>
     <color name="line">#BDBDBD</color>
     <color name="error">#B00020</color>
+    <color name="income_amount">#4F8060</color>
+    <color name="expense_amount">#AC5962</color>
     <color name="legacy_navigation">#222222</color>
     <bool name="light_system_bars">true</bool>
 </resources>
