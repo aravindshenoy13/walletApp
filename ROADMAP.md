@@ -35,10 +35,11 @@
 - Show an account balance for a past date.
 - Confirm graph modes, account filters, and category total calculations with the user before implementing them.
 
-### V4 — Full backup and restore
+### V4 — Full backup, restore, and dark mode
 
 - Back up and restore accounts, opening balances, categories, and transactions.
 - Keep this distinct from transaction CSV import/export unless the user chooses to combine them.
+- Add dark mode.
 
 ## Business rules
 
