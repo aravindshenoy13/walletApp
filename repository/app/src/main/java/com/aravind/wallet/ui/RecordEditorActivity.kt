@@ -15,8 +15,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.aravind.wallet.R
 import com.aravind.wallet.data.Account
 import com.aravind.wallet.data.WalletRecord
+import com.aravind.wallet.data.WalletCategory
 import com.aravind.wallet.databinding.ActivityRecordEditorBinding
-import com.aravind.wallet.domain.Category
 import com.aravind.wallet.domain.Ledger
 import com.aravind.wallet.domain.Money
 import com.aravind.wallet.domain.RecordType
@@ -33,6 +33,8 @@ class RecordEditorActivity : AppCompatActivity() {
     private var initialized = false
     private var draft: Bundle? = null
     private var accounts = emptyList<Account>()
+    private var categoryChoices = emptyList<WalletCategory>()
+    private var originalCategoryId: String? = null
     private var preservedNote = ""
     private var occurredAt = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES)
     private val recordId get() = intent.getLongExtra("id", 0)
@@ -50,7 +52,9 @@ class RecordEditorActivity : AppCompatActivity() {
         applyInsets(binding.root)
         binding.title.setText(if (recordId == 0L) R.string.new_record else R.string.edit_record)
         binding.delete.isVisible = recordId != 0L
-        binding.category.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, Category.entries.toList())
+        binding.category.isSaveEnabled = false
+        binding.account.isSaveEnabled = false
+        binding.destination.isSaveEnabled = false
         onBackPressedDispatcher.addCallback(this) { if (model.operation.value != Operation.Working) finish() }
         binding.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.type.setOnCheckedChangeListener { _, _ -> updateType() }
@@ -74,7 +78,7 @@ class RecordEditorActivity : AppCompatActivity() {
                 launch {
                     model.ledger.collect { state ->
                         when (state) {
-                            is LedgerState.Ready -> if (!initialized) initialize(state.ledger)
+                            is LedgerState.Ready -> if (!initialized) initialize(state.ledger) else refreshCategories(state.ledger)
                             LedgerState.Failed -> {
                                 binding.loading.isVisible = false
                                 binding.form.isVisible = true
@@ -103,6 +107,7 @@ class RecordEditorActivity : AppCompatActivity() {
             return
         }
         accounts = ledger.accounts
+        originalCategoryId = record?.categoryId
         preservedNote = record?.note.orEmpty()
         val names = accounts.map { it.name }
         binding.account.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, names)
@@ -119,8 +124,7 @@ class RecordEditorActivity : AppCompatActivity() {
             RecordType.EXPENSE -> R.id.type_expense
             RecordType.TRANSFER -> R.id.type_transfer
         })
-        val category = draft?.getString("category")?.let(Category::valueOf) ?: record?.category ?: Category.FOOD
-        binding.category.setSelection(Category.entries.indexOf(category))
+        refreshCategories(ledger, draft?.getString("category") ?: record?.categoryId ?: "FOOD")
         binding.amount.setText(draft?.getString("amount") ?: record?.let { Money.input(it.amountMinor) }.orEmpty())
         binding.description.setText(draft?.getString("description") ?: record?.description.orEmpty())
         occurredAt = draft?.getString("occurredAt")?.let(LocalDateTime::parse) ?: record?.occurredAt
@@ -131,6 +135,17 @@ class RecordEditorActivity : AppCompatActivity() {
         binding.form.isVisible = true
         updateDateTime()
         updateType()
+    }
+
+    private fun refreshCategories(ledger: Ledger, wantedId: String? = categoryChoices.getOrNull(binding.category.selectedItemPosition)?.id) {
+        val available = ledger.categories.filter { !it.isArchived || it.id == originalCategoryId }
+        if (available != categoryChoices) {
+            categoryChoices = available
+            binding.category.adapter = CategoryChoices(this, available)
+            val chosen = available.indexOfFirst { it.id == wantedId }
+            binding.category.setSelection(if (chosen >= 0) chosen else 0)
+        }
+        updateEnabled()
     }
 
     private fun updateDateTime() {
@@ -173,7 +188,7 @@ class RecordEditorActivity : AppCompatActivity() {
         }
         model.saveRecord(WalletRecord(
             id = recordId, type = type, amountMinor = amount, accountId = source, destinationAccountId = destination,
-            category = if (type == RecordType.TRANSFER) null else Category.entries[binding.category.selectedItemPosition],
+            categoryId = if (type == RecordType.TRANSFER) null else categoryChoices.getOrNull(binding.category.selectedItemPosition)?.id,
             occurredAt = occurredAt, description = binding.description.text.toString(), note = preservedNote,
         ))
     }
@@ -182,7 +197,8 @@ class RecordEditorActivity : AppCompatActivity() {
         val busy = model.operation.value == Operation.Working || model.operation.value == Operation.Saved
         binding.form.enableTree(!busy)
         binding.back.isEnabled = !busy
-        binding.save.isEnabled = initialized && !busy && accounts.isNotEmpty() && (type != RecordType.TRANSFER || accounts.size >= 2)
+        binding.save.isEnabled = initialized && !busy && accounts.isNotEmpty() &&
+            (if (type == RecordType.TRANSFER) accounts.size >= 2 else categoryChoices.isNotEmpty())
         binding.delete.isEnabled = initialized && !busy
     }
 
@@ -198,7 +214,7 @@ class RecordEditorActivity : AppCompatActivity() {
             putString("amount", binding.amount.text.toString())
             putString("description", binding.description.text.toString())
             putString("occurredAt", occurredAt.toString())
-            putString("category", Category.entries[binding.category.selectedItemPosition].name)
+            putString("category", categoryChoices.getOrNull(binding.category.selectedItemPosition)?.id)
             putLong("source", accounts.getOrNull(binding.account.selectedItemPosition)?.id ?: 0)
             putLong("destination", accounts.getOrNull(binding.destination.selectedItemPosition)?.id ?: 0)
         } else draft)

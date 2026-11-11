@@ -2,25 +2,19 @@ package com.aravind.wallet.domain
 
 import com.aravind.wallet.data.Account
 import com.aravind.wallet.data.WalletRecord
+import com.aravind.wallet.data.WalletCategory
 import java.math.BigInteger
 import java.time.LocalDate
 
 enum class RecordType { EXPENSE, INCOME, TRANSFER }
 
-/** One shared, fixed category set for both directions. IDs remain stable on disk. */
-enum class Category(val label: String) {
-    FOOD("Food"), GROCERIES("Groceries"), RENT("Rent"), TRANSPORT("Transport"),
-    UTILITIES("Utilities"), HEALTH("Health"), SHOPPING("Shopping"), ENTERTAINMENT("Entertainment"),
-    EDUCATION("Education"), SALARY("Salary"), GIFTS("Gifts"), OTHER("Other");
-    override fun toString() = label
-}
-
 data class DailyTotals(val income: BigInteger, val expense: BigInteger) {
     val net: BigInteger get() = income - expense
 }
 
-data class Ledger(val accounts: List<Account>, val records: List<WalletRecord>) {
+data class Ledger(val accounts: List<Account>, val records: List<WalletRecord>, val categories: List<WalletCategory> = emptyList()) {
     val accountsById = accounts.associateBy { it.id }
+    val categoriesById = categories.associateBy { it.id }
     val balances: Map<Long, BigInteger> by lazy {
         val result = accounts.associate { it.id to BigInteger.valueOf(it.openingBalanceMinor) }.toMutableMap()
         records.forEach { record ->

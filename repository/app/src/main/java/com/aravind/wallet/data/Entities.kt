@@ -1,13 +1,13 @@
 package com.aravind.wallet.data
 
 import androidx.room.Embedded
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import androidx.room.TypeConverter
-import com.aravind.wallet.domain.Category
 import com.aravind.wallet.domain.RecordType
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -19,13 +19,26 @@ data class Account(
     val openingBalanceMinor: Long,
 )
 
+@Entity(tableName = "categories")
+data class WalletCategory(
+    @PrimaryKey val id: String,
+    val name: String,
+    val iconKey: String,
+    val backgroundColorKey: String,
+    val isBuiltIn: Boolean = false,
+    val isArchived: Boolean = false,
+) {
+    override fun toString() = name
+}
+
 @Entity(
     tableName = "records",
     foreignKeys = [
         ForeignKey(entity = Account::class, parentColumns = ["id"], childColumns = ["accountId"], onDelete = ForeignKey.RESTRICT),
         ForeignKey(entity = Account::class, parentColumns = ["id"], childColumns = ["destinationAccountId"], onDelete = ForeignKey.RESTRICT),
+        ForeignKey(entity = WalletCategory::class, parentColumns = ["id"], childColumns = ["category"], onDelete = ForeignKey.RESTRICT),
     ],
-    indices = [Index("accountId"), Index("destinationAccountId"), Index("occurredAt")],
+    indices = [Index("accountId"), Index("destinationAccountId"), Index("occurredAt"), Index("category")],
 )
 data class WalletRecord(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
@@ -33,7 +46,7 @@ data class WalletRecord(
     val amountMinor: Long,
     val accountId: Long,
     val destinationAccountId: Long? = null,
-    val category: Category? = null,
+    @ColumnInfo(name = "category") val categoryId: String? = null,
     // A local wall-clock date/time preserves exactly the occurrence entered by the user.
     val occurredAt: LocalDateTime,
     val description: String,
@@ -51,6 +64,4 @@ class Converters {
     @TypeConverter fun textToTime(value: String): LocalDateTime = LocalDateTime.parse(value, timestamp)
     @TypeConverter fun typeToText(value: RecordType): String = value.name
     @TypeConverter fun textToType(value: String): RecordType = RecordType.valueOf(value)
-    @TypeConverter fun categoryToText(value: Category?): String? = value?.name
-    @TypeConverter fun textToCategory(value: String?): Category? = value?.let(Category::valueOf)
 }

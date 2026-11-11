@@ -49,7 +49,7 @@
     <string name="save_failed">Could not save your changes. Please try again.</string>
     <string name="opening_balance_value">Opening balance %1$s</string>
     <string name="record_meta">%1$s · %2$s · %3$s</string>
-    <string name="transfer_meta">%1$s · Transfer · %2$s → %3$s</string>
+    <string name="transfer_row_meta">%1$s · %2$s → %3$s · %4$s</string>
     <string name="transfer_amount">↔ %1$s</string>
     <string name="income_amount">+ %1$s</string>
     <string name="expense_amount">− %1$s</string>

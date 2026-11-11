@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="categories">Categories</string>
+    <string name="add_category">+ Add category</string>
+    <string name="new_category">Add category</string>
+    <string name="edit_category">Edit category</string>
+    <string name="category_name">Category name</string>
+    <string name="choose_icon">Choose icon</string>
+    <string name="background_color">Background color</string>
+    <string name="save_category">Save category</string>
+    <string name="save_changes">Save changes</string>
+    <string name="archive_category">Archive category</string>
+    <string name="archive_title">Archive %1$s?</string>
+    <string name="archive_message">This category will no longer appear when adding new transactions. Existing transactions keep their category.</string>
+    <string name="archive">Archive</string>
+    <string name="archived">Archived</string>
+    <string name="archived_name">%1$s · Archived</string>
+    <string name="archived_help">Archived categories remain on existing transactions. You can still edit the name and appearance here.</string>
+    <string name="built_in">Built-in</string>
+    <string name="custom">Custom</string>
+    <string name="edit">Edit</string>
+    <string name="category_help">For income and expenses</string>
+    <string name="category_preview">Category preview</string>
+    <string name="category_available">Available for both income and expenses.</string>
+    <string name="appearance_status">%1$s · %2$s</string>
+    <string name="icon_accessibility">%1$s icon</string>
+    <string name="color_accessibility">%1$s background</string>
+    <string name="selected_accessibility">%1$s, selected</string>
+    <string name="export_csv">Export CSV</string>
+    <string name="all_transactions">All transactions</string>
+    <string name="export_label">Export</string>
+    <string name="export_format">Format</string>
+    <string name="csv">CSV</string>
+    <string name="export_includes">Includes</string>
+    <string name="transfers">Transfers</string>
+    <string name="choose_save">Choose location &amp; save</string>
+    <string name="export_help">Choose a destination in the Android file picker.</string>
+    <string name="saving">Saving…</string>
+    <string name="choosing_location">Choosing location…</string>
+    <string name="export_saved">Saved %1$d transactions.</string>
+    <string name="export_failed">Could not save the CSV file. Please choose a location and try again.</string>
+</resources>

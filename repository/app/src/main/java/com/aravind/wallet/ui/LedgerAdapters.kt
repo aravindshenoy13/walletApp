@@ -2,14 +2,17 @@ package com.aravind.wallet.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.aravind.wallet.R
 import com.aravind.wallet.data.Account
 import com.aravind.wallet.data.WalletRecord
+import com.aravind.wallet.data.WalletCategory
 import com.aravind.wallet.databinding.ItemDateBinding
 import com.aravind.wallet.databinding.ItemRecordBinding
+import com.aravind.wallet.databinding.ItemAccountBinding
 import com.aravind.wallet.domain.Ledger
 import com.aravind.wallet.domain.Money
 import com.aravind.wallet.domain.RecordType
@@ -19,7 +22,7 @@ import java.time.format.DateTimeFormatter
 
 sealed interface RecordRow {
     data class Date(val date: LocalDate) : RecordRow
-    data class Entry(val record: WalletRecord, val source: String, val destination: String?) : RecordRow
+    data class Entry(val record: WalletRecord, val source: String, val destination: String?, val category: WalletCategory?) : RecordRow
 }
 
 class RecordsAdapter(private val edit: (Long) -> Unit) :
@@ -41,7 +44,8 @@ class RecordsAdapter(private val edit: (Long) -> Unit) :
                 add(RecordRow.Date(date))
                 records.forEach { record ->
                     add(RecordRow.Entry(record, ledger.accountsById.getValue(record.accountId).name,
-                        record.destinationAccountId?.let { ledger.accountsById.getValue(it).name }))
+                        record.destinationAccountId?.let { ledger.accountsById.getValue(it).name },
+                        record.categoryId?.let { ledger.categoriesById.getValue(it) }))
                 }
             }
         }
@@ -63,7 +67,9 @@ class RecordsAdapter(private val edit: (Long) -> Unit) :
             is RecordRow.Entry -> (holder as RecordHolder).binding.apply {
                 val record = row.record
                 val context = root.context
-                description.text = record.description
+                description.text = row.category?.name ?: context.getString(R.string.transfer)
+                badge.isVisible = row.category != null
+                row.category?.let { badge.showCategory(it.iconKey, it.backgroundColorKey) }
                 amount.text = context.getString(when (record.type) {
                     RecordType.EXPENSE -> R.string.expense_amount
                     RecordType.INCOME -> R.string.income_amount
@@ -76,8 +82,8 @@ class RecordsAdapter(private val edit: (Long) -> Unit) :
                 }))
                 val time = record.occurredAt.format(DateTimeFormatter.ofPattern("HH:mm"))
                 meta.text = if (record.type == RecordType.TRANSFER)
-                    context.getString(R.string.transfer_meta, time, row.source, row.destination)
-                else context.getString(R.string.record_meta, time, record.category?.label, row.source)
+                    context.getString(R.string.transfer_row_meta, time, row.source, row.destination, record.description)
+                else context.getString(R.string.record_meta, time, row.source, record.description)
                 root.setOnClickListener { edit(record.id) }
             }
         }
@@ -92,9 +98,9 @@ class AccountsAdapter(private val edit: (Long) -> Unit) :
         override fun areContentsTheSame(old: AccountRow, new: AccountRow) = old == new
     }) {
     init { stateRestorationPolicy = StateRestorationPolicy.PREVENT_WHEN_EMPTY }
-    class Holder(val binding: ItemRecordBinding) : RecyclerView.ViewHolder(binding.root)
+    class Holder(val binding: ItemAccountBinding) : RecyclerView.ViewHolder(binding.root)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        Holder(ItemRecordBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        Holder(ItemAccountBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val row = getItem(position)
         holder.binding.apply {
