@@ -76,7 +76,7 @@ class V42FlowTest {
             onView(withId(R.id.record_search)).check(matches(withText("")))
             onView(withId(R.id.record_search)).perform(typeText("123"))
             androidx.test.espresso.Espresso.pressBack()
-            onView(withId(R.id.open_search)).check(matches(isDisplayed()))
+            await(withId(R.id.open_search))
             onView(withId(R.id.record_count)).check(matches(withText(R.string.all_records)))
             onView(withId(R.id.open_search)).perform(click())
             onView(withId(R.id.record_search)).perform(typeText("456"))

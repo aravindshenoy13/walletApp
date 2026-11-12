@@ -26,7 +26,9 @@ class CategoryPickerActivity : AppCompatActivity() {
         setContentView(binding.root)
         applyInsets(binding.root)
         adapter = CategoryChoices(this, mutableListOf())
+        adapter.selectedId = intent.getStringExtra("selectedCategoryId")
         binding.categoryResults.adapter = adapter
+        binding.message.setOnClickListener { model.retry() }
         binding.back.setOnClickListener { finish() }
         binding.search.doAfterTextChanged { showResults() }
         binding.categoryResults.setOnItemClickListener { _, _, position, _ ->

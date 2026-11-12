@@ -21,18 +21,54 @@ class DailyFlowView(context: Context, attrs: AttributeSet? = null) : View(contex
     private var start = LocalDate.now()
     private var end = start
     private var daily = emptyMap<LocalDate, DailyTotals>()
+    private var inspectedDate = start
+    private var totals = DailyTotals(BigInteger.ZERO, BigInteger.ZERO)
     private var mode = BreakdownMode.NET
     fun show(start: LocalDate, end: LocalDate, data: PeriodAnalysis, mode: BreakdownMode) {
         this.start = start; this.end = end; this.daily = data.daily; this.mode = mode
-        contentDescription = context.getString(R.string.graph_summary, start.display(), end.display(), Money.format(data.totals.income), Money.format(data.totals.expense)) + " " +
-            context.getString(when (mode) { BreakdownMode.NET -> R.string.net; BreakdownMode.INCOME -> R.string.income; BreakdownMode.EXPENSE -> R.string.expenses })
+        totals = data.totals
+        if (inspectedDate < start || inspectedDate > end) inspectedDate = start
+        updateAccessibility()
         invalidate()
+    }
+    private fun updateAccessibility() {
+        val label = context.getString(when (mode) { BreakdownMode.NET -> R.string.net; BreakdownMode.INCOME -> R.string.income; BreakdownMode.EXPENSE -> R.string.expenses })
+        val value = daily[inspectedDate]?.value(mode) ?: BigInteger.ZERO
+        contentDescription = context.getString(R.string.graph_summary, start.display(), end.display(), Money.format(totals.income), Money.format(totals.expense)) + " " +
+            context.getString(R.string.graph_day_value, inspectedDate.display(), Money.format(value), label, Money.format(totals.value(mode)))
+    }
+    override fun onInitializeAccessibilityNodeInfo(info: android.view.accessibility.AccessibilityNodeInfo) {
+        super.onInitializeAccessibilityNodeInfo(info)
+        info.isScrollable = start < end
+        if (inspectedDate < end) info.addAction(android.view.accessibility.AccessibilityNodeInfo.AccessibilityAction(
+            android.view.accessibility.AccessibilityNodeInfo.ACTION_SCROLL_FORWARD, context.getString(R.string.next_day)))
+        if (inspectedDate > start) info.addAction(android.view.accessibility.AccessibilityNodeInfo.AccessibilityAction(
+            android.view.accessibility.AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD, context.getString(R.string.previous_day)))
+    }
+    override fun performAccessibilityAction(action: Int, arguments: android.os.Bundle?): Boolean {
+        inspectedDate = when {
+            action == android.view.accessibility.AccessibilityNodeInfo.ACTION_SCROLL_FORWARD && inspectedDate < end -> inspectedDate.plusDays(1)
+            action == android.view.accessibility.AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD && inspectedDate > start -> inspectedDate.minusDays(1)
+            else -> return super.performAccessibilityAction(action, arguments)
+        }
+        updateAccessibility()
+        sendAccessibilityEvent(android.view.accessibility.AccessibilityEvent.TYPE_VIEW_SELECTED)
+        return true
+    }
+    private fun drawAxisLabel(canvas: Canvas, label: String, x: Float, y: Float, availableWidth: Float) {
+        val size = paint.textSize
+        val measured = paint.measureText(label)
+        if (measured > availableWidth) paint.textSize *= availableWidth / measured
+        canvas.drawText(label, x, y, paint)
+        paint.textSize = size
     }
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val density = resources.displayMetrics.density
         val left = 10f * density; val right = width - 12f * density
-        val top = 38f * density; val bottom = height - 30f * density
+        paint.textSize = 11f * resources.displayMetrics.scaledDensity
+        val top = paint.fontSpacing + 12f * density
+        val bottom = height - 2 * paint.fontSpacing - 8f * density
         if (right <= left || bottom <= top) return
         val values = daily.mapValues { it.value.value(mode) }
         val highest = (values.values.maxOrNull() ?: BigInteger.ZERO).coerceAtLeast(BigInteger.ZERO)
@@ -46,9 +82,9 @@ class DailyFlowView(context: Context, attrs: AttributeSet? = null) : View(contex
         val zero = y(BigInteger.ZERO)
         paint.style = Paint.Style.FILL; paint.color = context.getColor(R.color.quiet)
         paint.textSize = 11f * resources.displayMetrics.scaledDensity
-        canvas.drawText(Money.format(highest), left, top - 15f * density, paint)
-        if (lowest.signum() < 0) canvas.drawText(Money.format(lowest), left, bottom + 13f * density, paint)
-        else canvas.drawText("0", left, bottom + 13f * density, paint)
+        drawAxisLabel(canvas, Money.compactNet(highest), left, top - 6f * density, right - left)
+        if (lowest.signum() < 0) drawAxisLabel(canvas, Money.compactNet(lowest), left, bottom + paint.fontSpacing, right - left)
+        else canvas.drawText("0", left, bottom + paint.fontSpacing, paint)
         if (zero - top > 20f * density && bottom - zero > 20f * density) canvas.drawText("0", left, zero + 13f * density, paint)
         paint.color = context.getColor(R.color.line); paint.strokeWidth = density
         canvas.drawLine(left, top, left, bottom, paint); canvas.drawLine(left, zero, right, zero, paint)

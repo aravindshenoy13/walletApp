@@ -92,7 +92,7 @@ class RecordsAdapter(private val edit: (Long) -> Unit) :
                     RecordType.EXPENSE -> R.color.expense_amount
                     RecordType.TRANSFER -> R.color.transfer_amount
                 }))
-                val time = record.occurredAt.format(DateTimeFormatter.ofPattern("HH:mm"))
+                val time = record.occurredAt.displayTime(context)
                 meta.text = listOf(time, if (record.type == RecordType.TRANSFER)
                     context.getString(R.string.transfer_accounts, row.source, row.destination) else row.source,
                     record.description).filter { it.isNotBlank() }.joinToString(" · ")

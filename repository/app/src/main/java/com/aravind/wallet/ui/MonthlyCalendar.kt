@@ -30,7 +30,8 @@ class MonthlyCalendar(private val container: LinearLayout) {
         // Monday-first grid, including leading and trailing blank cells.
         DayOfWeek.values().forEach { day ->
             headings.addView(TextView(context).apply {
-                text = day.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                text = day.getDisplayName(if (context.resources.configuration.fontScale > 1.3f) TextStyle.NARROW else TextStyle.SHORT, Locale.getDefault())
+                contentDescription = day.getDisplayName(TextStyle.FULL, Locale.getDefault())
                 gravity = Gravity.CENTER
                 setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
                 setTextColor(context.getColor(R.color.quiet))
@@ -45,14 +46,14 @@ class MonthlyCalendar(private val container: LinearLayout) {
                 val number = week * 7 + column - offset + 1
                 val cell = LinearLayout(context).apply {
                     orientation = LinearLayout.VERTICAL
-                    gravity = Gravity.CENTER
+                    gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
                     setPadding(dp(1), dp(3), dp(1), dp(3))
                     background = GradientDrawable().apply {
                         setColor(context.getColor(R.color.paper))
                         setStroke(dp(1).coerceAtLeast(1), context.getColor(R.color.line))
                     }
                 }
-                weekRow.addView(cell, LinearLayout.LayoutParams(0, -2, 1f))
+                weekRow.addView(cell, LinearLayout.LayoutParams(0, -1, 1f))
                 if (number !in 1..month.lengthOfMonth()) {
                     cell.minimumHeight = dp(46)
                     cell.importantForAccessibility = android.view.View.IMPORTANT_FOR_ACCESSIBILITY_NO
@@ -70,19 +71,18 @@ class MonthlyCalendar(private val container: LinearLayout) {
                         setTextColor(context.getColor(R.color.ink))
                         if (date == LocalDate.now()) setTypeface(null, Typeface.BOLD)
                         importantForAccessibility = android.view.View.IMPORTANT_FOR_ACCESSIBILITY_NO
-                    }, LinearLayout.LayoutParams(-1, dp(18)))
+                    }, LinearLayout.LayoutParams(-1, -2))
                     cell.addView(TextView(context).apply {
                         text = if (totals == null) "—" else Money.compactNet(net)
                         gravity = Gravity.CENTER
-                        maxLines = 1
-                        setAutoSizeTextTypeUniformWithConfiguration(7, 11, 1, TypedValue.COMPLEX_UNIT_SP)
+                        setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
                         setTextColor(context.getColor(when (net.signum()) {
                             1 -> R.color.income_amount
                             -1 -> R.color.expense_amount
                             else -> R.color.quiet
                         }))
                         importantForAccessibility = android.view.View.IMPORTANT_FOR_ACCESSIBILITY_NO
-                    }, LinearLayout.LayoutParams(-1, dp(22)))
+                    }, LinearLayout.LayoutParams(-1, -2))
                 }
             }
         }

@@ -12,6 +12,10 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -32,10 +36,19 @@ sealed interface Operation {
 
 class WalletViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = (application as WalletApplication).repository
-    val ledger: StateFlow<LedgerState> = repository.ledger
-        .map<Ledger, LedgerState> { LedgerState.Ready(it) }
-        .catch { emit(LedgerState.Failed) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), LedgerState.Loading)
+    private val reload = MutableStateFlow(0)
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    val ledger: StateFlow<LedgerState> = reload.flatMapLatest {
+        repository.ledger.map<Ledger, LedgerState> { LedgerState.Ready(it) }
+            .retryWhen { cause, attempt ->
+                if (cause is CancellationException || attempt >= 2) false
+                else { emit(LedgerState.Loading); delay(500L * (attempt + 1)); true }
+            }
+            .catch { emit(LedgerState.Failed) }
+            .onStart { emit(LedgerState.Loading) }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), LedgerState.Loading)
+
+    fun retry() { if (ledger.value == LedgerState.Failed) reload.value++ }
 
     private val _operation = MutableStateFlow<Operation>(Operation.Idle)
     val operation: StateFlow<Operation> = _operation

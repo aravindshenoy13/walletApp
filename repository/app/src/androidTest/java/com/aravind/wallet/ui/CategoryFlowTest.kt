@@ -43,6 +43,10 @@ class CategoryFlowTest {
     private val app get() = ApplicationProvider.getApplicationContext<WalletApplication>()
     private val repository get() = app.repository
     @Before fun clearData() {
+        app.getSharedPreferences("appearance", 0).edit().putBoolean("dark", false).commit()
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
+            androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO)
+        }
         val db = WalletDatabase.create(app)
         try {
             db.clearAllTables()

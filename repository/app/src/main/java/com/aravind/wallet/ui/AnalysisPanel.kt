@@ -22,6 +22,7 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
     var end: LocalDate = saved?.getString("analysisEnd")?.let(LocalDate::parse) ?: LocalDate.now()
         private set
     private var calendarMonth = saved?.getString("calendarMonth")?.let(YearMonth::parse) ?: YearMonth.now()
+    private var calendarCustom = saved?.takeIf { it.containsKey("calendarCustom") }?.getBoolean("calendarCustom") ?: (calendarMonth != YearMonth.now())
     private val calendar = MonthlyCalendar(binding.calendarGrid)
     private var custom = saved?.getBoolean("analysisCustom") ?: false
     private var breakdown = saved?.getString("analysisBreakdown")?.let(BreakdownMode::valueOf) ?: BreakdownMode.NET
@@ -38,8 +39,8 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
         }
 
         binding.breakdownMode.check(when(breakdown) { BreakdownMode.NET -> R.id.breakdown_net; BreakdownMode.INCOME -> R.id.breakdown_income; BreakdownMode.EXPENSE -> R.id.breakdown_expense })
-        binding.previousMonth.setOnClickListener { calendarMonth = calendarMonth.minusMonths(1); render() }
-        binding.nextMonth.setOnClickListener { calendarMonth = calendarMonth.plusMonths(1); render() }
+        binding.previousMonth.setOnClickListener { calendarCustom = true; calendarMonth = calendarMonth.minusMonths(1); render() }
+        binding.nextMonth.setOnClickListener { calendarCustom = true; calendarMonth = calendarMonth.plusMonths(1); render() }
         binding.customRange.setOnClickListener { range(start, end) }
         binding.breakdownMode.setOnCheckedChangeListener { _, id ->
             breakdown = when(id) { R.id.breakdown_income -> BreakdownMode.INCOME; R.id.breakdown_expense -> BreakdownMode.EXPENSE; else -> BreakdownMode.NET }; render()
@@ -47,6 +48,7 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
     }
     fun open() {
         start = LocalDate.now().withDayOfMonth(1); end = LocalDate.now(); custom = false
+        calendarCustom = false
         calendarMonth = YearMonth.now()
         breakdown = BreakdownMode.NET
         binding.breakdownMode.check(R.id.breakdown_net)
@@ -55,6 +57,11 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
     fun range(start: LocalDate, end: LocalDate) {
         if (end < start) return
         this.start = start; this.end = end; custom = true; render()
+    }
+    fun refreshDefaults(today: LocalDate = LocalDate.now()) {
+        if (!custom) { start = today.withDayOfMonth(1); end = today }
+        if (!calendarCustom) calendarMonth = YearMonth.from(today)
+        render()
     }
     fun show(ledger: Ledger) {
         this.ledger = ledger
@@ -111,6 +118,7 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
         }
     }
     fun save(out: Bundle) {
+        out.putBoolean("calendarCustom", calendarCustom)
         out.putInt("analysisView", viewIndex)
         out.putString("calendarMonth", calendarMonth.toString())
         out.putString("analysisStart", start.toString()); out.putString("analysisEnd", end.toString())

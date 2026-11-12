@@ -45,7 +45,7 @@
     <string name="account_required_title">Add an account first</string>
     <string name="account_required_message">Create an account with an opening balance before recording a transaction.</string>
     <string name="loading">Loading…</string>
-    <string name="load_failed">Could not read your saved data. Close and reopen Wallet to try again.</string>
+    <string name="load_failed">Could not read your saved data. Tap to retry.</string>
     <string name="save_failed">Could not save your changes. Please try again.</string>
     <string name="opening_balance_value">Opening balance %1$s</string>
     <string name="record_meta">%1$s · %2$s · %3$s</string>
@@ -54,4 +54,9 @@
     <string name="income_amount">+ %1$s</string>
     <string name="expense_amount">− %1$s</string>
     <string name="clear">Clear</string>
+    <string name="retry">Retry</string>
+    <string name="no_active_categories_help">No active categories. Tap Choose category to add one.</string>
+    <string name="previous_day">Previous day</string>
+    <string name="next_day">Next day</string>
+    <string name="graph_day_value">%1$s: %2$s. %3$s total: %4$s. Use Previous day and Next day to inspect each date.</string>
 </resources>

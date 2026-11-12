@@ -7,6 +7,12 @@ import java.time.LocalDateTime
 
 /** Versioned JSON; minor units and IDs are strings to retain full 64-bit precision. */
 object WalletBackup {
+    const val MAX_BYTES = 20 * 1024 * 1024
+
+    fun encodeBytes(ledger: Ledger): ByteArray = encode(ledger).toByteArray(Charsets.UTF_8).also {
+        require(it.size <= MAX_BYTES) { "Backup exceeds the 20 MB limit. No backup was saved." }
+    }
+
     fun encode(ledger: Ledger): String = JSONObject().apply {
         put("format", "wallet-full-backup"); put("version", 2); put("currency", "INR")
         put("accounts", JSONArray().apply { ledger.accounts.forEach { a -> put(JSONObject().apply {
@@ -38,6 +44,7 @@ object WalletBackup {
         require(categories.isNotEmpty() && categories.any { !it.isArchived }) { "Backup must contain active categories." }
         require(categories.all { c -> c.id.isNotBlank() && c.name.isNotBlank() && c.name.length <= 80 && CategoryCatalog.icons.any { it.key == c.iconKey } && CategoryCatalog.colors.any { it.key == c.backgroundColorKey } }) { "Invalid category." }
         require(categories.map { it.id }.distinct().size == categories.size && categories.map { it.name.lowercase(java.util.Locale.ROOT) }.distinct().size == categories.size) { "Duplicate categories." }
+        require(records.all { it.occurredAt.nano == 0 }) { "Backup timestamps must use whole seconds; fractional seconds are not supported." }
         require(records.map { it.id }.distinct().size == records.size) { "Duplicate record IDs." }
         val accountIds = accounts.map { it.id }.toSet(); val categoryIds = categories.map { it.id }.toSet()
         require(records.all { r -> r.id > 0 && r.amountMinor > 0 && r.accountId in accountIds && r.occurredAt.year in 1..9999 && r.description.length <= 120 && r.note.length <= 1000 &&

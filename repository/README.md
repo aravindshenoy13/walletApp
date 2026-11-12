@@ -1,5 +1,20 @@
 # Wallet V4.4
 
+## UI and logical review fixes
+
+All findings in [UI-BUGS.md](../UI-BUGS.md) and [LOGICAL-BUGS.md](../LOGICAL-BUGS.md) now have resolution notes. The reports retain the original review for context; UI-03's claim that all categories can be archived was corrected because existing guards already prevent it.
+
+- CSV selections survive restored ViewModel state, and missing account selections cannot become an all-account export. Read failures offer retry.
+- Backup creation and restore share the 20 MiB byte limit. Unsupported fractional-second backup timestamps are rejected explicitly before replacing data.
+- Default Analysis dates refresh across day/month changes while explicit periods remain selected. Ledger reads retry automatically twice and offer manual retry after failure.
+- Filtered records retain their identity through a tap. Category selection is marked, origin labels are hidden, time display follows Android preferences, and wheel drags release page scrolling.
+- Flow accessibility offers exact daily values and active totals through Previous day / Next day actions. Large text and large amounts have adaptive spacing, wrapping, and overflow scrolling.
+
+Validation: 25 JVM tests and all 61 Android cases passed across the regression run and isolated reruns. Narrow-screen checks passed at 320 dp and 200% text in light/dark themes. Debug/test builds passed; lint reported zero errors and 54 warnings. Detailed validation boundaries are recorded in the two bug reports.
+
+Current maintenance artifact: [debug APK](app/build/outputs/apk/debug/app-debug.apk).
+
+
 ## State handling fixes
 
 - Backup and restore use explicit ViewModel states for picking, working, confirmation, and results. Screen recreation retains work and restore confirmation; conflicting operations are blocked.

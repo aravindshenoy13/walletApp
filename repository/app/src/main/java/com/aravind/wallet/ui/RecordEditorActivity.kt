@@ -63,12 +63,17 @@ class RecordEditorActivity : AppCompatActivity() {
         binding.delete.isVisible = recordId != 0L
         binding.category.isSaveEnabled = false
         binding.category.setOnClickListener {
+            if (categoryChoices.isEmpty()) {
+                startActivity(Intent(this, CategoryEditorActivity::class.java))
+                return@setOnClickListener
+            }
             pickCategory.launch(Intent(this, CategoryPickerActivity::class.java)
-                .putExtra("recordId", recordId))
+                .putExtra("recordId", recordId).putExtra("selectedCategoryId", selectedCategoryId))
         }
         binding.account.isSaveEnabled = false
         binding.destination.isSaveEnabled = false
         onBackPressedDispatcher.addCallback(this) { if (model.operation.value != Operation.Working) finish() }
+        binding.error.setOnClickListener { model.retry() }
         binding.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.type.setOnCheckedChangeListener { _, _ -> updateType() }
         binding.date.setOnClickListener {
@@ -95,6 +100,8 @@ class RecordEditorActivity : AppCompatActivity() {
                                 if (recordId != 0L && state.ledger.records.none { it.id == recordId }) {
                                     finish()
                                 } else {
+                                    if (binding.error.text == getString(R.string.load_failed)) binding.error.isVisible = false
+                                    binding.loading.isVisible = false
                                     refreshAccounts(state.ledger)
                                     refreshCategories(state.ledger)
                                 }
@@ -105,7 +112,7 @@ class RecordEditorActivity : AppCompatActivity() {
                                 showError(getString(R.string.load_failed))
                                 updateEnabled()
                             }
-                            LedgerState.Loading -> Unit
+                            LedgerState.Loading -> { binding.loading.isVisible = true; updateEnabled() }
                         }
                     }
                 }
@@ -166,7 +173,7 @@ class RecordEditorActivity : AppCompatActivity() {
         binding.categoryBadge.isVisible = category != null
         category?.let { binding.categoryBadge.showCategory(it.iconKey, it.backgroundColorKey) }
         binding.category.contentDescription = getString(R.string.category_selection, binding.categoryName.text)
-        updateEnabled()
+        updateType()
     }
 
     private fun refreshAccounts(ledger: Ledger) {
@@ -190,7 +197,7 @@ class RecordEditorActivity : AppCompatActivity() {
 
     private fun updateDateTime() {
         binding.date.text = occurredAt.toLocalDate().display()
-        binding.time.text = occurredAt.format(DateTimeFormatter.ofPattern("HH:mm"))
+        binding.time.text = occurredAt.displayTime(this)
     }
 
     private fun updateType() {
@@ -199,6 +206,7 @@ class RecordEditorActivity : AppCompatActivity() {
         binding.categoryLabel.isVisible = !transfer
         binding.destination.isVisible = transfer
         binding.destinationLabel.isVisible = transfer
+        binding.categoryHelp.isVisible = !transfer && categoryChoices.isEmpty()
         binding.transferHelp.isVisible = transfer
         binding.transferHelp.setText(if (accounts.size >= 2) R.string.transfer_help else R.string.transfer_needs_accounts)
         binding.accountLabel.setText(if (transfer) R.string.from_account else R.string.account)

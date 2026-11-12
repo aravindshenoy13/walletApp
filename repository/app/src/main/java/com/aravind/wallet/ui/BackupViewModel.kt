@@ -51,7 +51,7 @@ class BackupViewModel(application: Application) : AndroidViewModel(application) 
                         while (true) {
                             val count = stream.read(buffer)
                             if (count < 0) break
-                            require(out.size() + count <= 20 * 1024 * 1024) { "Backup exceeds the 20 MB limit." }
+                            require(out.size() + count <= WalletBackup.MAX_BYTES) { "Backup exceeds the 20 MB limit." }
                             out.write(buffer, 0, count)
                         }
                         out.toByteArray()
@@ -62,9 +62,9 @@ class BackupViewModel(application: Application) : AndroidViewModel(application) 
             } else {
                 try {
                     withContext(Dispatchers.IO) {
-                        val text = WalletBackup.encode(app.repository.snapshot())
+                        val bytes = WalletBackup.encodeBytes(app.repository.snapshot())
                         requireNotNull(app.contentResolver.openOutputStream(uri, "w"))
-                            .bufferedWriter(Charsets.UTF_8).use { it.write(text) }
+                            .use { it.write(bytes) }
                     }
                     BackupState.Result("Full backup saved.")
                 } catch (e: Exception) {

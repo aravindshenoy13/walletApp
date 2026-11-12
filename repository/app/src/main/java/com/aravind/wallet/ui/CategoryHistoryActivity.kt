@@ -29,6 +29,7 @@ class CategoryHistoryActivity : AppCompatActivity() {
         val model: WalletViewModel by viewModels()
         val adapter = RecordsAdapter { record -> startActivity(Intent(this, RecordEditorActivity::class.java).putExtra("id", record)) }
         binding.historyList.layoutManager = LinearLayoutManager(this); binding.historyList.adapter = adapter
+        binding.error.setOnClickListener { model.retry() }
         binding.back.setOnClickListener { finish() }
         binding.period.text = getString(R.string.date_range, start.display(), end.display())
         lifecycleScope.launch {

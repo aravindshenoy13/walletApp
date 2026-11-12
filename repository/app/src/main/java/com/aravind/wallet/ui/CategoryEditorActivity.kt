@@ -54,6 +54,7 @@ class CategoryEditorActivity : AppCompatActivity() {
         binding.title.setText(if (isNew) R.string.new_category else R.string.edit_category)
         binding.save.setText(if (isNew) R.string.save_category else R.string.save_changes)
         onBackPressedDispatcher.addCallback(this) { if (model.operation.value != Operation.Working) finish() }
+        binding.error.setOnClickListener { model.retry() }
         binding.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.name.doAfterTextChanged { updatePreview() }
         createChoices()
@@ -73,7 +74,12 @@ class CategoryEditorActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch { model.ledger.collect { state ->
-                    if (state is LedgerState.Ready && !initialized) initialize(state.ledger)
+                    if (state is LedgerState.Ready) {
+                        if (!initialized) initialize(state.ledger)
+                        binding.loading.isVisible = false
+                        if (binding.error.text == getString(R.string.load_failed)) binding.error.isVisible = false
+                        updateEnabled()
+                    }
                     if (state == LedgerState.Failed) {
                         binding.loading.isVisible = false
                         binding.form.isVisible = true
@@ -96,9 +102,8 @@ class CategoryEditorActivity : AppCompatActivity() {
         icon = draft?.getString("icon") ?: persisted?.iconKey ?: "tag"
         color = draft?.getString("color") ?: persisted?.backgroundColorKey ?: "Sky"
         binding.name.setText(draft?.getString("name") ?: persisted?.name.orEmpty())
-        val origin = getString(if (persisted?.isBuiltIn == true) R.string.built_in else R.string.custom)
-        binding.origin.text = if (persisted?.isArchived == true) getString(R.string.archived_name, origin) else origin
-        binding.origin.isVisible = !isNew
+        binding.origin.setText(R.string.archived)
+        binding.origin.isVisible = persisted?.isArchived == true
         binding.archive.isVisible = !isNew && persisted?.isArchived == false
         binding.archivedHelp.isVisible = persisted?.isArchived == true
         initialized = true

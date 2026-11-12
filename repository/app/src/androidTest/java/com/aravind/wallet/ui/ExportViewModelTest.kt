@@ -40,7 +40,7 @@ class ExportViewModelTest {
     }
 
     @Test fun cancelResetsPickerAndRepeatedPickerRequestsAreIgnored() {
-        val model = ExportViewModel(app)
+        val model = ExportViewModel(app).apply { accountIds = setOf(1L) }
         instrumentation.runOnMainSync {
             assertTrue(model.choose())
             assertFalse(model.choose())
@@ -67,7 +67,7 @@ class ExportViewModelTest {
         app.repository.saveRecord(WalletRecord(type = RecordType.INCOME, amountMinor = 500, accountId = account,
             categoryId = "SALARY", occurredAt = LocalDateTime.of(2026,11,11,13,30), description = "Excluded income"))
         val before = app.repository.snapshot()
-        val model = ExportViewModel(app)
+        val model = ExportViewModel(app).apply { accountIds = setOf(account) }
         val store = ViewModelStore()
         store.put("export", model)
         val file = File(app.cacheDir, "v2-export-writer-test.csv")

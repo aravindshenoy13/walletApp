@@ -63,3 +63,9 @@ fun View.enableTree(enabled: Boolean) {
     isEnabled = enabled
     if (this is ViewGroup) for (index in 0 until childCount) getChildAt(index).enableTree(enabled)
 }
+
+fun java.time.LocalDateTime.displayTime(context: android.content.Context): String {
+    val locale = Locale.getDefault()
+    val skeleton = if (android.text.format.DateFormat.is24HourFormat(context)) "Hm" else "hm"
+    return format(DateTimeFormatter.ofPattern(android.text.format.DateFormat.getBestDateTimePattern(locale, skeleton), locale))
+}

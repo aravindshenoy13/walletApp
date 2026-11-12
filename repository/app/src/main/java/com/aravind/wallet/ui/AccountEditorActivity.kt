@@ -31,6 +31,7 @@ class AccountEditorActivity : AppCompatActivity() {
         applyInsets(binding.root)
         binding.title.setText(if (accountId == 0L) R.string.new_account else R.string.edit_account)
         onBackPressedDispatcher.addCallback(this) { if (model.operation.value != Operation.Working) finish() }
+        binding.error.setOnClickListener { model.retry() }
         binding.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.save.setOnClickListener { save() }
         binding.accountIcon.setOnCheckedChangeListener { _, id ->
@@ -41,14 +42,19 @@ class AccountEditorActivity : AppCompatActivity() {
                 launch {
                     model.ledger.collect { state ->
                         when (state) {
-                            is LedgerState.Ready -> if (!initialized) initialize(state.ledger)
+                            is LedgerState.Ready -> {
+                                if (!initialized) initialize(state.ledger)
+                                binding.loading.isVisible = false
+                                if (binding.error.text == getString(R.string.load_failed)) binding.error.isVisible = false
+                                updateEnabled()
+                            }
                             LedgerState.Failed -> {
                                 binding.loading.isVisible = false
                                 binding.form.isVisible = true
                                 showError(getString(R.string.load_failed))
                                 updateEnabled()
                             }
-                            LedgerState.Loading -> Unit
+                            LedgerState.Loading -> { binding.loading.isVisible = true; updateEnabled() }
                         }
                     }
                 }

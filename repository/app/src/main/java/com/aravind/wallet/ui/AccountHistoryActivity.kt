@@ -23,6 +23,7 @@ class AccountHistoryActivity : AppCompatActivity() {
         val id = intent.getLongExtra("id", 0)
         val adapter = RecordsAdapter { record -> startActivity(Intent(this, RecordEditorActivity::class.java).putExtra("id", record)) }
         binding.historyList.layoutManager = LinearLayoutManager(this); binding.historyList.adapter = adapter
+        binding.error.setOnClickListener { model.retry() }
         binding.back.setOnClickListener { finish() }
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {

@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     }
     private var monthlySummary = false
     private var searchState = SearchState.COLLAPSED
+    private var dismissSearchAfterGesture = false
     private var keyboardVisibilityRevision = 0L
     private val searchExpanded get() = searchState != SearchState.COLLAPSED
     private var tab = Tab.RECORDS
@@ -77,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                 SearchState.EDITING -> if (!visible) binding.root.postDelayed({
                     // IME hide/show requests can overlap when search is reopened.
                     // Only dismiss once the latest visibility has settled.
-                    if (revision == keyboardVisibilityRevision && searchState == SearchState.EDITING &&
+                    if (!dismissSearchAfterGesture && revision == keyboardVisibilityRevision && searchState == SearchState.EDITING &&
                         androidx.core.view.ViewCompat.getRootWindowInsets(binding.root)
                             ?.isVisible(androidx.core.view.WindowInsetsCompat.Type.ime()) == false) dismissSearch()
                 }, 200)
@@ -89,6 +90,7 @@ class MainActivity : AppCompatActivity() {
         }
         searchState = if (savedInstanceState?.getBoolean("searchExpanded") == true) SearchState.OPENING else SearchState.COLLAPSED
         binding.todayDate.setOnClickListener { monthlySummary = !monthlySummary; render() }
+        binding.error.setOnClickListener { model.retry() }
         binding.settings.setOnClickListener { startActivity(Intent(this, SettingsActivity::class.java)) }
         binding.openSearch.setOnClickListener {
             ++keyboardVisibilityRevision
@@ -174,12 +176,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
-        if (searchExpanded && event.action == MotionEvent.ACTION_DOWN) {
-            val bounds = Rect()
-            binding.searchBox.getGlobalVisibleRect(bounds)
-            if (!bounds.contains(event.rawX.toInt(), event.rawY.toInt())) dismissSearch()
+        if (event.action == MotionEvent.ACTION_DOWN) {
+            dismissSearchAfterGesture = false
+            if (searchExpanded) {
+                val searchBounds = Rect()
+                binding.searchBox.getGlobalVisibleRect(searchBounds)
+                if (!searchBounds.contains(event.rawX.toInt(), event.rawY.toInt())) {
+                    val listBounds = Rect()
+                    binding.recordList.getGlobalVisibleRect(listBounds)
+                    if (listBounds.contains(event.rawX.toInt(), event.rawY.toInt())) dismissSearchAfterGesture = true
+                    else dismissSearch()
+                }
+            }
         }
-        return super.dispatchTouchEvent(event)
+        val handled = super.dispatchTouchEvent(event)
+        if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL) {
+            if (dismissSearchAfterGesture) binding.root.post { dismissSearch() }
+            dismissSearchAfterGesture = false
+        }
+        return handled
     }
 
     override fun onStart() {
@@ -200,6 +215,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun render() = with(binding) {
         val today = LocalDate.now()
+        analysis.refreshDefaults(today)
+        title.isVisible = !(tab == Tab.RECORDS && searchExpanded)
         title.setText(R.string.app_name)
         add.setText(if (tab == Tab.CATEGORIES) R.string.add_category else R.string.add_account)
         add.isVisible = tab == Tab.ACCOUNTS || tab == Tab.CATEGORIES

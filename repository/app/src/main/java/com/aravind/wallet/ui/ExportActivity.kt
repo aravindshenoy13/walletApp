@@ -39,14 +39,19 @@ sealed interface ExportState {
     data class Saved(val count: Int) : ExportState
 }
 
-class ExportViewModel(application: Application) : AndroidViewModel(application) {
+class ExportViewModel @JvmOverloads constructor(application: Application, private val saved: androidx.lifecycle.SavedStateHandle = androidx.lifecycle.SavedStateHandle()) : AndroidViewModel(application) {
     private val app = application as WalletApplication
     private val _state = MutableStateFlow<ExportState>(ExportState.Idle)
     val state: StateFlow<ExportState> = _state
-    var accountIds: Set<Long>? = null
-    var recordType: RecordType? = null
+    var accountIds: Set<Long>?
+        get() = saved.get<LongArray>("accounts")?.toSet()
+        set(value) { saved["accounts"] = value?.toLongArray() }
+    var recordType: RecordType?
+        get() = saved.get<String>("exportType")?.let(RecordType::valueOf)
+        set(value) { saved["exportType"] = value?.name }
 
     fun choose(type: RecordType? = recordType): Boolean {
+        if (accountIds.isNullOrEmpty()) return false
         if (_state.value == ExportState.Choosing || _state.value == ExportState.Writing || _state.value is ExportState.Saved) return false
         recordType = type
         _state.value = ExportState.Choosing
@@ -62,6 +67,7 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             try {
                 val count = withContext(Dispatchers.IO) {
+                    require(!scope.isNullOrEmpty()) { "Select at least one account." }
                     val snapshot = app.repository.snapshot()
                     val stream = app.contentResolver.openOutputStream(uri, "w") ?: throw IOException("No output stream")
                     OutputStreamWriter(stream, Charsets.UTF_8).buffered().use { CsvExporter.write(snapshot, it, type, scope) }
@@ -94,9 +100,10 @@ class ExportActivity : AppCompatActivity() {
         binding = ActivityExportBinding.inflate(layoutInflater)
         setContentView(binding.root)
         applyInsets(binding.root)
-        if (savedInstanceState != null && model.state.value == ExportState.Idle) {
+        if (savedInstanceState?.containsKey("exportType") == true && model.state.value == ExportState.Idle) {
             model.recordType = savedInstanceState.getString("exportType")?.let(RecordType::valueOf)
         }
+        if (model.accountIds == null) model.accountIds = savedInstanceState?.getLongArray("accounts")?.toSet()
         binding.exportType.check(when (model.recordType) {
             RecordType.INCOME -> R.id.export_income
             RecordType.EXPENSE -> R.id.export_expenses
@@ -104,20 +111,26 @@ class ExportActivity : AppCompatActivity() {
             null -> R.id.export_all
         })
         onBackPressedDispatcher.addCallback(this) { if (model.state.value != ExportState.Writing) finish() }
-        lifecycleScope.launch {
-            try {
-                val accounts = (application as WalletApplication).repository.snapshot().accounts
-                val restored = savedInstanceState?.getLongArray("accounts")?.toSet()
-                if (model.accountIds == null) model.accountIds = restored ?: accounts.map { it.id }.toSet()
-                accounts.forEach { account -> binding.accountChoices.addView(android.widget.CheckBox(this@ExportActivity).apply {
-                    text = account.name; isChecked = account.id in model.accountIds.orEmpty()
-                    setOnCheckedChangeListener { _, checked -> model.accountIds = if (checked) model.accountIds.orEmpty() + account.id else model.accountIds.orEmpty() - account.id }
-                }) }
-                accountsLoaded = true
-            } catch (cancelled: CancellationException) { throw cancelled }
-            catch (_: Exception) { accountsFailed = true }
+        fun loadAccounts() {
+            accountsFailed = false
             render(model.state.value)
+            lifecycleScope.launch {
+                try {
+                    val accounts = (application as WalletApplication).repository.snapshot().accounts
+                    if (model.accountIds == null) model.accountIds = accounts.map { it.id }.toSet()
+                    binding.accountChoices.removeAllViews()
+                    accounts.forEach { account -> binding.accountChoices.addView(android.widget.CheckBox(this@ExportActivity).apply {
+                        text = account.name; isChecked = account.id in model.accountIds.orEmpty()
+                        setOnCheckedChangeListener { _, checked -> model.accountIds = if (checked) model.accountIds.orEmpty() + account.id else model.accountIds.orEmpty() - account.id }
+                    }) }
+                    accountsLoaded = true
+                } catch (cancelled: CancellationException) { throw cancelled }
+                catch (_: Exception) { accountsFailed = true }
+                render(model.state.value)
+            }
         }
+        binding.retry.setOnClickListener { loadAccounts() }
+        loadAccounts()
         binding.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.save.setOnClickListener {
             val type = when (binding.exportType.checkedRadioButtonId) {
@@ -147,6 +160,7 @@ class ExportActivity : AppCompatActivity() {
 
     private fun render(state: ExportState) {
         val editable = accountsLoaded && state != ExportState.Writing && state != ExportState.Choosing && state !is ExportState.Saved
+        binding.retry.isVisible = accountsFailed
         binding.error.isVisible = accountsFailed || state == ExportState.Failed
         binding.error.setText(if (accountsFailed) R.string.load_failed else R.string.export_failed)
         binding.save.isEnabled = editable

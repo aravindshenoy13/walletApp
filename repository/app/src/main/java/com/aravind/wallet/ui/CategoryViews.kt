@@ -59,6 +59,7 @@ fun ImageView.showCategory(iconKey: String, colorKey: String) {
 
 class CategoryChoices(context: Context, choices: List<WalletCategory>) :
     ArrayAdapter<WalletCategory>(context, R.layout.item_category_choice, choices) {
+    var selectedId: String? = null
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View = row(position, convertView, parent)
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View = row(position, convertView, parent)
     private fun row(position: Int, recycled: View?, parent: ViewGroup): View {
@@ -66,6 +67,8 @@ class CategoryChoices(context: Context, choices: List<WalletCategory>) :
             ?: ItemCategoryChoiceBinding.inflate(LayoutInflater.from(context), parent, false)
         val category = requireNotNull(getItem(position))
         binding.badge.showCategory(category.iconKey, category.backgroundColorKey)
+        binding.root.isActivated = category.id == selectedId
+        androidx.core.view.ViewCompat.setStateDescription(binding.root, if (category.id == selectedId) "Selected" else "Not selected")
         binding.label.text = if (category.isArchived) context.getString(R.string.archived_name, category.name) else category.name
         return binding.root
     }

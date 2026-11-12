@@ -22,6 +22,10 @@ class CategoryWheelView(context: Context) : View(context) {
     private var values = emptyList<Pair<WalletCategory, BigInteger>>()
     private var sweeps = emptyList<Float>()
     private var total = BigInteger.ZERO
+    private var downX = 0f
+    private var downY = 0f
+    private var scrolling = false
+    private val touchSlop = android.view.ViewConfiguration.get(context).scaledTouchSlop
     private var pressedSector: Int? = null
     init {
         isClickable = true; isFocusable = true; importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
@@ -41,7 +45,7 @@ class CategoryWheelView(context: Context) : View(context) {
             angle += sweep
             sweep
         }
-        contentDescription = context.getString(R.string.wheel_accessibility, negative.joinToString {
+        contentDescription = context.getString(R.string.wheel_accessibility, if (negative.isEmpty()) context.getString(R.string.no_category_values) else negative.joinToString {
             "${it.first.name}: ${Money.format(it.second)}, ${percentage(it.second)}"
         })
         invalidate()
@@ -75,11 +79,17 @@ class CategoryWheelView(context: Context) : View(context) {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 val sector = sectorAt(event.x, event.y) ?: return false
+                downX = event.x; downY = event.y; scrolling = false
                 parent?.requestDisallowInterceptTouchEvent(true)
                 press(sector)
             }
-            MotionEvent.ACTION_MOVE -> press(sectorAt(event.x, event.y))
-            MotionEvent.ACTION_UP -> { clearPress(); performClick() }
+            MotionEvent.ACTION_MOVE -> {
+                if (scrolling || hypot(event.x - downX, event.y - downY) > touchSlop) {
+                    scrolling = true
+                    clearPress()
+                } else press(sectorAt(event.x, event.y))
+            }
+            MotionEvent.ACTION_UP -> { clearPress(); if (!scrolling) performClick() }
             MotionEvent.ACTION_CANCEL -> clearPress()
             else -> return super.onTouchEvent(event)
         }
