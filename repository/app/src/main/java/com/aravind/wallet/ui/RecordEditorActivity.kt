@@ -69,10 +69,6 @@ class RecordEditorActivity : AppCompatActivity() {
         binding.delete.isVisible = recordId != 0L
         binding.category.isSaveEnabled = false
         binding.category.setOnClickListener {
-            if (categoryChoices.isEmpty()) {
-                startActivity(Intent(this, CategoryEditorActivity::class.java))
-                return@setOnClickListener
-            }
             pickCategory.launch(Intent(this, CategoryPickerActivity::class.java)
                 .putExtra("recordId", recordId).putExtra("selectedCategoryId", selectedCategoryId))
         }
@@ -187,7 +183,7 @@ class RecordEditorActivity : AppCompatActivity() {
             RecordType.EXPENSE -> R.id.type_expense
             RecordType.TRANSFER -> R.id.type_transfer
         })
-        refreshCategories(ledger, selectedCategoryId ?: draft?.getString("category") ?: record?.categoryId ?: "")
+        refreshCategories(ledger, if (draft?.containsKey("category") == true) draft?.getString("category") else selectedCategoryId ?: record?.categoryId)
         binding.amount.setText(draft?.getString("amount") ?: record?.let { Money.input(it.amountMinor) }.orEmpty())
         binding.description.setText(draft?.getString("description") ?: record?.description.orEmpty())
         occurredAt = draft?.getString("occurredAt")?.let(LocalDateTime::parse) ?: record?.occurredAt

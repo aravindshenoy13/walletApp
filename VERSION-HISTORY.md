@@ -68,3 +68,5 @@
 
 - Corrected the record header Save alignment.
 - Removed paw and wrench, redrew cash and airplane, and unified icon stroke widths.
+
+V5.3.1 completed: includes responsive UI refinements, explicit Uncategorised draft restoration, empty-category picking, last-category archiving, and normalized restore names. Archived under backups/wallet-v5.3.1-2026-11-13-r01/.

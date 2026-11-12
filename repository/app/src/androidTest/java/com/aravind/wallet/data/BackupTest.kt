@@ -33,6 +33,18 @@ class BackupTest {
             assertTrue(next > 11)
         } finally { db.close() }
     }
+    @Test fun restoredNamesAreTrimmedAndWhitespaceDuplicatesRejected() {
+        val categories = V2CategorySeeds.rows
+        val valid = Ledger(listOf(Account(1, " Cash ", 0)), emptyList(), categories.map { it.copy(name = " ${it.name} ") })
+        val decoded = WalletBackup.decode(WalletBackup.encode(valid))
+        assertEquals("Cash", decoded.accounts.single().name)
+        assertEquals(categories.map { it.name }, decoded.categories.map { it.name })
+        val duplicateAccounts = valid.copy(accounts = valid.accounts + Account(2, "cash", 0))
+        assertTrue(runCatching { WalletBackup.decode(WalletBackup.encode(duplicateAccounts)) }.isFailure)
+        val duplicateCategories = valid.copy(categories = categories + categories.first().copy(id = "duplicate", name = " ${categories.first().name.uppercase()} "))
+        assertTrue(runCatching { WalletBackup.decode(WalletBackup.encode(duplicateCategories)) }.isFailure)
+    }
+
     @Test fun rejectsBrokenReferencesAndUnsupportedVersion() {
         val invalid = Ledger(listOf(Account(1, "Bank", 0)), listOf(WalletRecord(1, RecordType.TRANSFER, 5, 1, 99, null, LocalDateTime.now(), "")), V2CategorySeeds.rows)
         try { WalletBackup.decode(WalletBackup.encode(invalid)); fail("Missing destination accepted") } catch (_: IllegalArgumentException) { }

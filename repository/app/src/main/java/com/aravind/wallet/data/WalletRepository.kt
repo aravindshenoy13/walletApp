@@ -18,7 +18,7 @@ class WalletRepository(private val database: WalletDatabase) {
         require(name.isNotEmpty() && name.length <= 80) { "Enter a category name of 1–80 characters." }
         require(category.iconKey in CategoryCatalog.supportedIconKeys) { "Choose an icon." }
         require(CategoryCatalog.colors.any { it.key == category.backgroundColorKey }) { "Choose a background color." }
-        require(dao.categories().none { it.id != category.id && it.name.equals(name, ignoreCase = true) }) {
+        require(dao.categories().none { it.id != category.id && it.name.trim().equals(name, ignoreCase = true) }) {
             "A category with this name already exists (it may be archived)."
         }
         if (isNew) {
@@ -39,7 +39,6 @@ class WalletRepository(private val database: WalletDatabase) {
     suspend fun archiveCategory(id: String) = database.withTransaction {
         val category = requireNotNull(dao.category(id)) { "This category no longer exists." }
         require(!category.isArchived) { "This category is already archived." }
-        require(dao.categories().count { !it.isArchived } > 1) { "Keep at least one category active." }
         dao.updateCategory(category.copy(isArchived = true))
     }
 
@@ -49,7 +48,7 @@ class WalletRepository(private val database: WalletDatabase) {
         require(name.isNotEmpty()) { "Enter an account name." }
         require(name.length <= 80) { "Use at most 80 characters for the account name." }
         val existing = dao.accounts()
-        require(existing.none { it.id != account.id && it.name.equals(name, ignoreCase = true) }) {
+        require(existing.none { it.id != account.id && it.name.trim().equals(name, ignoreCase = true) }) {
             "An account with this name already exists."
         }
         val normalized = account.copy(name = name)

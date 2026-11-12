@@ -87,10 +87,10 @@ class CategoryRepositoryTest {
         assertTrue(runCatching { repository.saveCategory(custom("Old DINING"), true) }.isFailure)
     }
 
-    @Test fun lastActiveCategoryCannotBeArchivedAndInvalidAppearanceCannotBeSaved() = runBlocking {
+    @Test fun lastActiveCategoryCanBeArchivedAndInvalidAppearanceCannotBeSaved() = runBlocking {
         repository.snapshot().categories.filter { it.id != "OTHER" }.forEach { repository.archiveCategory(it.id) }
-        assertTrue(runCatching { repository.archiveCategory("OTHER") }.isFailure)
-        assertEquals(1, repository.snapshot().categories.count { !it.isArchived })
+        repository.archiveCategory("OTHER")
+        assertEquals(0, repository.snapshot().categories.count { !it.isArchived })
         listOf(custom(" "), custom("Invalid").copy(iconKey = "unknown"), custom("Invalid").copy(backgroundColorKey = "unknown"))
             .forEach { assertTrue(runCatching { repository.saveCategory(it, true) }.isFailure) }
         assertEquals(12, repository.snapshot().categories.size)

@@ -34,16 +34,16 @@ object WalletBackup {
         val root = JSONObject(text)
         require(root.getString("format") == "wallet-full-backup" && root.getInt("version") in 1..2 && root.getString("currency") == "INR") { "Unsupported backup format." }
         fun rows(key: String): List<JSONObject> = root.getJSONArray(key).let { a -> (0 until a.length()).map(a::getJSONObject) }
-        val accounts = rows("accounts").map { Account(it.getString("id").toLong(), it.getString("name"), it.getString("opening").toLong(), if (root.getInt("version") == 1) "bank" else it.getString("icon")) }
-        val categories = rows("categories").map { WalletCategory(it.getString("id"), it.getString("name"), it.getString("icon"), it.getString("color"), it.getBoolean("builtIn"), it.getBoolean("archived")) }
+        val accounts = rows("accounts").map { Account(it.getString("id").toLong(), it.getString("name").trim(), it.getString("opening").toLong(), if (root.getInt("version") == 1) "bank" else it.getString("icon")) }
+        val categories = rows("categories").map { WalletCategory(it.getString("id"), it.getString("name").trim(), it.getString("icon"), it.getString("color"), it.getBoolean("builtIn"), it.getBoolean("archived")) }
         val records = rows("records").map { WalletRecord(it.getString("id").toLong(), RecordType.valueOf(it.getString("type")), it.getString("amount").toLong(), it.getString("account").toLong(),
             if (it.isNull("destination")) null else it.getString("destination").toLong(), if (it.isNull("category")) null else it.getString("category"),
             LocalDateTime.parse(it.getString("occurredAt")), it.getString("description"), it.getString("note")) }
         require(accounts.all { it.iconKey in setOf("bank", "cash", "card") && it.id > 0 && it.name.isNotBlank() && it.name.length <= 80 }) { "Invalid account." }
-        require(accounts.map { it.id }.distinct().size == accounts.size && accounts.map { it.name.lowercase(java.util.Locale.ROOT) }.distinct().size == accounts.size) { "Duplicate accounts." }
+        require(accounts.map { it.id }.distinct().size == accounts.size && accounts.map { it.name }.toSortedSet(String.CASE_INSENSITIVE_ORDER).size == accounts.size) { "Duplicate accounts." }
 
         require(categories.all { c -> c.id.isNotBlank() && c.name.isNotBlank() && c.name.length <= 80 && c.iconKey in CategoryCatalog.supportedIconKeys && CategoryCatalog.colors.any { it.key == c.backgroundColorKey } }) { "Invalid category." }
-        require(categories.map { it.id }.distinct().size == categories.size && categories.map { it.name.lowercase(java.util.Locale.ROOT) }.distinct().size == categories.size) { "Duplicate categories." }
+        require(categories.map { it.id }.distinct().size == categories.size && categories.map { it.name }.toSortedSet(String.CASE_INSENSITIVE_ORDER).size == categories.size) { "Duplicate categories." }
         require(records.all { it.occurredAt.nano == 0 }) { "Backup timestamps must use whole seconds; fractional seconds are not supported." }
         require(records.map { it.id }.distinct().size == records.size) { "Duplicate record IDs." }
         val accountIds = accounts.map { it.id }.toSet(); val categoryIds = categories.map { it.id }.toSet()
