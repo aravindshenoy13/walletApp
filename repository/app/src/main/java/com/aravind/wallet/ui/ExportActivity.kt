@@ -120,6 +120,10 @@ class ExportActivity : AppCompatActivity() {
                     if (model.accountIds == null) model.accountIds = accounts.map { it.id }.toSet()
                     binding.accountChoices.removeAllViews()
                     accounts.forEach { account -> binding.accountChoices.addView(android.widget.CheckBox(this@ExportActivity).apply {
+                        layoutParams = android.widget.LinearLayout.LayoutParams(-1, -2).apply {
+                            bottomMargin = (4 * resources.displayMetrics.density).toInt()
+                        }
+                        gravity = android.view.Gravity.START or android.view.Gravity.CENTER_VERTICAL
                         text = account.name; isChecked = account.id in model.accountIds.orEmpty()
                         setOnCheckedChangeListener { _, checked -> model.accountIds = if (checked) model.accountIds.orEmpty() + account.id else model.accountIds.orEmpty() - account.id }
                     }) }

@@ -1,7 +1,11 @@
 package com.aravind.wallet.ui
 
 import android.graphics.Typeface
-import android.graphics.drawable.GradientDrawable
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.ColorFilter
+import android.graphics.PixelFormat
+import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.view.Gravity
 import android.widget.LinearLayout
@@ -48,9 +52,21 @@ class MonthlyCalendar(private val container: LinearLayout) {
                     orientation = LinearLayout.VERTICAL
                     gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
                     setPadding(dp(1), dp(3), dp(1), dp(3))
-                    background = GradientDrawable().apply {
-                        setColor(context.getColor(R.color.paper))
-                        setStroke(dp(1).coerceAtLeast(1), context.getColor(R.color.line))
+                    // Each shared edge belongs to just one cell.
+                    background = object : Drawable() {
+                        private val paint = Paint().apply { color = context.getColor(R.color.line) }
+                        override fun draw(canvas: Canvas) {
+                            val b = bounds
+                            val stroke = dp(1).coerceAtLeast(1).toFloat()
+                            canvas.drawRect(b.right - stroke, b.top.toFloat(), b.right.toFloat(), b.bottom.toFloat(), paint)
+                            canvas.drawRect(b.left.toFloat(), b.bottom - stroke, b.right.toFloat(), b.bottom.toFloat(), paint)
+                            if (column == 0) canvas.drawRect(b.left.toFloat(), b.top.toFloat(), b.left + stroke, b.bottom.toFloat(), paint)
+                            if (week == 0) canvas.drawRect(b.left.toFloat(), b.top.toFloat(), b.right.toFloat(), b.top + stroke, paint)
+                        }
+                        override fun setAlpha(alpha: Int) { paint.alpha = alpha }
+                        override fun setColorFilter(colorFilter: ColorFilter?) { paint.colorFilter = colorFilter }
+                        @Deprecated("Deprecated in Android")
+                        override fun getOpacity() = PixelFormat.TRANSLUCENT
                     }
                 }
                 weekRow.addView(cell, LinearLayout.LayoutParams(0, -1, 1f))

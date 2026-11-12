@@ -21,7 +21,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 sealed interface RecordRow {
-    data class Date(val date: LocalDate) : RecordRow
+    data class Date(val date: LocalDate, val first: Boolean = false) : RecordRow
     data class Entry(val record: WalletRecord, val source: String, val destination: String?, val category: WalletCategory?, val accountScope: Long? = null) : RecordRow
 }
 
@@ -41,7 +41,7 @@ class RecordsAdapter(private val edit: (Long) -> Unit) :
     fun show(ledger: Ledger, records: List<WalletRecord> = ledger.records, accountId: Long? = null) {
         val rows = buildList {
             records.sortedWith(compareByDescending<WalletRecord> { it.occurredAt }.thenByDescending { it.id }).groupBy { it.occurredAt.toLocalDate() }.forEach { (date, records) ->
-                add(RecordRow.Date(date))
+                add(RecordRow.Date(date, isEmpty()))
                 records.forEach { record ->
                     add(RecordRow.Entry(record, ledger.accountsById.getValue(record.accountId).name,
                         record.destinationAccountId?.let { ledger.accountsById.getValue(it).name },
@@ -63,6 +63,9 @@ class RecordsAdapter(private val edit: (Long) -> Unit) :
         when (val row = getItem(position)) {
             is RecordRow.Date -> (holder as DateHolder).binding.apply {
                 dateLabel.text = row.date.display()
+                (root.layoutParams as ViewGroup.MarginLayoutParams).apply {
+                    topMargin = if (row.first) 0 else (12 * root.resources.displayMetrics.density).toInt()
+                }
             }
             is RecordRow.Entry -> (holder as RecordHolder).binding.apply {
                 val record = row.record
@@ -95,7 +98,7 @@ class RecordsAdapter(private val edit: (Long) -> Unit) :
                 val time = record.occurredAt.displayTime(context)
                 meta.text = listOf(time, if (record.type == RecordType.TRANSFER)
                     context.getString(R.string.transfer_accounts, row.source, row.destination) else row.source,
-                    record.description).filter { it.isNotBlank() }.joinToString(" · ")
+                    record.description).filter { it.isNotBlank() }.joinToString(" Â· ")
                 root.setOnClickListener { edit(record.id) }
             }
         }

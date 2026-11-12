@@ -20,6 +20,7 @@ class AdditionalIconsActivity : AppCompatActivity() {
         setContentView(root); applyInsets(root)
         val header = LinearLayout(this).apply { gravity = Gravity.CENTER_VERTICAL; minimumHeight = dp(56); setPadding(dp(8), 0, dp(8), 0) }
         header.addView(Button(this, null, 0, R.style.PlainButton).apply {
+            compoundDrawablePadding = dp(4)
             setText(R.string.back); setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_back, 0, 0, 0)
             setOnClickListener { finish() }
         })
@@ -56,6 +57,12 @@ class AdditionalIconsActivity : AppCompatActivity() {
         update()
         root.addView(Button(this, null, 0, R.style.OutlineButton).apply {
             setText(R.string.use_selected_icon)
+            gravity = Gravity.START or Gravity.CENTER_VERTICAL
+            setBackgroundResource(R.drawable.action_save)
+            setTextColor(getColor(R.color.action_save))
+            setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_save, 0, 0, 0)
+            compoundDrawableTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.action_save))
+            compoundDrawablePadding = dp(4)
             layoutParams = LinearLayout.LayoutParams(-1, -2).apply { setMargins(dp(16), dp(12), dp(16), dp(16)) }
             setOnClickListener { if (CategoryCatalog.icons.any { it.key == selected }) {
                 setResult(RESULT_OK, Intent().putExtra("icon", selected)); finish()

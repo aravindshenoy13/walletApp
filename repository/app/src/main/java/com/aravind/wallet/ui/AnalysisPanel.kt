@@ -30,7 +30,7 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
     private var viewIndex = saved?.getInt("analysisView") ?: 0
     private var ledger: Ledger? = null
     init {
-        binding.wheelPanel.addView(wheel, android.widget.LinearLayout.LayoutParams(-1, (280 * activity.resources.displayMetrics.density).toInt()))
+        binding.wheelPanel.addView(wheel, android.widget.LinearLayout.LayoutParams(-1, -2))
         binding.analysisView.adapter = ArrayAdapter(activity, android.R.layout.simple_spinner_item, activity.resources.getStringArray(R.array.analysis_views)) .apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
         binding.analysisView.setSelection(viewIndex)
         binding.analysisView.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {

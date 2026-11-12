@@ -6,9 +6,9 @@
     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/ink" />
     <TextView android:id="@+id/period" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingHorizontal="16dp" android:paddingTop="16dp" android:textColor="@color/quiet" />
     <TextView android:id="@+id/scope" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingHorizontal="16dp" android:paddingTop="8dp" android:textColor="@color/quiet" />
-    <TextView android:id="@+id/total" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingHorizontal="16dp" android:paddingVertical="12dp" android:textSize="24sp" android:textIsSelectable="true" />
+    <TextView android:id="@+id/total" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingHorizontal="16dp" android:paddingVertical="12dp" android:textStyle="bold" android:textSize="24sp" android:textIsSelectable="true" />
     <ProgressBar android:id="@+id/loading" android:layout_width="48dp" android:layout_height="48dp" android:layout_gravity="center_horizontal" android:contentDescription="@string/loading" />
     <TextView android:id="@+id/error" android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="16dp" android:text="@string/load_failed" android:textColor="@color/error" android:visibility="gone" />
     <TextView android:id="@+id/empty" android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="16dp" android:text="@string/no_category_records" android:visibility="gone" />
-    <androidx.recyclerview.widget.RecyclerView android:id="@+id/history_list" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:paddingHorizontal="16dp" android:clipToPadding="false" />
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/history_list" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:paddingHorizontal="16dp" android:paddingBottom="16dp" android:clipToPadding="false" />
 </LinearLayout>

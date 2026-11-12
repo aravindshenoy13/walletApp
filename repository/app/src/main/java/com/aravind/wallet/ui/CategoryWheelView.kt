@@ -18,6 +18,12 @@ import kotlin.math.hypot
 
 /** Drawing alone uses floating point; values and totals stay exact. */
 class CategoryWheelView(context: Context) : View(context) {
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val width = MeasureSpec.getSize(widthMeasureSpec)
+        val density = resources.displayMetrics.density
+        val height = (width * 0.75f).coerceIn(240f * density, 360f * density).toInt()
+        setMeasuredDimension(resolveSize(width, widthMeasureSpec), resolveSize(height, heightMeasureSpec))
+    }
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var values = emptyList<Pair<WalletCategory, BigInteger>>()
     private var sweeps = emptyList<Float>()

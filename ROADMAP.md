@@ -118,6 +118,12 @@
 - Keep the standalone V5 source/history/APK backup in the existing top-level `backups/` folder, as requested for this release.
 - See [V5 release notes](V5-PLAN.md) for scope, verification, and backup details.
 
+### V5.1 — UI design consistency
+
+- Implement D01–D26 from [UI-DESIGN-REVIEW.md](UI-DESIGN-REVIEW.md): headers, list gutters, forms, selection spacing, actions, totals, and chart presentation.
+- Keep existing transaction behavior, Room schema 3, and backup format 2 unchanged.
+- Version name 5.1, version code 12. See [V5.1-PLAN.md](V5.1-PLAN.md) for decisions and verification.
+
 ## Business rules
 
 - Transaction direction and category are separate concepts: income and expense entries can share a category.

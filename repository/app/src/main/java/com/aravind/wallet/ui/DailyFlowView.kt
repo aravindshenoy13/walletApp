@@ -17,6 +17,12 @@ import java.time.format.DateTimeFormatter
 
 /** Sparse day points plus adjacent zero days avoid allocating every day in very long ranges. */
 class DailyFlowView(context: Context, attrs: AttributeSet? = null) : View(context, attrs) {
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val width = MeasureSpec.getSize(widthMeasureSpec)
+        val density = resources.displayMetrics.density
+        val height = (width * 0.75f).coerceIn(240f * density, 360f * density).toInt()
+        setMeasuredDimension(resolveSize(width, widthMeasureSpec), resolveSize(height, heightMeasureSpec))
+    }
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var start = LocalDate.now()
     private var end = start
@@ -68,7 +74,7 @@ class DailyFlowView(context: Context, attrs: AttributeSet? = null) : View(contex
         val left = 10f * density; val right = width - 12f * density
         paint.textSize = 11f * resources.displayMetrics.scaledDensity
         val top = paint.fontSpacing + 12f * density
-        val bottom = height - 2 * paint.fontSpacing - 8f * density
+        val bottom = height - 2 * paint.fontSpacing - 16f * density
         if (right <= left || bottom <= top) return
         val values = daily.mapValues { it.value.value(mode) }
         val highest = (values.values.maxOrNull() ?: BigInteger.ZERO).coerceAtLeast(BigInteger.ZERO)
@@ -127,8 +133,8 @@ class DailyFlowView(context: Context, attrs: AttributeSet? = null) : View(contex
         }
         paint.color = context.getColor(R.color.quiet)
         val format = DateTimeFormatter.ofPattern("d MMM")
-        paint.textAlign = Paint.Align.LEFT; canvas.drawText(start.format(format), left, height-4*density, paint)
-        if (days > 0) { paint.textAlign = Paint.Align.RIGHT; canvas.drawText(end.format(format), right, height-4*density, paint) }
+        paint.textAlign = Paint.Align.LEFT; canvas.drawText(start.format(format), left, height - 8*density - paint.descent(), paint)
+        if (days > 0) { paint.textAlign = Paint.Align.RIGHT; canvas.drawText(end.format(format), right, height - 8*density - paint.descent(), paint) }
         paint.textAlign = Paint.Align.LEFT
     }
 }

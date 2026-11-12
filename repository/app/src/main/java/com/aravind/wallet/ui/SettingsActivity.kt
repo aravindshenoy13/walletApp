@@ -23,21 +23,23 @@ class SettingsActivity : AppCompatActivity() {
     private val restore = registerForActivityResult(ActivityResultContracts.OpenDocument()) { model.selected(it, true) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        actions = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(16), dp(8), dp(16), dp(16)) }
-        val scroll = ScrollView(this).apply { addView(actions) }; setContentView(scroll); applyInsets(scroll)
-        val header = LinearLayout(this).apply { gravity = android.view.Gravity.CENTER_VERTICAL; minimumHeight = dp(56) }
+        actions = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(16), dp(16), dp(16), dp(16)) }
+        val root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }; setContentView(root); applyInsets(root)
+        val header = LinearLayout(this).apply { gravity = android.view.Gravity.CENTER_VERTICAL; minimumHeight = dp(56); setPadding(dp(8), 0, dp(8), 0) }
         header.addView(Button(this, null, 0, R.style.PlainButton).apply {
+            compoundDrawablePadding = dp(4)
             text = "Back"; setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_back, 0, 0, 0)
             setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         })
         header.addView(TextView(this, null, 0, R.style.ScreenTitle).apply {
             text = "Settings"; setPadding(dp(8), dp(8), 0, dp(8))
         }, LinearLayout.LayoutParams(0, -2, 1f))
-        actions.addView(header)
-        actions.addView(android.view.View(this).apply { setBackgroundColor(getColor(R.color.ink)) }, LinearLayout.LayoutParams(-1, dp(1)))
+        root.addView(header)
+        root.addView(android.view.View(this).apply { setBackgroundColor(getColor(R.color.ink)) }, LinearLayout.LayoutParams(-1, dp(1)))
+        root.addView(ScrollView(this).apply { addView(actions) }, LinearLayout.LayoutParams(-1, 0, 1f))
         val prefs = getSharedPreferences("appearance", MODE_PRIVATE)
         actions.addView(CheckBox(this).apply {
-            layoutParams = LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(12) }
+            layoutParams = LinearLayout.LayoutParams(-1, -2).apply { topMargin = 0 }
             setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_dark_mode, 0, 0, 0)
             compoundDrawablePadding = dp(8)
             text = "Dark mode"; isChecked = prefs.getBoolean("dark", false)
@@ -80,7 +82,7 @@ class SettingsActivity : AppCompatActivity() {
     }
     private fun button(label: String, clicked: () -> Unit) { actions.addView(Button(this, null, 0, R.style.OutlineButton).apply { text = label; isAllCaps = false; gravity = android.view.Gravity.START or android.view.Gravity.CENTER_VERTICAL
         layoutParams = LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(12) }
-        val icon = when (label) { "Export CSV" -> com.aravind.wallet.R.drawable.ic_expense; "Back up data" -> com.aravind.wallet.R.drawable.ic_save; "Restore backup" -> com.aravind.wallet.R.drawable.ic_back; else -> com.aravind.wallet.R.drawable.ic_back }
+        val icon = when (label) { "Export CSV" -> com.aravind.wallet.R.drawable.ic_export; "Back up data" -> com.aravind.wallet.R.drawable.ic_save; "Restore backup" -> com.aravind.wallet.R.drawable.ic_restore; else -> com.aravind.wallet.R.drawable.ic_back }
         setCompoundDrawablesRelativeWithIntrinsicBounds(icon, 0, 0, 0)
         compoundDrawablePadding = dp(8); setTextColor(getColor(R.color.ink))
         setOnClickListener { clicked() } }) }
