@@ -155,3 +155,8 @@
 - CSV export is supported. CSV import is removed from the product scope.
 - Full backup/restore is V4; exporting transactions as CSV alone is not a full backup.
 - Budgets and app lock are not in the roadmap.
+
+### V5.4 — Restore selection styling
+
+- Restore the selection appearance from before the V5.3.1 square markers, preserving checked behavior and all bug fixes.
+- Version 5.4, code 16. See [V5.4 notes](V5.4-PLAN.md).
