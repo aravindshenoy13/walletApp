@@ -41,7 +41,7 @@ object WalletBackup {
             LocalDateTime.parse(it.getString("occurredAt")), it.getString("description"), it.getString("note")) }
         require(accounts.all { it.iconKey in setOf("bank", "cash", "card") && it.id > 0 && it.name.isNotBlank() && it.name.length <= 80 }) { "Invalid account." }
         require(accounts.map { it.id }.distinct().size == accounts.size && accounts.map { it.name.lowercase(java.util.Locale.ROOT) }.distinct().size == accounts.size) { "Duplicate accounts." }
-        require(categories.isNotEmpty() && categories.any { !it.isArchived }) { "Backup must contain active categories." }
+
         require(categories.all { c -> c.id.isNotBlank() && c.name.isNotBlank() && c.name.length <= 80 && CategoryCatalog.icons.any { it.key == c.iconKey } && CategoryCatalog.colors.any { it.key == c.backgroundColorKey } }) { "Invalid category." }
         require(categories.map { it.id }.distinct().size == categories.size && categories.map { it.name.lowercase(java.util.Locale.ROOT) }.distinct().size == categories.size) { "Duplicate categories." }
         require(records.all { it.occurredAt.nano == 0 }) { "Backup timestamps must use whole seconds; fractional seconds are not supported." }
@@ -49,7 +49,7 @@ object WalletBackup {
         val accountIds = accounts.map { it.id }.toSet(); val categoryIds = categories.map { it.id }.toSet()
         require(records.all { r -> r.id > 0 && r.amountMinor > 0 && r.accountId in accountIds && r.occurredAt.year in 1..9999 && r.description.length <= 120 && r.note.length <= 1000 &&
             if (r.type == RecordType.TRANSFER) r.destinationAccountId in accountIds && r.destinationAccountId != r.accountId && r.categoryId == null
-            else r.destinationAccountId == null && r.categoryId in categoryIds }) { "Invalid transaction or missing relationship." }
+            else r.destinationAccountId == null && (r.categoryId == null || r.categoryId in categoryIds) }) { "Invalid transaction or missing relationship." }
         return Ledger(accounts, records, categories)
     }
 }

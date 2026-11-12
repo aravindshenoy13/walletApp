@@ -1,5 +1,21 @@
 # WalletApp wireframes
 
+## Calculator proposal · V5.1 baseline, revision 03
+
+- `wallet-v5.1-wireframe-r03.html` moves the transaction-type buttons above Account and Category. The buttons use red for Expense, green for Income, and blue for Transfer; the selected button is underlined and more strongly outlined.
+- Type selection is interactive in the preview. Transfer displays a destination account instead of a category. The shared calculation field, top-right Save, and description placement remain as in revision 02. Previous revisions are preserved.
+
+## Calculator proposal · V5.1 baseline, revision 02
+
+- `wallet-v5.1-wireframe-r02.html` keeps the shared amount/calculation field and places Save in the top-right header. Description/payee appears immediately below the date and time. Revision 01 remains available for comparing both field layouts.
+- Equals changes the shared field and does not save. The Save button is a preview-only action. V5.1 identifies the existing app baseline, not an assigned release for this proposal.
+
+## Calculator proposal · V5.1 baseline, revision 01
+
+- `wallet-v5.1-wireframe-r01.html` compares two new-record layouts: separate calculation and amount fields, and a single shared amount/calculation field. V5.1 is the existing app baseline, not a commitment to add this feature to that release.
+- The calculator controls are interactive for exploring the layouts. Equals updates the amount field; it never saves a record. Save is a preview-only action. Expression evaluation in the preview is illustrative; exact money precision, rounding, and validation rules must be decided for a future implementation.
+- The rest of the new-record layout is illustrative, preserving account, category, transaction type, date, time, description/payee, and Save. No Android implementation or roadmap change is included.
+
 ## V4.1 confirmed implementation decision
 
 - The user chose a Net-only wheel containing negative-net categories only. Slices use absolute negative values; zero and positive categories are omitted. This supersedes the all-category Expenses example and unresolved mixed-sign proposal in revision 01. Flow Graph keeps Net/Income/Expenses.

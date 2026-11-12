@@ -30,6 +30,12 @@ class WalletRepository(private val database: WalletDatabase) {
         }
     }
 
+    suspend fun deleteCategory(id: String) = database.withTransaction {
+        requireNotNull(dao.category(id)) { "This category no longer exists." }
+        dao.uncategoriseRecords(id)
+        dao.deleteCategory(id)
+    }
+
     suspend fun archiveCategory(id: String) = database.withTransaction {
         val category = requireNotNull(dao.category(id)) { "This category no longer exists." }
         require(!category.isArchived) { "This category is already archived." }
@@ -66,9 +72,9 @@ class WalletRepository(private val database: WalletDatabase) {
             require(record.categoryId == null) { "Transfers do not have a category." }
         } else {
             val category = record.categoryId?.let { dao.category(it) }
-            require(category != null) { "Choose an existing category." }
+            require(record.categoryId == null || category != null) { "Choose an existing category." }
             val oldCategory = if (record.id == 0L) null else dao.record(record.id)?.categoryId
-            require(!category.isArchived || oldCategory == category.id) { "Choose an active category for a new assignment." }
+            require(category == null || !category.isArchived || oldCategory == category.id) { "Choose an active category for a new assignment." }
             require(record.destinationAccountId == null) { "Only transfers have a destination account." }
         }
         val normalized = record.copy(description = record.description.trim(), note = record.note.trim())

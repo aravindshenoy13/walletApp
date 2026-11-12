@@ -65,6 +65,12 @@ class CategoryEditorActivity : AppCompatActivity() {
                 binding.name.requestFocus()
             } else model.saveCategory(WalletCategory(categoryId, binding.name.text.toString(), icon, color), isNew)
         }
+        binding.delete.setOnClickListener {
+            AlertDialog.Builder(this).setTitle("Delete category")
+                .setMessage("Deleting this category will make all its records uncategorised")
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.delete) { _, _ -> model.deleteCategory(categoryId) }.show()
+        }
         binding.archive.setOnClickListener {
             val saved = persisted ?: return@setOnClickListener
             AlertDialog.Builder(this).setTitle(getString(R.string.archive_title, saved.name))
@@ -104,6 +110,7 @@ class CategoryEditorActivity : AppCompatActivity() {
         binding.name.setText(draft?.getString("name") ?: persisted?.name.orEmpty())
         binding.origin.setText(R.string.archived)
         binding.origin.isVisible = persisted?.isArchived == true
+        binding.delete.isVisible = !isNew
         binding.archive.isVisible = !isNew && persisted?.isArchived == false
         binding.archivedHelp.isVisible = persisted?.isArchived == true
         initialized = true
@@ -183,6 +190,7 @@ class CategoryEditorActivity : AppCompatActivity() {
         binding.form.enableTree(ready && !busy)
         binding.back.isEnabled = !busy
         binding.save.isEnabled = ready && !busy
+        binding.delete.isEnabled = ready && !busy
         binding.archive.isEnabled = ready && !busy
     }
     private fun showError(message: String) {

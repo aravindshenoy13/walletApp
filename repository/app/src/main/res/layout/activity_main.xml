@@ -11,7 +11,7 @@
             <com.aravind.wallet.ui.RecordsSearchField android:id="@+id/record_search" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:minHeight="48dp" android:background="@android:color/transparent" android:paddingHorizontal="8dp" android:paddingVertical="8dp" android:hint="@string/search_records" android:inputType="text" android:singleLine="true" android:textSize="14sp" android:importantForAutofill="no" android:imeOptions="actionDone" />
             <ImageButton android:id="@+id/clear_search" android:layout_width="48dp" android:layout_height="48dp" android:background="?attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_close" app:tint="@color/quiet" android:contentDescription="@string/clear_search" />
         </LinearLayout>
-        <Button android:background="@drawable/action_add" android:backgroundTint="@null" android:textColor="@color/action_add" android:drawableTint="@color/action_add" android:id="@+id/add" android:layout_marginVertical="4dp" android:drawableStart="@drawable/ic_add"  android:drawablePadding="4dp" style="@style/PlainButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/add_record" android:enabled="false"  android:gravity="start|center_vertical" />
+
     </LinearLayout>
     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/ink" />
     <ProgressBar android:id="@+id/loading" android:layout_width="48dp" android:layout_height="48dp" android:layout_gravity="center_horizontal" android:contentDescription="@string/loading" />
@@ -53,6 +53,7 @@
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/category_help" android:textColor="@color/quiet" android:textSize="14sp" android:paddingBottom="12dp" />
         <androidx.recyclerview.widget.RecyclerView android:id="@+id/category_list" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:clipToPadding="false" />
     </LinearLayout>
+        <Button android:background="@drawable/action_add" android:backgroundTint="@null" android:textColor="@color/action_add" android:drawableTint="@color/action_add" android:id="@+id/add" android:layout_marginHorizontal="16dp" android:layout_marginBottom="12dp" android:drawableStart="@drawable/ic_add"  android:drawablePadding="4dp" style="@style/OutlineButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/add_record" android:enabled="false"  android:gravity="start|center_vertical" />
     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/ink" />
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
         <Button android:id="@+id/records_tab" style="@style/NavigationButton" android:drawableTop="@drawable/ic_nav_records" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:text="@string/records" />

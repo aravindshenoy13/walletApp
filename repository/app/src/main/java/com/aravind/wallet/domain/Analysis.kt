@@ -22,7 +22,7 @@ fun Ledger.categoryRecords(categoryId: String, start: LocalDate, end: LocalDate,
     require(!end.isBefore(start))
     return records.filter { record ->
         val date = record.occurredAt.toLocalDate()
-        record.categoryId == categoryId && record.type != RecordType.TRANSFER && date >= start && date <= end &&
+        (record.categoryId ?: "") == categoryId && record.type != RecordType.TRANSFER && date >= start && date <= end &&
             (accountId == null || record.accountId == accountId) && when (mode) {
                 BreakdownMode.NET -> true
                 BreakdownMode.INCOME -> record.type == RecordType.INCOME
@@ -46,7 +46,8 @@ fun Ledger.analyze(start: LocalDate, end: LocalDate, accountId: Long? = null): P
         totals = totals.add(record)
         val zero = DailyTotals(BigInteger.ZERO, BigInteger.ZERO)
         daily[date] = (daily[date] ?: zero).add(record)
-        record.categoryId?.let { categories[it] = (categories[it] ?: zero).add(record) }
+        val categoryId = record.categoryId ?: ""
+        categories[categoryId] = (categories[categoryId] ?: zero).add(record)
     }
     return PeriodAnalysis(totals, daily, categories)
 }

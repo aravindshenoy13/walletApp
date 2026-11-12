@@ -1,0 +1,134 @@
+<style>
+  #wallet-calc-wireframes { --paper:light-dark(#fff,#181818); --ink:light-dark(#222,#eee); --line:light-dark(#999,#858585); --quiet:light-dark(#555,#bbb); --green:light-dark(#39734b,#a8d8b2); color:var(--ink); font:14px/1.4 Arial,sans-serif; }
+  #wallet-calc-wireframes * { box-sizing:border-box; }
+  #wallet-calc-wireframes .board { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; }
+  #wallet-calc-wireframes section { display:flex; flex-direction:column; min-width:0; }
+  #wallet-calc-wireframes h2 { font-size:14px; font-weight:400; margin:0 0 10px; }
+  #wallet-calc-wireframes .phone { background:var(--paper); color:var(--ink); border:1px solid var(--ink); display:flex; flex-direction:column; flex:1; }
+  #wallet-calc-wireframes header { padding:14px; border-bottom:1px solid var(--ink); display:flex; gap:18px; align-items:center; }
+  #wallet-calc-wireframes .body { padding:14px; flex:1; }
+  #wallet-calc-wireframes .pair { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+  #wallet-calc-wireframes label { display:block; color:var(--quiet); font-size:12px; margin:12px 0 5px; }
+  #wallet-calc-wireframes input, #wallet-calc-wireframes select { width:100%; min-width:0; min-height:40px; border:1px solid var(--line); border-radius:0; padding:8px; background:var(--paper); color:var(--ink); font:16px Arial,sans-serif; }
+  #wallet-calc-wireframes .types { display:grid; grid-template-columns:repeat(3,1fr); margin:14px 0 0; }
+  #wallet-calc-wireframes .types span { text-align:center; border:1px solid var(--line); padding:8px 1px; font-size:12px; }
+  #wallet-calc-wireframes .types span:first-child { border:1px solid var(--ink); text-decoration:underline; }
+  #wallet-calc-wireframes .keys { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:5px; margin-top:8px; }
+  #wallet-calc-wireframes button { border:1px solid var(--line); border-radius:0; background:var(--paper); color:var(--ink); min-height:40px; padding:5px; font:14px Arial,sans-serif; }
+  #wallet-calc-wireframes .keys button { min-height:44px; }
+  #wallet-calc-wireframes .keys button[data-key="="] { border-color:var(--ink); font-weight:600; }
+  #wallet-calc-wireframes .error { color:light-dark(#a51d2c,#ffb4ab); font-size:12px; margin:7px 0 0; }
+  #wallet-calc-wireframes .save { display:block; width:100%; border-color:var(--green); color:var(--green); text-align:left; padding:10px; margin-top:16px; }
+  #wallet-calc-wireframes .status { font-size:12px; color:var(--quiet); margin:8px 0 0; }
+  @media(max-width:620px) { #wallet-calc-wireframes .board { grid-template-columns:minmax(0,1fr); } }
+</style>
+<div id="wallet-calc-wireframes">
+  <div class="board">
+    <section data-design="separate" aria-label="Separate calculation and amount fields">
+      <h2>Separate fields</h2>
+      <div class="phone"><header><span>‹ Back</span><span>New record</span></header><div class="body">
+        <div class="pair"><div><label for="s-account">Account</label><select id="s-account"><option>Cash</option><option>Bank</option></select></div><div><label for="s-category">Category</label><select id="s-category"><option>Food</option><option>Groceries</option></select></div></div>
+        <div class="types" aria-label="Transaction type: expense"><span>Expense</span><span>Income</span><span>Transfer</span></div>
+        <div class="pair"><div><label for="s-date">Date</label><input id="s-date" type="text" value="12 Nov 2026"></div><div><label for="s-time">Time</label><input id="s-time" type="text" value="13:30"></div></div>
+        <label for="s-amount">Amount · ₹</label><input id="s-amount" data-amount type="text" inputmode="decimal" placeholder="0.00">
+        <label for="s-expression">Calculation</label><input id="s-expression" data-expression type="text" inputmode="decimal" value="300 + 500" aria-describedby="s-error">
+        <div class="keys" role="group" aria-label="Calculator controls for separate fields">
+          <button type="button" data-key="clear">Clear</button><button type="button" data-key="back" aria-label="Backspace">⌫</button><button type="button" data-key="÷">÷</button><button type="button" data-key="×">×</button>
+          <button type="button" data-key="7">7</button><button type="button" data-key="8">8</button><button type="button" data-key="9">9</button><button type="button" data-key="−">−</button>
+          <button type="button" data-key="4">4</button><button type="button" data-key="5">5</button><button type="button" data-key="6">6</button><button type="button" data-key="+">+</button>
+          <button type="button" data-key="1">1</button><button type="button" data-key="2">2</button><button type="button" data-key="3">3</button><button type="button" data-key="=">=</button>
+          <button type="button" data-key="0">0</button><button type="button" data-key=".">.</button>
+        </div><p id="s-error" class="error" role="alert" hidden></p>
+        <label for="s-desc">Description / payee · optional</label><input id="s-desc" type="text" value="Lunch">
+        <button type="button" class="save" data-save>Save record</button><p class="status" aria-live="polite"></p>
+      </div></div>
+    </section>
+    <section data-design="shared" aria-label="One shared calculation and amount field">
+      <h2>Shared field</h2>
+      <div class="phone"><header><span>‹ Back</span><span>New record</span></header><div class="body">
+        <div class="pair"><div><label for="m-account">Account</label><select id="m-account"><option>Cash</option><option>Bank</option></select></div><div><label for="m-category">Category</label><select id="m-category"><option>Food</option><option>Groceries</option></select></div></div>
+        <div class="types" aria-label="Transaction type: expense"><span>Expense</span><span>Income</span><span>Transfer</span></div>
+        <div class="pair"><div><label for="m-date">Date</label><input id="m-date" type="text" value="12 Nov 2026"></div><div><label for="m-time">Time</label><input id="m-time" type="text" value="13:30"></div></div>
+        <label for="m-amount">Amount · ₹</label><input id="m-amount" data-expression data-amount type="text" inputmode="decimal" value="300 + 500" aria-describedby="m-error">
+        <div class="keys" role="group" aria-label="Calculator controls for shared field">
+          <button type="button" data-key="clear">Clear</button><button type="button" data-key="back" aria-label="Backspace">⌫</button><button type="button" data-key="÷">÷</button><button type="button" data-key="×">×</button>
+          <button type="button" data-key="7">7</button><button type="button" data-key="8">8</button><button type="button" data-key="9">9</button><button type="button" data-key="−">−</button>
+          <button type="button" data-key="4">4</button><button type="button" data-key="5">5</button><button type="button" data-key="6">6</button><button type="button" data-key="+">+</button>
+          <button type="button" data-key="1">1</button><button type="button" data-key="2">2</button><button type="button" data-key="3">3</button><button type="button" data-key="=">=</button>
+          <button type="button" data-key="0">0</button><button type="button" data-key=".">.</button>
+        </div><p id="m-error" class="error" role="alert" hidden></p>
+        <label for="m-desc">Description / payee · optional</label><input id="m-desc" type="text" value="Lunch">
+        <button type="button" class="save" data-save>Save record</button><p class="status" aria-live="polite"></p>
+      </div></div>
+    </section>
+  </div>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('wallet-calc-wireframes');
+  function calculate(input) {
+    const expression = input.replace(/\s/g, '').replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+    const tokens = expression.match(/(?:\d+(?:\.\d*)?|\.\d+)|[+\-*/]/g);
+    if (!tokens || tokens.join('') !== expression) throw new Error('Enter a valid calculation.');
+    let i = 0;
+    function number() {
+      let sign = 1;
+      if (tokens[i] === '+' || tokens[i] === '-') sign = tokens[i++] === '-' ? -1 : 1;
+      const value = tokens[i++];
+      if (!value || !/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(value)) throw new Error('Enter a valid calculation.');
+      return sign * Number(value);
+    }
+    function term() {
+      let value = number();
+      while (tokens[i] === '*' || tokens[i] === '/') {
+        const op = tokens[i++];
+        const next = number();
+        if (op === '/' && next === 0) throw new Error('Cannot divide by zero.');
+        value = op === '*' ? value * next : value / next;
+      }
+      return value;
+    }
+    let value = term();
+    while (tokens[i] === '+' || tokens[i] === '-') {
+      const op = tokens[i++];
+      const next = term();
+      value = op === '+' ? value + next : value - next;
+    }
+    if (i !== tokens.length || !Number.isFinite(value)) throw new Error('Enter a valid calculation.');
+    return String(Number(value.toPrecision(12)));
+  }
+  for (const section of root.querySelectorAll('[data-design]')) {
+    const expression = section.querySelector('[data-expression]');
+    const amount = section.querySelector('[data-amount]');
+    const error = section.querySelector('.error');
+    const status = section.querySelector('.status');
+    function clearError() { error.hidden = true; error.textContent = ''; }
+    expression.addEventListener('input', clearError);
+    section.querySelector('.keys').addEventListener('click', event => {
+      const button = event.target.closest('button[data-key]');
+      if (!button) return;
+      const key = button.dataset.key;
+      clearError();
+      status.textContent = '';
+      if (key === '=') {
+        try { amount.value = calculate(expression.value); }
+        catch (problem) { error.textContent = problem.message; error.hidden = false; }
+        return;
+      }
+      if (key === 'clear') expression.value = '';
+      else if (key === 'back') {
+        const start = expression.selectionStart ?? expression.value.length;
+        const end = expression.selectionEnd ?? start;
+        const from = start === end ? Math.max(0, start - 1) : start;
+        expression.setRangeText('', from, end, 'end');
+      } else {
+        const start = expression.selectionStart ?? expression.value.length;
+        const end = expression.selectionEnd ?? start;
+        expression.setRangeText(key, start, end, 'end');
+      }
+      expression.focus();
+    });
+    section.querySelector('[data-save]').addEventListener('click', () => { status.textContent = 'Preview only — no record was saved.'; });
+  }
+})();
+</script>

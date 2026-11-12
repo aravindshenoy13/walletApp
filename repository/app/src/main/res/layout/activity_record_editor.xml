@@ -3,11 +3,17 @@
     <LinearLayout style="@style/ScreenHeader">
         <Button android:id="@+id/back" android:drawableStart="@drawable/ic_back" android:drawableTint="@color/icon_stroke" android:drawablePadding="4dp" style="@style/PlainButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/back" />
         <TextView style="@style/ScreenTitle" android:id="@+id/title" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:paddingHorizontal="8dp" android:text="@string/new_record" android:textSize="20sp" />
+            <Button android:background="@drawable/action_save" android:backgroundTint="@null" android:textColor="@color/action_save" android:drawableTint="@color/action_save" android:id="@+id/save" android:drawableStart="@drawable/ic_save"  android:drawablePadding="4dp" style="@style/OutlineButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Save"  android:gravity="start|center_vertical" />
     </LinearLayout>
     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/ink" />
     <ProgressBar android:id="@+id/loading" android:layout_width="48dp" android:layout_height="48dp" android:layout_gravity="center_horizontal" android:contentDescription="@string/loading" />
     <ScrollView android:id="@+id/scroll" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true">
         <LinearLayout android:id="@+id/form" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp" android:visibility="gone">
+            <RadioGroup android:id="@+id/type" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:orientation="horizontal" android:checkedButton="@id/type_expense">
+                <RadioButton android:layout_marginHorizontal="2dp" android:drawablePadding="4dp" android:id="@+id/type_expense" android:drawableTop="@drawable/ic_expense" android:drawableTint="@color/icon_stroke" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:minHeight="48dp" android:text="@string/expense" android:textSize="14sp" />
+                <RadioButton android:layout_marginHorizontal="2dp" android:drawablePadding="4dp" android:id="@+id/type_income" android:drawableTop="@drawable/ic_income" android:drawableTint="@color/icon_stroke" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:minHeight="48dp" android:text="@string/income" android:textSize="14sp" />
+                <RadioButton android:layout_marginHorizontal="2dp" android:drawablePadding="4dp" android:id="@+id/type_transfer" android:drawableTop="@drawable/ic_transfer" android:drawableTint="@color/icon_stroke" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:minHeight="48dp" android:text="@string/transfer" android:textSize="14sp" />
+            </RadioGroup>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="top">
                 <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
                     <TextView android:id="@+id/account_label" style="@style/FormLabel" android:layout_marginTop="0dp" android:text="@string/account" android:labelFor="@id/account" />
@@ -24,11 +30,7 @@
                     <Spinner android:paddingEnd="32dp" android:paddingStart="8dp" android:id="@+id/destination" style="@style/FormField" android:spinnerMode="dropdown" android:layout_marginTop="4dp" android:visibility="gone" />
                 </LinearLayout>
             </LinearLayout>
-            <RadioGroup android:id="@+id/type" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:orientation="horizontal" android:checkedButton="@id/type_expense">
-                <RadioButton android:layout_marginHorizontal="2dp" android:drawablePadding="4dp" android:id="@+id/type_expense" android:drawableTop="@drawable/ic_expense" android:drawableTint="@color/icon_stroke" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:minHeight="48dp" android:text="@string/expense" android:textSize="14sp" />
-                <RadioButton android:layout_marginHorizontal="2dp" android:drawablePadding="4dp" android:id="@+id/type_income" android:drawableTop="@drawable/ic_income" android:drawableTint="@color/icon_stroke" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:minHeight="48dp" android:text="@string/income" android:textSize="14sp" />
-                <RadioButton android:layout_marginHorizontal="2dp" android:drawablePadding="4dp" android:id="@+id/type_transfer" android:drawableTop="@drawable/ic_transfer" android:drawableTint="@color/icon_stroke" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:minHeight="48dp" android:text="@string/transfer" android:textSize="14sp" />
-            </RadioGroup>
+
             <TextView android:id="@+id/category_help" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="8dp" android:text="@string/no_active_categories_help" android:textColor="@color/quiet" android:visibility="gone" />
             <TextView android:id="@+id/transfer_help" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="8dp" android:text="@string/transfer_help" android:textSize="14sp" android:textColor="@color/quiet" android:visibility="gone" />
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="top">
@@ -42,12 +44,14 @@
                     <Button android:textSize="16sp" android:id="@+id/time" style="@style/OutlineButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:gravity="start|center_vertical" />
                 </LinearLayout>
             </LinearLayout>
-            <TextView style="@style/FormLabel" android:text="@string/amount" android:labelFor="@id/amount" />
-            <EditText android:id="@+id/amount" style="@style/FormField" android:inputType="numberDecimal" android:digits="0123456789." android:maxLength="22" android:maxLines="1" android:importantForAutofill="no" />
             <TextView style="@style/FormLabel" android:text="@string/description" android:labelFor="@id/description" />
             <EditText android:id="@+id/description" style="@style/FormField" android:inputType="textCapSentences" android:maxLength="120" android:maxLines="2" android:importantForAutofill="no" />
+            <TextView style="@style/FormLabel" android:text="@string/amount" android:labelFor="@id/amount" />
+            <EditText android:id="@+id/amount" style="@style/FormField" android:inputType="text" android:digits="0123456789.+−×÷-*/ " android:maxLength="160" android:maxLines="1" android:importantForAutofill="no" />
+<LinearLayout android:id="@+id/calculator_keys" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
+
             <TextView android:id="@+id/error" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:textColor="@color/error" android:accessibilityLiveRegion="polite" android:visibility="gone" />
-            <Button android:background="@drawable/action_save" android:backgroundTint="@null" android:textColor="@color/action_save" android:drawableTint="@color/action_save" android:id="@+id/save" android:drawableStart="@drawable/ic_save"  android:drawablePadding="4dp" style="@style/OutlineButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/save_record"  android:gravity="start|center_vertical" />
+
             <Button android:drawableStart="@drawable/ic_delete" android:drawablePadding="4dp" android:background="@drawable/action_delete" android:backgroundTint="@null" android:textColor="@color/action_delete" android:drawableTint="@color/action_delete" android:id="@+id/delete" style="@style/PlainButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/delete_record" android:visibility="gone"  android:gravity="start|center_vertical" />
         </LinearLayout>
     </ScrollView>

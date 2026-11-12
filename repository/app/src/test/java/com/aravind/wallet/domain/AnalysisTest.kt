@@ -15,6 +15,13 @@ class AnalysisTest {
     private fun record(id: Long, type: RecordType, amount: Long, account: Long = 1, date: LocalDate = day, description: String = "Lunch") =
         WalletRecord(id,type,amount,account,if(type == RecordType.TRANSFER) 2 else null,if(type == RecordType.TRANSFER) null else "FOOD",date.atTime(12,0),description,"")
 
+    @Test fun uncategorisedRecordsRemainInBreakdownAndHistory() {
+        val entry = record(1, RecordType.EXPENSE, 250).copy(categoryId = null)
+        val ledger = Ledger(accounts, listOf(entry), emptyList())
+        assertEquals(BigInteger.valueOf(250), ledger.analyze(day, day).categories.getValue("").expense)
+        assertEquals(listOf(entry), ledger.categoryRecords("", day, day, null, BreakdownMode.NET))
+    }
+
     @Test fun fullMonthIncludesFutureDatesAndRollsAtYearAndLeapMonthBoundaries() {
         val december = LocalDate.of(2026, 12, 31)
         val january = december.plusDays(1)

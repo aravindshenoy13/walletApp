@@ -70,12 +70,12 @@ class RecordsAdapter(private val edit: (Long) -> Unit) :
             is RecordRow.Entry -> (holder as RecordHolder).binding.apply {
                 val record = row.record
                 val context = root.context
-                description.text = row.category?.name ?: context.getString(R.string.transfer)
+                description.text = row.category?.name ?: if (row.record.type == RecordType.TRANSFER) context.getString(R.string.transfer) else "Uncategorised"
                 if (record.type == RecordType.TRANSFER && row.accountScope != null) {
                     description.text = if (record.accountId == row.accountScope) context.getString(R.string.transfer_to, row.destination)
                         else context.getString(R.string.transfer_from, row.source)
                 }
-                badge.isVisible = true
+                badge.isVisible = record.type == RecordType.TRANSFER || row.category != null
                 if (record.type == RecordType.TRANSFER) {
                     badge.setImageResource(R.drawable.ic_transfer)
                     badge.imageTintList = null

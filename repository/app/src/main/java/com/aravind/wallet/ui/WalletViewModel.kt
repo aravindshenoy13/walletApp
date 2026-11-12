@@ -57,6 +57,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     fun saveRecord(record: WalletRecord) = perform { repository.saveRecord(record) }
     fun deleteRecord(id: Long) = perform { repository.deleteRecord(id) }
     fun saveCategory(category: WalletCategory, isNew: Boolean) = perform { repository.saveCategory(category, isNew) }
+    fun deleteCategory(id: String) = perform { repository.deleteCategory(id) }
     fun archiveCategory(id: String) = perform { repository.archiveCategory(id) }
 
     // The write outlives Activity recreation; repeated taps cannot create duplicate entries.

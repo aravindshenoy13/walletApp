@@ -35,6 +35,20 @@ class WalletRepositoryTest {
         WalletRecord(type = type, amountMinor = 2_500, accountId = account, destinationAccountId = destination,
             categoryId = if (type == RecordType.TRANSFER) null else "SALARY", occurredAt = at, description = "Payment")
 
+    @Test fun deletingCategoryPreservesRecordsAndBalances() = runBlocking {
+        val account = repository.saveAccount(Account(name = "Cash", openingBalanceMinor = 10000))
+        val id = repository.saveRecord(entry(account))
+        val before = snapshot()
+        repository.deleteCategory("SALARY")
+        val after = snapshot()
+        assertFalse(after.categories.any { it.id == "SALARY" })
+        assertEquals(before.balances, after.balances)
+        assertEquals(before.records.single().copy(categoryId = null), after.records.single())
+        repository.saveRecord(after.records.single().copy(id = id, description = "Edited"))
+        val decoded = WalletBackup.decode(WalletBackup.encode(snapshot()))
+        assertNull(decoded.records.single().categoryId)
+    }
+
     @Test fun transferEditAndDeleteRecalculateBothSides() = runBlocking {
         val source = repository.saveAccount(Account(name = "Source", openingBalanceMinor = 10_000))
         val destination = repository.saveAccount(Account(name = "Destination", openingBalanceMinor = -5_000))

@@ -85,6 +85,31 @@ class RecordEditorActivity : AppCompatActivity() {
                 updateDateTime()
             }, occurredAt.hour, occurredAt.minute, DateFormat.is24HourFormat(this)).show()
         }
+        binding.amount.showSoftInputOnFocus = false
+        listOf(listOf("Clear", "⌫", "÷", "×"), listOf("7", "8", "9", "−"), listOf("4", "5", "6", "+"), listOf("1", "2", "3", "="), listOf("0", ".")).forEach { keys ->
+            val row = android.widget.LinearLayout(this)
+            keys.forEach { key ->
+                val button = android.widget.Button(this, null, 0, R.style.OutlineButton).apply {
+                    text = key
+                    contentDescription = when (key) { "⌫" -> "Backspace"; "=" -> "Calculate amount"; else -> key }
+                    setOnClickListener {
+                        if (key == "=") calculateAmount() else {
+                            val field = binding.amount
+                            val start = field.selectionStart.coerceAtLeast(0)
+                            val end = field.selectionEnd.coerceAtLeast(start)
+                            when (key) {
+                                "Clear" -> field.text.clear()
+                                "⌫" -> field.text.delete(if (start == end) (start - 1).coerceAtLeast(0) else start, end)
+                                else -> field.text.replace(start, end, key)
+                            }
+                            field.error = null
+                        }
+                    }
+                }
+                row.addView(button, android.widget.LinearLayout.LayoutParams(0, -2, 1f))
+            }
+            binding.calculatorKeys.addView(row)
+        }
         binding.save.setOnClickListener { save() }
         binding.delete.setOnClickListener {
             AlertDialog.Builder(this).setTitle(R.string.delete_title).setMessage(R.string.delete_message)
@@ -151,7 +176,7 @@ class RecordEditorActivity : AppCompatActivity() {
             RecordType.EXPENSE -> R.id.type_expense
             RecordType.TRANSFER -> R.id.type_transfer
         })
-        refreshCategories(ledger, selectedCategoryId ?: draft?.getString("category") ?: record?.categoryId ?: "FOOD")
+        refreshCategories(ledger, selectedCategoryId ?: draft?.getString("category") ?: record?.categoryId ?: "")
         binding.amount.setText(draft?.getString("amount") ?: record?.let { Money.input(it.amountMinor) }.orEmpty())
         binding.description.setText(draft?.getString("description") ?: record?.description.orEmpty())
         occurredAt = draft?.getString("occurredAt")?.let(LocalDateTime::parse) ?: record?.occurredAt
@@ -166,10 +191,10 @@ class RecordEditorActivity : AppCompatActivity() {
 
     private fun refreshCategories(ledger: Ledger, wantedId: String? = selectedCategoryId) {
         categoryChoices = ledger.categories.filter { !it.isArchived || it.id == originalCategoryId }
-        val category = categoryChoices.find { it.id == wantedId } ?: categoryChoices.firstOrNull()
+        val category = categoryChoices.find { it.id == wantedId }
         selectedCategoryId = category?.id
         binding.categoryName.text = category?.let { if (it.isArchived) getString(R.string.archived_name, it.name) else it.name }
-            ?: getString(R.string.choose_category)
+            ?: "Uncategorised"
         binding.categoryBadge.isVisible = category != null
         category?.let { binding.categoryBadge.showCategory(it.iconKey, it.backgroundColorKey) }
         binding.category.contentDescription = getString(R.string.category_selection, binding.categoryName.text)
@@ -206,14 +231,26 @@ class RecordEditorActivity : AppCompatActivity() {
         binding.categoryLabel.isVisible = !transfer
         binding.destination.isVisible = transfer
         binding.destinationLabel.isVisible = transfer
-        binding.categoryHelp.isVisible = !transfer && categoryChoices.isEmpty()
+        binding.categoryHelp.isVisible = false
         binding.transferHelp.isVisible = transfer
         binding.transferHelp.setText(if (accounts.size >= 2) R.string.transfer_help else R.string.transfer_needs_accounts)
         binding.accountLabel.setText(if (transfer) R.string.from_account else R.string.account)
         updateEnabled()
     }
 
+    private fun calculateAmount(): Boolean = try {
+        binding.amount.setText(com.aravind.wallet.domain.AmountCalculator.evaluate(binding.amount.text.toString()))
+        binding.amount.setSelection(binding.amount.length())
+        binding.amount.error = null
+        true
+    } catch (error: IllegalArgumentException) {
+        binding.amount.error = error.message
+        binding.amount.requestFocus()
+        false
+    }
+
     private fun save() {
+        if (!calculateAmount()) return
         binding.error.isVisible = false
         val amount = try {
             Money.parse(binding.amount.text.toString())
@@ -231,7 +268,7 @@ class RecordEditorActivity : AppCompatActivity() {
         }
         model.saveRecord(WalletRecord(
             id = recordId, type = type, amountMinor = amount, accountId = source, destinationAccountId = destination,
-            categoryId = if (type == RecordType.TRANSFER) null else selectedCategoryId,
+            categoryId = if (type == RecordType.TRANSFER) null else selectedCategoryId?.takeIf { it.isNotEmpty() },
             occurredAt = occurredAt, description = binding.description.text.toString(), note = preservedNote,
         ))
     }
@@ -242,7 +279,7 @@ class RecordEditorActivity : AppCompatActivity() {
         binding.form.enableTree(ready && !busy)
         binding.back.isEnabled = !busy
         binding.save.isEnabled = ready && !busy && accounts.isNotEmpty() &&
-            (if (type == RecordType.TRANSFER) accounts.size >= 2 else categoryChoices.isNotEmpty())
+            (if (type == RecordType.TRANSFER) accounts.size >= 2 else true)
         binding.delete.isEnabled = ready && !busy
     }
 
