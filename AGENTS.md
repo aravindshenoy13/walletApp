@@ -25,5 +25,6 @@ Use this file for project working requirements. Read [ROADMAP.md](ROADMAP.md) fo
 - Ask the user for approval before future `AGENTS.md` updates, describing the proposed changes before editing.
 - When committing and pushing work, use `GITHUB_PAT` from `repository/.env` for GitHub authentication; never print or commit the token.
 - Commit frequently at meaningful checkpoints whenever appropriate, keeping commits focused and messages clear.
+- When the user says a version is done or asks to start a new version, back up the completed or outgoing version in the top-level `backups/` directory, outside `repository/`.
 - After completing each app version, archive that version's Codex chat.
 
