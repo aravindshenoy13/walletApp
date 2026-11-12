@@ -1,8 +1,12 @@
-# Wallet V4.3.1
+# Wallet V4.3.2
 
 A personal, on-device INR transaction tracker for Android 8.0 (API 26) and later. Built with Kotlin, native Android Views/XML, and Room. The product scope is defined in [ROADMAP.md](../ROADMAP.md); the simple appearance follows [V3 wireframe revision 03](../wireframes/wallet-v3-wireframe-r03.html) and the subsequently confirmed decisions in the wireframe README.
 
-## Current V4.3.1 behavior
+## Current V4.3.2 behavior
+
+Action outlines and alignment are refined, dark-mode pastel category colors are brighter, transfer amounts use a lighter blue in dark mode, category rows omit the Custom label, and Analysis summary boxes use square corners.
+
+## V4.3.1 behavior
 
 Analysis totals share a compact outlined box. Records dates are unboxed, the Today/month selection uses a switch, calendar borders are thinner, and category rows are more compact. Dark-mode category backgrounds are brighter while retaining white icon contrast. Add, Save, and Delete use blue, green, and red outlines respectively. Transfer colors and stored data remain unchanged.
 

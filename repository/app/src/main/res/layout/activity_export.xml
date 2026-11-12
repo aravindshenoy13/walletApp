@@ -17,7 +17,7 @@
                 <RadioButton android:id="@+id/export_transfers" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:text="@string/transfers" />
             </RadioGroup>
             <TextView android:id="@+id/error" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:textColor="@color/error" android:accessibilityLiveRegion="polite" android:visibility="gone" />
-            <Button android:background="@drawable/action_save" android:backgroundTint="@null" android:textColor="@color/action_save" android:drawableTint="@color/action_save" android:id="@+id/save" android:drawableStart="@drawable/ic_save"  android:drawablePadding="4dp" style="@style/OutlineButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/choose_save" />
+            <Button android:background="@drawable/action_save" android:backgroundTint="@null" android:textColor="@color/action_save" android:drawableTint="@color/action_save" android:id="@+id/save" android:drawableStart="@drawable/ic_save"  android:drawablePadding="4dp" style="@style/OutlineButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/choose_save"  android:gravity="start|center_vertical" />
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="16dp" android:text="@string/export_help" android:textColor="@color/quiet" android:textSize="14sp" />
         </LinearLayout>
     </ScrollView>

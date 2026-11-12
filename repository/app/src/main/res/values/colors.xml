@@ -7,6 +7,7 @@
     <color name="error">#B00020</color>
     <color name="income_amount">#4F8060</color>
     <color name="expense_amount">#AC5962</color>
+    <color name="transfer_icon">#2864AD</color>
     <color name="transfer_amount">#2864AD</color>
     <color name="transfer_background">#C9DEF5</color>
     <color name="legacy_navigation">#222222</color>

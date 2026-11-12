@@ -7,5 +7,6 @@
     <color name="error">#FFB4AB</color>
     <color name="income_amount">#A8D8B2</color>
     <color name="expense_amount">#F0A1A7</color>
+    <color name="transfer_amount">#8DBBFF</color>
     <bool name="light_system_bars">false</bool>
 </resources>
