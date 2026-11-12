@@ -1,8 +1,20 @@
-# Wallet V4.3.2
+# Wallet V4.4
 
 A personal, on-device INR transaction tracker for Android 8.0 (API 26) and later. Built with Kotlin, native Android Views/XML, and Room. The product scope is defined in [ROADMAP.md](../ROADMAP.md); the simple appearance follows [V3 wireframe revision 03](../wireframes/wallet-v3-wireframe-r03.html) and the subsequently confirmed decisions in the wireframe README.
 
-## Current V4.3.2 behavior
+## Current V4.4 behavior
+
+- Fixes the dark-mode category color exception affecting Add record, Categories, and other category badges. Blended display colors remain opaque; saved category choices are unchanged.
+- Records search collapses when the keyboard is hidden as well as on Back, Done, outside tap, or leaving. Dismissal clears focus and restores the explicit themed screen background. Clear keeps search open for another query.
+- Bottom navigation has matched 24 dp line icons, stroke weights, centered artwork, and equal-height touch targets. Secondary titles share the same typography and theme color; Settings spacing and date-range button sizing are consistent with the other screens.
+
+Version code 10. Room schema 3, backup format 2 (including format-1 restore support), exact money calculations, and CSV behavior are unchanged. See [V4.4 implementation and validation](../V4.4-PLAN.md).
+
+Verification: 25 JVM tests and all 46 Android cases passed across the regression run and corrected legacy-test reruns. Six selected UI cases passed at 130% text in both themes. Debug/release builds passed; lint reported zero errors and 50 warnings. The original brightness symptom was not consistently reproduced; final emulator screenshots retain the same background after Clear and dismissal.
+
+Artifacts: [installable V4.4 debug APK](dist/wallet-v4.4-debug.apk), [unsigned optimized release](dist/wallet-v4.4-release-unsigned.apk), and [SHA-256 checksums](dist/wallet-v4.4-SHA256SUMS.txt). Release distribution requires signing.
+
+## V4.3.2 behavior
 
 Action outlines and alignment are refined, dark-mode pastel category colors are brighter, transfer amounts use a lighter blue in dark mode, category rows omit the Custom label, and Analysis summary boxes use square corners.
 
@@ -10,7 +22,7 @@ Action outlines and alignment are refined, dark-mode pastel category colors are 
 
 Analysis totals share a compact outlined box. Records dates are unboxed, the Today/month selection uses a switch, calendar borders are thinner, and category rows are more compact. Dark-mode category backgrounds are brighter while retaining white icon contrast. Add, Save, and Delete use blue, green, and red outlines respectively. Transfer colors and stored data remain unchanged.
 
-## Current V4.3 behavior
+## V4.3 behavior
 
 - Tap the outlined **Today** summary on Records to switch to the full current calendar month, including future-dated transactions in that month. Tap again for Today. Rotation retains the selection; date changes refresh the totals. Search and the dated list remain independent of the summary. Transfers are excluded.
 - Accounts show their name, icon, current balance, and separate Edit action. Opening balance remains editable and included in balances/backups, but is hidden from the list and transaction history.

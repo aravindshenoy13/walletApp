@@ -114,11 +114,12 @@ class V44FlowTest {
                     onView(withId(R.id.empty_records)).check(matches(withText(R.string.no_matches)))
                     onView(withId(R.id.clear_search)).perform(click())
                     onView(withId(R.id.record_search)).check(matches(withText("")))
+                    assertEquals("$theme clear background", before, background(scenario, "$theme-$dismissal-clear"))
                     onView(withId(R.id.record_search)).perform(typeText("123"))
                     when (dismissal) {
                         "back" -> androidx.test.espresso.Espresso.pressBack()
                         "done" -> onView(withId(R.id.record_search)).perform(pressImeActionButton())
-                        "outside" -> onView(withId(R.id.record_list)).perform(click())
+                        "outside" -> onView(withId(R.id.record_count)).perform(click())
                         else -> scenario.onActivity { activity ->
                             (activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
                                 .hideSoftInputFromWindow(activity.findViewById<View>(R.id.record_search).windowToken, 0)
@@ -195,12 +196,14 @@ class V44FlowTest {
         instrumentation.waitForIdleSync()
         Thread.sleep(400)
         val bounds = Rect()
-        scenario.onActivity { it.findViewById<View>(R.id.record_list).getGlobalVisibleRect(bounds) }
+        scenario.onActivity { it.findViewById<View>(R.id.records_panel).getGlobalVisibleRect(bounds) }
         val bitmap = requireNotNull(instrumentation.uiAutomation.takeScreenshot())
         File(app.getExternalFilesDir(null), "v44-$name.png").outputStream().use {
             bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it)
         }
-        val color = bitmap.getPixel(bounds.centerX(), bounds.centerY())
+        // The empty panel margin stays visible even when larger text and the IME
+        // leave no height for the list itself.
+        val color = bitmap.getPixel(bounds.left + 2, bounds.top + 2)
         bitmap.recycle()
         return color
     }
