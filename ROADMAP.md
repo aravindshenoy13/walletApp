@@ -121,6 +121,7 @@
 ### V5.1 — UI design consistency
 
 - Implement D01–D26 from [UI-DESIGN-REVIEW.md](UI-DESIGN-REVIEW.md): headers, list gutters, forms, selection spacing, actions, totals, and chart presentation.
+- Rename the Analysis choices to Monthly Overview, Category Breakdown, and Flow Graph.
 - Keep existing transaction behavior, Room schema 3, and backup format 2 unchanged.
 - Version name 5.1, version code 12. See [V5.1-PLAN.md](V5.1-PLAN.md) for decisions and verification.
 

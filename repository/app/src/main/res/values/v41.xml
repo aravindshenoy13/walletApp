@@ -1,1 +1,1 @@
-<resources><string name="analysis_view">Analysis view</string><string-array name="analysis_views"><item>Daily Breakdown</item><item>Category Expense Graph</item><item>Flow Graph</item></string-array></resources>
+<resources><string name="analysis_view">Analysis view</string><string-array name="analysis_views"><item>Monthly Overview</item><item>Category Breakdown</item><item>Flow Graph</item></string-array></resources>

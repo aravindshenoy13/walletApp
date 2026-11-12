@@ -83,9 +83,9 @@ class V43FlowTest {
             onView(withId(R.id.breakdown_list)).check(matches(withEffectiveVisibility(Visibility.GONE)))
             onView(withText("Detailed analysis")).check(doesNotExist())
             onView(withId(R.id.analysis_view)).perform(scrollTo(), click())
-            onView(withText("Category Expense Graph")).perform(click())
+            onView(withText("Category Breakdown")).perform(click())
             scenario.recreate()
-            onView(withId(R.id.analysis_view)).check(matches(withSpinnerText("Category Expense Graph")))
+            onView(withId(R.id.analysis_view)).check(matches(withSpinnerText("Category Breakdown")))
             onView(withId(R.id.custom_range)).perform(scrollTo(), click())
             for (id in listOf(R.id.start_date, R.id.end_date)) {
                 onView(withId(id)).perform(click())
@@ -159,7 +159,7 @@ class V43FlowTest {
                 capture(scenario, "$theme-accounts")
                 onView(withId(R.id.analysis_tab)).perform(click()); await(R.id.calendar_grid)
                 capture(scenario, "$theme-calendar")
-                onView(withId(R.id.analysis_view)).perform(click()); onView(withText("Category Expense Graph")).perform(click())
+                onView(withId(R.id.analysis_view)).perform(click()); onView(withText("Category Breakdown")).perform(click())
                 onView(withId(R.id.wheel_panel)).perform(scrollTo()); capture(scenario, "$theme-wheel")
             }
             ActivityScenario.launch(CategoryEditorActivity::class.java).use { scenario ->
