@@ -94,6 +94,14 @@
 - Remove the visible Built-in category label and make category rows more compact.
 - See [V4.3.1-PLAN.md](V4.3.1-PLAN.md) for the implementation details.
 
+### V4.3.2 — Button and color refinements
+
+- Fix action-button outline edges, dimensions, and alignment while retaining the Add/Save/Delete color scheme.
+- Brighten pastel category backgrounds while keeping icons readable and saved color choices intact.
+- Restore the intended earlier dark-mode transfer colors.
+- Remove the visible Custom label from category rows while retaining category data and archived-state indication.
+- See [V4.3.2-PLAN.md](V4.3.2-PLAN.md) for implementation details and validation.
+
 ## Business rules
 
 - Transaction direction and category are separate concepts: income and expense entries can share a category.
