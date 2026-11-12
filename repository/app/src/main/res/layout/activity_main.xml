@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent"
-    android:orientation="vertical" android:focusableInTouchMode="true">
+    android:orientation="vertical" android:background="@color/paper" android:focusableInTouchMode="true">
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:minHeight="48dp" android:paddingHorizontal="16dp">
         <ImageButton android:id="@+id/settings" android:layout_width="48dp" android:layout_height="48dp" android:background="?attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_settings" app:tint="@color/ink" android:contentDescription="Settings" />
-        <TextView android:id="@+id/title" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/app_name" android:textSize="20sp" android:textStyle="bold" />
+        <TextView style="@style/ScreenTitle" android:id="@+id/title" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/app_name" android:textSize="20sp" android:textStyle="bold" />
         <Button android:drawablePadding="8dp" android:id="@+id/open_search" style="@style/PlainButton" android:layout_width="wrap_content" android:layout_height="48dp" android:text="@string/search_records" android:drawableStart="@drawable/ic_search" android:drawableTint="@color/ink" />
         <LinearLayout android:id="@+id/search_box" android:layout_width="0dp" android:layout_weight="2" android:layout_height="48dp" android:layout_marginVertical="4dp" android:gravity="center_vertical" android:background="@drawable/search_background">
             <ImageView android:layout_width="18dp" android:layout_height="18dp" android:layout_marginStart="8dp" android:src="@drawable/ic_search" app:tint="@color/ink" android:importantForAccessibility="no" />
@@ -53,9 +53,9 @@
     </LinearLayout>
     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/ink" />
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
-        <Button android:id="@+id/records_tab" android:paddingHorizontal="2dp" android:drawableTop="@drawable/ic_receipt" android:drawableTint="@color/icon_stroke" android:drawablePadding="4dp" style="@style/PlainButton" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/records" android:textSize="12sp" />
-        <Button android:id="@+id/analysis_tab" android:paddingHorizontal="2dp" android:drawableTop="@drawable/ic_chart" android:drawableTint="@color/icon_stroke" android:drawablePadding="4dp" style="@style/PlainButton" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/analysis" android:textSize="12sp" />
-        <Button android:id="@+id/accounts_tab" android:paddingHorizontal="2dp" android:drawableTop="@drawable/ic_account" android:drawableTint="@color/icon_stroke" android:drawablePadding="4dp" style="@style/PlainButton" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/accounts" android:textSize="12sp" />
-        <Button android:id="@+id/categories_tab" android:paddingHorizontal="2dp" android:drawableTop="@drawable/ic_category_tag" android:drawableTint="@color/icon_stroke" android:drawablePadding="4dp" style="@style/PlainButton" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/categories" android:textSize="12sp" />
+        <Button android:id="@+id/records_tab" style="@style/NavigationButton" android:drawableTop="@drawable/ic_nav_records" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:text="@string/records" />
+        <Button android:id="@+id/analysis_tab" style="@style/NavigationButton" android:drawableTop="@drawable/ic_nav_analysis" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:text="@string/analysis" />
+        <Button android:id="@+id/accounts_tab" style="@style/NavigationButton" android:drawableTop="@drawable/ic_nav_accounts" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:text="@string/accounts" />
+        <Button android:id="@+id/categories_tab" style="@style/NavigationButton" android:drawableTop="@drawable/ic_nav_categories" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:text="@string/categories" />
     </LinearLayout>
 </LinearLayout>

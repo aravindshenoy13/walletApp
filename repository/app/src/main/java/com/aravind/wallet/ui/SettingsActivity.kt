@@ -52,11 +52,14 @@ class SettingsActivity : AppCompatActivity() {
             text = "Back"; setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_back, 0, 0, 0)
             setOnClickListener { finish() }
         })
-        header.addView(TextView(this).apply { text = "Settings"; textSize = 20f; setPadding(dp(8), 0, 0, 0) })
+        header.addView(TextView(this, null, 0, R.style.ScreenTitle).apply {
+            text = "Settings"; setPadding(dp(8), dp(8), 0, dp(8))
+        }, LinearLayout.LayoutParams(0, -2, 1f))
         actions.addView(header)
         actions.addView(android.view.View(this).apply { setBackgroundColor(getColor(R.color.ink)) }, LinearLayout.LayoutParams(-1, dp(1)))
         val prefs = getSharedPreferences("appearance", MODE_PRIVATE)
         actions.addView(CheckBox(this).apply {
+            layoutParams = LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(12) }
             setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_dark_mode, 0, 0, 0)
             compoundDrawablePadding = dp(8)
             text = "Dark mode"; isChecked = prefs.getBoolean("dark", false)

@@ -109,7 +109,7 @@ class WalletFlowTest {
             awaitText(transfer, true)
             onView(allOf(withId(R.id.amount), isDisplayed())).check { view, error ->
                 if (error != null) throw error
-                assertEquals(context.getColor(R.color.transfer_amount), (view as android.widget.TextView).currentTextColor)
+                assertEquals(view.context.getColor(R.color.transfer_amount), (view as android.widget.TextView).currentTextColor)
             }
             onView(allOf(withId(R.id.badge), isDisplayed())).check(matches(isDisplayed()))
             capture("v2-transfer-records")

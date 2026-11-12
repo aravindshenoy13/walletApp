@@ -23,8 +23,8 @@ class AdditionalIconsActivity : AppCompatActivity() {
             setText(R.string.back); setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_back, 0, 0, 0)
             setOnClickListener { finish() }
         })
-        header.addView(TextView(this).apply {
-            setText(R.string.additional_icons); textSize = 20f; setTextColor(getColor(R.color.ink))
+        header.addView(TextView(this, null, 0, R.style.ScreenTitle).apply {
+            setText(R.string.additional_icons)
             setPadding(dp(8), dp(8), dp(8), dp(8))
         }, LinearLayout.LayoutParams(0, -2, 1f))
         root.addView(header)

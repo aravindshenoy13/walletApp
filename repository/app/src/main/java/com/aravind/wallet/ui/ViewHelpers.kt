@@ -16,12 +16,17 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.max
 
-fun AppCompatActivity.applyInsets(root: View) {
+fun AppCompatActivity.applyInsets(root: View, onKeyboardHidden: (() -> Unit)? = null) {
     WindowCompat.setDecorFitsSystemWindows(window, false)
+    var keyboardWasVisible = false
     ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
         val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
         val keyboard = insets.getInsets(WindowInsetsCompat.Type.ime())
         view.setPadding(bars.left, bars.top, bars.right, max(bars.bottom, keyboard.bottom))
+        val keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+        val hidden = keyboardWasVisible && !keyboardVisible
+        keyboardWasVisible = keyboardVisible
+        if (hidden) onKeyboardHidden?.invoke()
         insets
     }
     ViewCompat.requestApplyInsets(root)

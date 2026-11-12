@@ -18,7 +18,7 @@ class V4FlowTest {
     @Test fun compactSearchAndSettings() {
         ActivityScenario.launch(MainActivity::class.java).use { scenario ->
             onView(withId(R.id.open_search)).check(matches(isDisplayed())).perform(click())
-            onView(withId(R.id.record_search)).perform(typeText("123"), closeSoftKeyboard())
+            onView(withId(R.id.record_search)).perform(typeText("123"))
             onView(withId(R.id.clear_search)).perform(click())
             onView(withId(R.id.record_search)).check(matches(withText("")))
             androidx.test.espresso.Espresso.pressBack()

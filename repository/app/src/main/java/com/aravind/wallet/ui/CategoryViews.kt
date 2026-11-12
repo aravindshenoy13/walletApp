@@ -26,7 +26,10 @@ fun categoryDisplayColor(context: Context, key: String): Int {
     var shade = 0f
     while (androidx.core.graphics.ColorUtils.calculateContrast(Color.WHITE, displayed) < 2.5 && shade < 1f) {
         shade += 0.01f
-        displayed = androidx.core.graphics.ColorUtils.blendARGB(color, Color.BLACK, shade.coerceAtMost(1f))
+        // Float rounding in blendARGB can turn an opaque alpha into 254. Contrast
+        // requires an opaque background, and these badges are always solid colors.
+        displayed = androidx.core.graphics.ColorUtils.setAlphaComponent(
+            androidx.core.graphics.ColorUtils.blendARGB(color, Color.BLACK, shade.coerceAtMost(1f)), 255)
     }
     return displayed
 }
