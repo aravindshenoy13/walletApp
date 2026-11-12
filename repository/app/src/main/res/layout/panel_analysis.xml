@@ -11,9 +11,9 @@
         </LinearLayout>
         <TextView style="@style/FormLabel" android:text="@string/monthly_net" />
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
-            <Button android:id="@+id/previous_month" style="@style/PlainButton" android:layout_width="48dp" android:layout_height="48dp" android:minWidth="0dp" android:text="ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹" android:textSize="24sp" android:contentDescription="@string/previous_month" />
+            <Button android:id="@+id/previous_month" style="@style/PlainButton" android:layout_width="48dp" android:layout_height="48dp" android:minWidth="0dp" android:text="&#x2039;" android:textSize="24sp" android:contentDescription="@string/previous_month" />
             <TextView android:id="@+id/calendar_month" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:gravity="center" android:textColor="@color/ink" android:textSize="16sp" android:accessibilityLiveRegion="polite" />
-            <Button android:id="@+id/next_month" style="@style/PlainButton" android:layout_width="48dp" android:layout_height="48dp" android:minWidth="0dp" android:text="ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âº" android:textSize="24sp" android:contentDescription="@string/next_month" />
+            <Button android:id="@+id/next_month" style="@style/PlainButton" android:layout_width="48dp" android:layout_height="48dp" android:minWidth="0dp" android:text="&#x203A;" android:textSize="24sp" android:contentDescription="@string/next_month" />
         </LinearLayout>
         <LinearLayout android:id="@+id/calendar_grid" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/calendar_legend" android:textColor="@color/quiet" android:textSize="12sp" android:paddingVertical="8dp" />

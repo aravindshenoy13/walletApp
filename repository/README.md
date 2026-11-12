@@ -169,3 +169,12 @@ V4.2 uses outlined selection states, a menu icon beside Wallet, themed Settings/
 Accounts offer bank, cash and card icons as visual labels only. Existing accounts upgrade non-destructively to bank icons through Room schema 3. New full backups use format 2 and retain icons; V4 format-1 backups remain restorable with bank defaults. CSV is unchanged. See ../V4.2-PLAN.md for implementation and validation.
 
 Validation: 23 JVM tests and all 38 API 37 Android tests passed; three V4.2 UI tests also passed at 360 dp with 130% text in light/dark themes. Debug and R8 release builds passed; lint reported zero errors and 54 warnings. Installable APK: dist/wallet-v4.2-debug.apk. Unsigned release and checksums are alongside it. The standalone archive is ../backups/wallet-v4.2-2026-11-12-r01/.
+
+
+## Dedicated test emulator
+
+Use only the `Wallet_V51_Test` AVD (display name **Wallet V5.1 Test**) for automated tests. Its configuration and data live in `.tools/avd/Wallet_V51_Test.avd/`; its assigned serial is `emulator-5560`. Before installing or testing, check `adb -s emulator-5560 emu avd name` and require `Wallet_V51_Test`. Never use Medium Phone or another running emulator for tests. Test suites reset Wallet data.
+
+Start with `ANDROID_AVD_HOME` set to `repository/.tools/avd` and `ANDROID_EMULATOR_HOME` and `ANDROID_USER_HOME` set to `repository/.tools/android-home`. Launch `emulator -avd Wallet_V51_Test -port 5560`. Keep future automated test runs on this dedicated AVD.
+
+V5.1 UI consistency release: [installable debug APK](dist/wallet-v5.1-debug.apk), [unsigned optimized release](dist/wallet-v5.1-release-unsigned.apk), and [checksums](dist/wallet-v5.1-SHA256SUMS.txt). See [V5.1 notes](../V5.1-PLAN.md).
