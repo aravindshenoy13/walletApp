@@ -102,6 +102,14 @@
 - Remove the visible Custom label from category rows while retaining category data and archived-state indication.
 - See [V4.3.2-PLAN.md](V4.3.2-PLAN.md) for implementation details and validation.
 
+### V4.4 — Stability and design consistency
+
+- Fix the reported Add record and Categories crashes.
+- Fix the Records screen remaining brighter after searching with no records until Search is tapped again.
+- Make the bottom navigation icons consistent in visible size and alignment.
+- Review the app for controls and screens that miss the established design language and bring them into line.
+- See [V4.4-PLAN.md](V4.4-PLAN.md) for the implementation order and validation.
+
 ## Business rules
 
 - Transaction direction and category are separate concepts: income and expense entries can share a category.
