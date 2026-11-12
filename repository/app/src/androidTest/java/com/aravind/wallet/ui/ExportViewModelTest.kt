@@ -82,6 +82,12 @@ class ExportViewModelTest {
             instrumentation.runOnMainSync { assertTrue(model.choose()); model.selected(Uri.fromFile(file)) }
             val saved = withTimeout(10_000) { model.state.first { it is ExportState.Saved } } as ExportState.Saved
             assertEquals(1, saved.count)
+            instrumentation.runOnMainSync {
+                model.selected(null)
+                model.pickerFailed()
+                assertFalse(model.choose())
+                assertEquals(saved, model.state.value)
+            }
             assertTrue(file.readText().startsWith("\uFEFFrecord_id,date,time,type,amount"))
             assertTrue(file.readText().contains(",1.23,INR,Export cash,,Food,Export test\r\n"))
             assertFalse(file.readText().contains("Excluded income"))

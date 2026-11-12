@@ -3,46 +3,24 @@ package com.aravind.wallet.ui
 import android.content.Intent
 import android.os.Bundle
 import android.widget.*
+import androidx.activity.addCallback
+import androidx.activity.viewModels
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
-import com.aravind.wallet.WalletApplication
 import com.aravind.wallet.R
-import com.aravind.wallet.data.WalletBackup
 import kotlinx.coroutines.*
 
 class SettingsActivity : AppCompatActivity() {
-    private val repository get() = (application as WalletApplication).repository
+    private val model: BackupViewModel by viewModels()
     private lateinit var actions: LinearLayout
-    private var busy = false
-    private val save = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
-        if (uri != null) work {
-            try {
-                withContext(Dispatchers.IO) {
-                    val text = WalletBackup.encode(repository.snapshot())
-                    requireNotNull(contentResolver.openOutputStream(uri, "w")).bufferedWriter(Charsets.UTF_8).use { it.write(text) }
-                }
-                message("Full backup saved.")
-            } catch (e: Exception) {
-                withContext(NonCancellable + Dispatchers.IO) { runCatching { android.provider.DocumentsContract.deleteDocument(contentResolver, uri) } }
-                throw e
-            }
-        }
-    }
-    private val restore = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-        if (uri != null) work {
-            val backup = withContext(Dispatchers.IO) {
-                val bytes = requireNotNull(contentResolver.openInputStream(uri)).use { stream -> val out = java.io.ByteArrayOutputStream(); val buffer = ByteArray(8192); var total = 0; while (true) { val n = stream.read(buffer); if (n < 0) break; total += n; require(total <= 20 * 1024 * 1024) { "Backup exceeds the 20 MB limit." }; out.write(buffer, 0, n) }; out.toByteArray() }
-                require(bytes.size <= 20 * 1024 * 1024) { "Backup exceeds the 20 MB limit." }
-                WalletBackup.decode(bytes.toString(Charsets.UTF_8))
-            }
-            AlertDialog.Builder(this).setTitle("Restore backup?")
-                .setMessage("${backup.accounts.size} accounts, ${backup.categories.size} categories, ${backup.records.size} transactions. Restore requires an empty wallet.")
-                .setNegativeButton("Cancel", null).setPositiveButton("Restore") { _, _ -> work { withContext(Dispatchers.IO) { repository.restore(backup) }; message("Backup restored.") } }.show()
-        }
-    }
+    private var dialog: AlertDialog? = null
+    private var dialogState: BackupState? = null
+    private val save = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { model.selected(it, false) }
+    private val restore = registerForActivityResult(ActivityResultContracts.OpenDocument()) { model.selected(it, true) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         actions = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(16), dp(8), dp(16), dp(16)) }
@@ -50,7 +28,7 @@ class SettingsActivity : AppCompatActivity() {
         val header = LinearLayout(this).apply { gravity = android.view.Gravity.CENTER_VERTICAL; minimumHeight = dp(56) }
         header.addView(Button(this, null, 0, R.style.PlainButton).apply {
             text = "Back"; setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_back, 0, 0, 0)
-            setOnClickListener { finish() }
+            setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         })
         header.addView(TextView(this, null, 0, R.style.ScreenTitle).apply {
             text = "Settings"; setPadding(dp(8), dp(8), 0, dp(8))
@@ -66,8 +44,39 @@ class SettingsActivity : AppCompatActivity() {
             setOnCheckedChangeListener { _, checked -> prefs.edit().putBoolean("dark", checked).apply(); AppCompatDelegate.setDefaultNightMode(if (checked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO) }
         })
         button("Export CSV") { startActivity(Intent(this, ExportActivity::class.java)) }
-        button("Back up data") { save.launch("wallet-backup-${java.time.LocalDate.now()}.json") }
-        button("Restore backup") { restore.launch(arrayOf("application/json", "text/plain", "application/octet-stream")) }
+        button("Back up data") { if (model.choose(false)) {
+            try { save.launch("wallet-backup-${java.time.LocalDate.now()}.json") }
+            catch (_: RuntimeException) { model.pickerFailed() }
+        } }
+        button("Restore backup") { if (model.choose(true)) {
+            try { restore.launch(arrayOf("application/json", "text/plain", "application/octet-stream")) }
+            catch (_: RuntimeException) { model.pickerFailed() }
+        } }
+        onBackPressedDispatcher.addCallback(this) { if (model.state.value != BackupState.Working) finish() }
+        lifecycleScope.launch {
+            repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.STARTED) {
+                model.state.collect { state ->
+                    actions.enableTree(state == BackupState.Idle)
+                    if (dialogState != state) {
+                        dialog?.dismiss()
+                        dialog = null
+                        dialogState = state
+                        dialog = when (state) {
+                            is BackupState.Confirm -> AlertDialog.Builder(this@SettingsActivity)
+                                .setTitle("Restore backup?")
+                                .setMessage("${state.ledger.accounts.size} accounts, ${state.ledger.categories.size} categories, ${state.ledger.records.size} transactions. Restore requires an empty wallet with untouched built-in categories.")
+                                .setNegativeButton("Cancel") { _, _ -> model.dismiss() }
+                                .setPositiveButton("Restore") { _, _ -> model.confirm() }
+                                .setOnCancelListener { model.dismiss() }.show()
+                            is BackupState.Result -> AlertDialog.Builder(this@SettingsActivity)
+                                .setMessage(state.message).setPositiveButton("OK") { _, _ -> model.dismiss() }
+                                .setOnCancelListener { model.dismiss() }.show()
+                            else -> null
+                        }
+                    }
+                }
+            }
+        }
     }
     private fun button(label: String, clicked: () -> Unit) { actions.addView(Button(this, null, 0, R.style.OutlineButton).apply { text = label; isAllCaps = false; gravity = android.view.Gravity.START or android.view.Gravity.CENTER_VERTICAL
         layoutParams = LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(12) }
@@ -76,13 +85,8 @@ class SettingsActivity : AppCompatActivity() {
         compoundDrawablePadding = dp(8); setTextColor(getColor(R.color.ink))
         setOnClickListener { clicked() } }) }
     private fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()
-    private fun message(text: String) { AlertDialog.Builder(this).setMessage(text).setPositiveButton("OK", null).show() }
-    private fun work(block: suspend () -> Unit) {
-        if (busy) return
-        busy = true; actions.enableTree(false)
-        lifecycleScope.launch {
-            try { block() } catch (e: CancellationException) { throw e } catch (e: Exception) { message(e.message ?: "Could not complete this operation.") }
-            finally { busy = false; actions.enableTree(true) }
-        }
+    override fun onDestroy() {
+        dialog?.dismiss()
+        super.onDestroy()
     }
 }

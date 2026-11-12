@@ -174,10 +174,11 @@ class CategoryEditorActivity : AppCompatActivity() {
     private fun selectedDescription(label: String, selected: Boolean) = if (selected) getString(R.string.selected_accessibility, label) else label
     private fun updateEnabled() {
         val busy = model.operation.value == Operation.Working || model.operation.value == Operation.Saved
-        binding.form.enableTree(!busy)
+        val ready = initialized && model.ledger.value is LedgerState.Ready
+        binding.form.enableTree(ready && !busy)
         binding.back.isEnabled = !busy
-        binding.save.isEnabled = initialized && !busy
-        binding.archive.isEnabled = initialized && !busy
+        binding.save.isEnabled = ready && !busy
+        binding.archive.isEnabled = ready && !busy
     }
     private fun showError(message: String) {
         binding.error.text = message

@@ -98,9 +98,10 @@ class AccountEditorActivity : AppCompatActivity() {
 
     private fun updateEnabled() {
         val busy = model.operation.value == Operation.Working || model.operation.value == Operation.Saved
-        binding.form.enableTree(!busy)
+        val ready = initialized && model.ledger.value is LedgerState.Ready
+        binding.form.enableTree(ready && !busy)
         binding.back.isEnabled = !busy
-        binding.save.isEnabled = initialized && !busy
+        binding.save.isEnabled = ready && !busy
     }
 
     private fun showError(message: String) {

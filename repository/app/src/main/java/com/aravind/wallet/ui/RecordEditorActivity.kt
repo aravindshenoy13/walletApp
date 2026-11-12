@@ -91,7 +91,14 @@ class RecordEditorActivity : AppCompatActivity() {
                 launch {
                     model.ledger.collect { state ->
                         when (state) {
-                            is LedgerState.Ready -> if (!initialized) initialize(state.ledger) else refreshCategories(state.ledger)
+                            is LedgerState.Ready -> if (!initialized) initialize(state.ledger) else {
+                                if (recordId != 0L && state.ledger.records.none { it.id == recordId }) {
+                                    finish()
+                                } else {
+                                    refreshAccounts(state.ledger)
+                                    refreshCategories(state.ledger)
+                                }
+                            }
                             LedgerState.Failed -> {
                                 binding.loading.isVisible = false
                                 binding.form.isVisible = true
@@ -162,6 +169,25 @@ class RecordEditorActivity : AppCompatActivity() {
         updateEnabled()
     }
 
+    private fun refreshAccounts(ledger: Ledger) {
+        if (accounts == ledger.accounts) return
+        val source = accounts.getOrNull(binding.account.selectedItemPosition)?.id
+        val destination = accounts.getOrNull(binding.destination.selectedItemPosition)?.id
+        accounts = ledger.accounts
+        val names = accounts.map { it.name }
+        binding.account.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, names).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
+        binding.destination.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, names).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
+        binding.account.setSelection(accounts.indexOfFirst { it.id == source }.coerceAtLeast(0))
+        binding.destination.setSelection(accounts.indexOfFirst { it.id == destination }.let {
+            if (it >= 0) it else if (accounts.size >= 2) 1 else 0
+        })
+        updateType()
+    }
+
     private fun updateDateTime() {
         binding.date.text = occurredAt.toLocalDate().display()
         binding.time.text = occurredAt.format(DateTimeFormatter.ofPattern("HH:mm"))
@@ -204,11 +230,12 @@ class RecordEditorActivity : AppCompatActivity() {
 
     private fun updateEnabled() {
         val busy = model.operation.value == Operation.Working || model.operation.value == Operation.Saved
-        binding.form.enableTree(!busy)
+        val ready = initialized && model.ledger.value is LedgerState.Ready
+        binding.form.enableTree(ready && !busy)
         binding.back.isEnabled = !busy
-        binding.save.isEnabled = initialized && !busy && accounts.isNotEmpty() &&
+        binding.save.isEnabled = ready && !busy && accounts.isNotEmpty() &&
             (if (type == RecordType.TRANSFER) accounts.size >= 2 else categoryChoices.isNotEmpty())
-        binding.delete.isEnabled = initialized && !busy
+        binding.delete.isEnabled = ready && !busy
     }
 
     private fun showError(message: String) {

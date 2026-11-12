@@ -22,7 +22,7 @@ class V4FlowTest {
             onView(withId(R.id.clear_search)).perform(click())
             onView(withId(R.id.record_search)).check(matches(withText("")))
             androidx.test.espresso.Espresso.pressBack()
-            onView(withId(R.id.open_search)).check(matches(isDisplayed()))
+            await { onView(withId(R.id.open_search)).check(matches(isDisplayed())) }
             onView(withId(R.id.settings)).perform(click())
             onView(withText("Dark mode")).check(matches(isDisplayed())).perform(click())
             onView(withText("Dark mode")).check(matches(isChecked())).perform(click())
@@ -38,6 +38,15 @@ class V4FlowTest {
             onView(withContentDescription("Travel icon")).check(matches(org.hamcrest.CoreMatchers.not(isSelected())))
             scenario.recreate()
             onView(withContentDescription("Music icon")).check(matches(isSelected()))
+        }
+    }
+    private fun await(block: () -> Unit) {
+        val deadline = System.currentTimeMillis() + 10000
+        while (true) {
+            try { block(); return } catch (e: Throwable) {
+                if (System.currentTimeMillis() >= deadline) throw e
+                Thread.sleep(100)
+            }
         }
     }
 }

@@ -47,14 +47,14 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
     var recordType: RecordType? = null
 
     fun choose(type: RecordType? = recordType): Boolean {
-        if (_state.value == ExportState.Choosing || _state.value == ExportState.Writing) return false
+        if (_state.value == ExportState.Choosing || _state.value == ExportState.Writing || _state.value is ExportState.Saved) return false
         recordType = type
         _state.value = ExportState.Choosing
         return true
     }
-    fun pickerFailed() { _state.value = ExportState.Failed }
+    fun pickerFailed() { if (_state.value == ExportState.Choosing) _state.value = ExportState.Failed }
     fun selected(uri: Uri?) {
-        if (_state.value == ExportState.Writing) return
+        if (_state.value == ExportState.Writing || _state.value is ExportState.Saved) return
         if (uri == null) { _state.value = ExportState.Idle; return }
         _state.value = ExportState.Writing
         val type = recordType
@@ -85,6 +85,8 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
 
 class ExportActivity : AppCompatActivity() {
     private lateinit var binding: ActivityExportBinding
+    private var accountsLoaded = false
+    private var accountsFailed = false
     private val model: ExportViewModel by viewModels()
     private val createDocument = registerForActivityResult(ActivityResultContracts.CreateDocument("text/csv")) { model.selected(it) }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,13 +105,18 @@ class ExportActivity : AppCompatActivity() {
         })
         onBackPressedDispatcher.addCallback(this) { if (model.state.value != ExportState.Writing) finish() }
         lifecycleScope.launch {
-            val accounts = (application as WalletApplication).repository.snapshot().accounts
-            val restored = savedInstanceState?.getLongArray("accounts")?.toSet()
-            if (model.accountIds == null) model.accountIds = restored ?: accounts.map { it.id }.toSet()
-            accounts.forEach { account -> binding.accountChoices.addView(android.widget.CheckBox(this@ExportActivity).apply {
-                text = account.name; isChecked = account.id in model.accountIds.orEmpty()
-                setOnCheckedChangeListener { _, checked -> model.accountIds = if (checked) model.accountIds.orEmpty() + account.id else model.accountIds.orEmpty() - account.id }
-            }) }
+            try {
+                val accounts = (application as WalletApplication).repository.snapshot().accounts
+                val restored = savedInstanceState?.getLongArray("accounts")?.toSet()
+                if (model.accountIds == null) model.accountIds = restored ?: accounts.map { it.id }.toSet()
+                accounts.forEach { account -> binding.accountChoices.addView(android.widget.CheckBox(this@ExportActivity).apply {
+                    text = account.name; isChecked = account.id in model.accountIds.orEmpty()
+                    setOnCheckedChangeListener { _, checked -> model.accountIds = if (checked) model.accountIds.orEmpty() + account.id else model.accountIds.orEmpty() - account.id }
+                }) }
+                accountsLoaded = true
+            } catch (cancelled: CancellationException) { throw cancelled }
+            catch (_: Exception) { accountsFailed = true }
+            render(model.state.value)
         }
         binding.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.save.setOnClickListener {
@@ -132,20 +139,25 @@ class ExportActivity : AppCompatActivity() {
                         Toast.makeText(this@ExportActivity, resources.getQuantityString(R.plurals.export_saved, state.count, state.count), Toast.LENGTH_LONG).show()
                         finish()
                     }
-                    binding.error.isVisible = state == ExportState.Failed
-                    binding.error.setText(R.string.export_failed)
-                    binding.save.isEnabled = state != ExportState.Writing && state != ExportState.Choosing
-                    binding.exportType.enableTree(binding.save.isEnabled)
-                    binding.accountChoices.enableTree(binding.save.isEnabled)
-                    binding.back.isEnabled = state != ExportState.Writing
-                    binding.save.setText(when (state) {
-                        ExportState.Writing -> R.string.saving
-                        ExportState.Choosing -> R.string.choosing_location
-                        else -> R.string.choose_save
-                    })
+                    render(state)
                 }
             }
         }
+    }
+
+    private fun render(state: ExportState) {
+        val editable = accountsLoaded && state != ExportState.Writing && state != ExportState.Choosing && state !is ExportState.Saved
+        binding.error.isVisible = accountsFailed || state == ExportState.Failed
+        binding.error.setText(if (accountsFailed) R.string.load_failed else R.string.export_failed)
+        binding.save.isEnabled = editable
+        binding.exportType.enableTree(editable)
+        binding.accountChoices.enableTree(editable)
+        binding.back.isEnabled = state != ExportState.Writing
+        binding.save.setText(when (state) {
+            ExportState.Writing -> R.string.saving
+            ExportState.Choosing -> R.string.choosing_location
+            else -> R.string.choose_save
+        })
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

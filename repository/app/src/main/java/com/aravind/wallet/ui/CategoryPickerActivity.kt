@@ -58,6 +58,11 @@ class CategoryPickerActivity : AppCompatActivity() {
     }
 
     private fun showResults() {
+        if (model.ledger.value == LedgerState.Failed) {
+            binding.message.setText(R.string.load_failed)
+            binding.message.isVisible = true
+            return
+        }
         val query = binding.search.text.toString().trim()
         val results = categories.filter { it.name.contains(query, ignoreCase = true) }
         adapter.setNotifyOnChange(false)

@@ -1,5 +1,18 @@
 # Wallet V4.4
 
+## State handling fixes
+
+- Backup and restore use explicit ViewModel states for picking, working, confirmation, and results. Screen recreation retains work and restore confirmation; conflicting operations are blocked.
+- Export waits for account loading, handles loading failures, keeps newly loaded controls disabled during export, and ignores callbacks after a successful save.
+- Editors disable their forms when ledger data is unavailable. Record drafts refresh account choices when accounts change while retaining their selections.
+- Category picker searches retain load-error messages. Records no longer shows an empty-day message alongside populated history, and hides stale panels after ledger failure.
+- Tapping the active Analysis tab retains the selected month, range, and mode. Entering from another tab keeps the existing reset behavior.
+- Records search has explicit opening/editing states and ignores transient keyboard-hide notifications while the keyboard settles, preventing a newly opened search from collapsing.
+
+Regression coverage is in `StateRegressionTest` and `ExportViewModelTest`.
+
+Validation: 25 JVM tests and 20 targeted Android cases passed across the regression run and synchronized legacy-test rerun. Debug and instrumentation APK builds passed; lint reported zero errors and 51 warnings.
+
 A personal, on-device INR transaction tracker for Android 8.0 (API 26) and later. Built with Kotlin, native Android Views/XML, and Room. The product scope is defined in [ROADMAP.md](../ROADMAP.md); the simple appearance follows [V3 wireframe revision 03](../wireframes/wallet-v3-wireframe-r03.html) and the subsequently confirmed decisions in the wireframe README.
 
 ## Current V4.4 behavior

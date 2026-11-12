@@ -31,13 +31,16 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private enum class Tab { RECORDS, ANALYSIS, ACCOUNTS, CATEGORIES }
+    private enum class SearchState { COLLAPSED, OPENING, EDITING }
     private lateinit var binding: ActivityMainBinding
     private val model: WalletViewModel by viewModels()
     private val dateChanged = object : android.content.BroadcastReceiver() {
         override fun onReceive(context: android.content.Context?, intent: Intent?) { render() }
     }
     private var monthlySummary = false
-    private var searchExpanded = false
+    private var searchState = SearchState.COLLAPSED
+    private var keyboardVisibilityRevision = 0L
+    private val searchExpanded get() = searchState != SearchState.COLLAPSED
     private var tab = Tab.RECORDS
     private var ledger: Ledger? = null
     private lateinit var analysis: AnalysisPanel
@@ -67,14 +70,32 @@ class MainActivity : AppCompatActivity() {
         monthlySummary = savedInstanceState?.getBoolean("monthlySummary") ?: false
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        applyInsets(binding.root) { dismissSearch() }
+        applyInsets(binding.root) { visible ->
+            val revision = ++keyboardVisibilityRevision
+            when (searchState) {
+                SearchState.OPENING -> if (visible) searchState = SearchState.EDITING
+                SearchState.EDITING -> if (!visible) binding.root.postDelayed({
+                    // IME hide/show requests can overlap when search is reopened.
+                    // Only dismiss once the latest visibility has settled.
+                    if (revision == keyboardVisibilityRevision && searchState == SearchState.EDITING &&
+                        androidx.core.view.ViewCompat.getRootWindowInsets(binding.root)
+                            ?.isVisible(androidx.core.view.WindowInsetsCompat.Type.ime()) == false) dismissSearch()
+                }, 200)
+                SearchState.COLLAPSED -> Unit
+            }
+        }
         analysis = AnalysisPanel(this, binding.analysisPanel, savedInstanceState) { start, end ->
             rangePicker.launch(Intent(this, DateRangeActivity::class.java).putExtra("start", start.toString()).putExtra("end", end.toString()))
         }
-        searchExpanded = savedInstanceState?.getBoolean("searchExpanded") ?: false
+        searchState = if (savedInstanceState?.getBoolean("searchExpanded") == true) SearchState.OPENING else SearchState.COLLAPSED
         binding.todayDate.setOnClickListener { monthlySummary = !monthlySummary; render() }
         binding.settings.setOnClickListener { startActivity(Intent(this, SettingsActivity::class.java)) }
-        binding.openSearch.setOnClickListener { searchExpanded = true; render(); binding.recordSearch.requestFocus(); (getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager).showSoftInput(binding.recordSearch, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT) }
+        binding.openSearch.setOnClickListener {
+            ++keyboardVisibilityRevision
+            searchState = SearchState.OPENING
+            render()
+            showSearchKeyboard()
+        }
         binding.recordSearch.doAfterTextChanged { render() }
         binding.clearSearch.setOnClickListener { binding.recordSearch.text?.clear(); binding.recordSearch.requestFocus() }
         binding.recordSearch.dismiss = { dismissSearch() }
@@ -89,7 +110,11 @@ class MainActivity : AppCompatActivity() {
         binding.categoryList.layoutManager = LinearLayoutManager(this)
         binding.categoryList.adapter = categoriesAdapter
         binding.recordsTab.setOnClickListener { tab = Tab.RECORDS; render() }
-        binding.analysisTab.setOnClickListener { tab = Tab.ANALYSIS; analysis.open(); render() }
+        binding.analysisTab.setOnClickListener {
+            if (tab != Tab.ANALYSIS) analysis.open()
+            tab = Tab.ANALYSIS
+            render()
+        }
         binding.accountsTab.setOnClickListener { tab = Tab.ACCOUNTS; render() }
         binding.categoriesTab.setOnClickListener { tab = Tab.CATEGORIES; render() }
         binding.add.setOnClickListener {
@@ -109,7 +134,7 @@ class MainActivity : AppCompatActivity() {
                         analysis.show(state.ledger)
                         accountsAdapter.submitList(state.ledger.accounts.map { AccountRow(it, state.ledger.balances.getValue(it.id)) })
                         categoriesAdapter.submitList(state.ledger.categories)
-                    }
+                    } else ledger = null
                     val ready = state is LedgerState.Ready
                     binding.add.isEnabled = ready
                     binding.addRecordButton.isEnabled = ready
@@ -127,14 +152,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun showSearchKeyboard() {
+        binding.recordSearch.post {
+            if (searchExpanded) {
+                binding.recordSearch.requestFocus()
+                androidx.core.view.WindowCompat.getInsetsController(window, binding.root)
+                    .show(androidx.core.view.WindowInsetsCompat.Type.ime())
+            }
+        }
+    }
+
     private fun dismissSearch() {
         if (!searchExpanded) return
-        searchExpanded = false
+        searchState = SearchState.COLLAPSED
         binding.recordSearch.text?.clear()
         binding.recordSearch.clearFocus()
         binding.root.requestFocus()
-        (getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager)
-            .hideSoftInputFromWindow(binding.recordSearch.windowToken, 0)
+        androidx.core.view.WindowCompat.getInsetsController(window, binding.root)
+            .hide(androidx.core.view.WindowInsetsCompat.Type.ime())
         render()
     }
 
@@ -200,7 +235,6 @@ class MainActivity : AppCompatActivity() {
             !recordSearch.text.isNullOrBlank() && matching.isEmpty() -> R.string.no_matches
             current.accounts.isEmpty() -> R.string.no_accounts
             current.records.isEmpty() -> R.string.no_records
-            current.records.none { it.occurredAt.toLocalDate() == today } -> R.string.no_records_today
             else -> null
         }
         emptyRecords.isVisible = emptyMessage != null
