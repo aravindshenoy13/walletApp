@@ -137,6 +137,12 @@
 - Add category icons, six distinct muted colors, immediate icon selection, an Uncategorised icon, and record keyboard fixes.
 - Version 5.3, code 14. See [V5.3 notes](V5.3-PLAN.md).
 
+### V5.3.1 — Save alignment and icon consistency
+
+- Vertically center the record Save action with Back and the title.
+- Remove paw and wrench artwork, redraw cash and airplane, and unify line-icon strokes.
+- Version 5.3.1, code 15. See [V5.3.1 notes](V5.3.1-PLAN.md).
+
 ## Business rules
 
 - Transaction direction and category are separate concepts: income and expense entries can share a category.

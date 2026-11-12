@@ -63,3 +63,8 @@
 ## V5.3 â€” Development baseline
 
 - Started from accepted V5.2; additional scope pending.
+
+## V5.3.1 — Save alignment and icon consistency
+
+- Corrected the record header Save alignment.
+- Removed paw and wrench, redrew cash and airplane, and unified icon stroke widths.

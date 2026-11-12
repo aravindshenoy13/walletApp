@@ -42,7 +42,7 @@ object WalletBackup {
         require(accounts.all { it.iconKey in setOf("bank", "cash", "card") && it.id > 0 && it.name.isNotBlank() && it.name.length <= 80 }) { "Invalid account." }
         require(accounts.map { it.id }.distinct().size == accounts.size && accounts.map { it.name.lowercase(java.util.Locale.ROOT) }.distinct().size == accounts.size) { "Duplicate accounts." }
 
-        require(categories.all { c -> c.id.isNotBlank() && c.name.isNotBlank() && c.name.length <= 80 && CategoryCatalog.icons.any { it.key == c.iconKey } && CategoryCatalog.colors.any { it.key == c.backgroundColorKey } }) { "Invalid category." }
+        require(categories.all { c -> c.id.isNotBlank() && c.name.isNotBlank() && c.name.length <= 80 && c.iconKey in CategoryCatalog.supportedIconKeys && CategoryCatalog.colors.any { it.key == c.backgroundColorKey } }) { "Invalid category." }
         require(categories.map { it.id }.distinct().size == categories.size && categories.map { it.name.lowercase(java.util.Locale.ROOT) }.distinct().size == categories.size) { "Duplicate categories." }
         require(records.all { it.occurredAt.nano == 0 }) { "Backup timestamps must use whole seconds; fractional seconds are not supported." }
         require(records.map { it.id }.distinct().size == records.size) { "Duplicate record IDs." }

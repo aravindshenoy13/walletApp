@@ -16,7 +16,7 @@ class WalletRepository(private val database: WalletDatabase) {
     suspend fun saveCategory(category: WalletCategory, isNew: Boolean = false) = database.withTransaction {
         val name = category.name.trim()
         require(name.isNotEmpty() && name.length <= 80) { "Enter a category name of 1–80 characters." }
-        require(CategoryCatalog.icons.any { it.key == category.iconKey }) { "Choose an icon." }
+        require(category.iconKey in CategoryCatalog.supportedIconKeys) { "Choose an icon." }
         require(CategoryCatalog.colors.any { it.key == category.backgroundColorKey }) { "Choose a background color." }
         require(dao.categories().none { it.id != category.id && it.name.equals(name, ignoreCase = true) }) {
             "A category with this name already exists (it may be archived)."

@@ -16,9 +16,11 @@ object CategoryCatalog {
         CategoryIcon("gift", "Gifts"),
         CategoryIcon("bulb", "Utilities"),
         CategoryIcon("money", "Money"), CategoryIcon("phone", "Phone"),
-        CategoryIcon("pet", "Pets"), CategoryIcon("fitness", "Fitness"),
-        CategoryIcon("tools", "Repairs"), CategoryIcon("uncategorised", "Uncategorised"),
+        CategoryIcon("fitness", "Fitness"),
+        CategoryIcon("uncategorised", "Uncategorised"),
     )
+    // Accept old stored keys and backups; removed artwork renders as Other.
+    val supportedIconKeys = icons.map { it.key }.toSet() + setOf("pet", "tools")
     val colors = listOf(
         CategoryColor("Red", "#D56565"), CategoryColor("Orange", "#C88645"),
         CategoryColor("Yellow", "#B7A13C"), CategoryColor("Green", "#5C9B70"),

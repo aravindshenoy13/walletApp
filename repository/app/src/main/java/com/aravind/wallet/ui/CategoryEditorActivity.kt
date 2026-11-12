@@ -106,6 +106,7 @@ class CategoryEditorActivity : AppCompatActivity() {
         persisted = ledger.categoriesById[categoryId]
         if (!isNew && persisted == null) { finish(); return }
         icon = draft?.getString("icon") ?: persisted?.iconKey ?: "tag"
+        if (CategoryCatalog.icons.none { it.key == icon }) icon = "tag"
         color = draft?.getString("color") ?: persisted?.backgroundColorKey ?: "Sky"
         binding.name.setText(draft?.getString("name") ?: persisted?.name.orEmpty())
         binding.origin.setText(R.string.archived)
