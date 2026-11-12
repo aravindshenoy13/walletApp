@@ -1,4 +1,4 @@
-# WalletApp version history
+# Wallet Manager version history
 
 ## V1 — Core transaction tracking
 
@@ -50,3 +50,16 @@
 
 - Improved backup and restore, export selection, search and gesture handling, and Analysis date refresh.
 - Refined chart accessibility and large-text layouts while preserving existing data and backup compatibility.
+
+## V5.1 — UI design consistency
+
+- Applied D01–D26 and renamed the Analysis view choices.
+
+## V5.2 — Calculator and category management
+
+- Renamed the app to Wallet Manager; added the calculator and rearranged the record form while preserving icons and colors.
+- Added category deletion and Uncategorised records; moved account/category Add actions to the bottom.
+
+## V5.3 — Development baseline
+
+- Started from accepted V5.2; additional scope pending.

@@ -178,3 +178,5 @@ Use only the `Wallet_V51_Test` AVD (display name **Wallet V5.1 Test**) for autom
 Start with `ANDROID_AVD_HOME` set to `repository/.tools/avd` and `ANDROID_EMULATOR_HOME` and `ANDROID_USER_HOME` set to `repository/.tools/android-home`. Launch `emulator -avd Wallet_V51_Test -port 5560`. Keep future automated test runs on this dedicated AVD.
 
 V5.1 UI consistency release: [installable debug APK](dist/wallet-v5.1-debug.apk), [unsigned optimized release](dist/wallet-v5.1-release-unsigned.apk), and [checksums](dist/wallet-v5.1-SHA256SUMS.txt). See [V5.1 notes](../V5.1-PLAN.md).
+
+Current development baseline: **Wallet Manager V5.3** (code 14), starting from accepted V5.2. V5.1 and V5.2 source/history/APK archives are in the top-level backups folder. See ../V5.2-PLAN.md and ../V5.3-PLAN.md.

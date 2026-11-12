@@ -125,6 +125,18 @@
 - Keep existing transaction behavior, Room schema 3, and backup format 2 unchanged.
 - Version name 5.1, version code 12. See [V5.1-PLAN.md](V5.1-PLAN.md) for decisions and verification.
 
+### V5.2 — Calculator and category management
+
+- App name: Wallet Manager. Calculator and record-form rearrangement preserve existing icons and colors.
+- Delete categories with confirmation and retain records as uncategorised; offer an Uncategorised selection.
+- Position Add account and Add category at the bottom to match Add record.
+- Version 5.2, code 13. See [V5.2 notes](V5.2-PLAN.md).
+
+### V5.3 — Development baseline
+
+- Start from accepted V5.2. Additional scope pending user direction.
+- Version 5.3, code 14. See [V5.3 notes](V5.3-PLAN.md).
+
 ## Business rules
 
 - Transaction direction and category are separate concepts: income and expense entries can share a category.
