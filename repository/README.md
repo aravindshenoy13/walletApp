@@ -1,4 +1,9 @@
-# Wallet V4.4
+# Wallet V5
+
+V5 packages the accepted state, UI, and logical fixes below as version `5.0` (code `11`). Room schema 3 and backup format 2 remain unchanged. See [V5 release notes](../V5-PLAN.md).
+
+V5 artifacts: [debug APK](dist/wallet-v5-debug.apk), [unsigned R8 release APK](dist/wallet-v5-release-unsigned.apk), and [checksums](dist/wallet-v5-SHA256SUMS.txt). Standalone source/history/APK backup: `../backups/wallet-v5-2026-11-12-r01/`.
+
 
 ## UI and logical review fixes
 

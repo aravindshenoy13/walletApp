@@ -110,6 +110,14 @@
 - Review the app for controls and screens that miss the established design language and bring them into line.
 - See [V4.4-PLAN.md](V4.4-PLAN.md) for the implementation order and validation.
 
+### V5 — State, UI, and logical bug fixes
+
+- Release the accepted state-machine, UI, and logical fixes from this chat as V5 (version name 5.0, version code 11).
+- Include the fixes and corrections documented in [UI-BUGS.md](UI-BUGS.md) and [LOGICAL-BUGS.md](LOGICAL-BUGS.md), including search/gesture stability, saved export selection, backup validation, retry, Analysis date refresh, accessibility, and large-text layouts.
+- Preserve Room schema 3 and backup format 2, including format-1 restore support.
+- Keep the standalone V5 source/history/APK backup in the existing top-level `backups/` folder, as requested for this release.
+- See [V5 release notes](V5-PLAN.md) for scope, verification, and backup details.
+
 ## Business rules
 
 - Transaction direction and category are separate concepts: income and expense entries can share a category.

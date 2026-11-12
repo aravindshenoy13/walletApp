@@ -1,0 +1,2 @@
+154d4ebd072d0a8b6e7f56b353c4ffd9774888e4ff66fd07d37d3f618a5290ad  wallet-v5-debug.apk
+5e639490b6d6a2d7ba2d593122f2f65709a31a5f66da489c0b700ce3a0f9180b  wallet-v5-release-unsigned.apk
