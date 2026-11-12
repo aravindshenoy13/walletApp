@@ -43,7 +43,7 @@ class CategoryPickerActivity : AppCompatActivity() {
                     when (state) {
                         is LedgerState.Ready -> {
                             val original = state.ledger.records.find { it.id == intent.getLongExtra("recordId", 0) }?.categoryId
-                            categories = listOf(WalletCategory("", "Uncategorised", "tag", "Sky")) + state.ledger.categories.filter { !it.isArchived || it.id == original }
+                            categories = listOf(WalletCategory("", "Uncategorised", "uncategorised", "Sky")) + state.ledger.categories.filter { !it.isArchived || it.id == original }
                             showResults()
                         }
                         LedgerState.Failed -> {

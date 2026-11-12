@@ -15,15 +15,18 @@ object CategoryCatalog {
         CategoryIcon("coffee", "Coffee"),
         CategoryIcon("gift", "Gifts"),
         CategoryIcon("bulb", "Utilities"),
+        CategoryIcon("money", "Money"), CategoryIcon("phone", "Phone"),
+        CategoryIcon("pet", "Pets"), CategoryIcon("fitness", "Fitness"),
+        CategoryIcon("tools", "Repairs"), CategoryIcon("uncategorised", "Uncategorised"),
     )
     val colors = listOf(
         CategoryColor("Red", "#D56565"), CategoryColor("Orange", "#C88645"),
         CategoryColor("Yellow", "#B7A13C"), CategoryColor("Green", "#5C9B70"),
         CategoryColor("Teal", "#479C98"), CategoryColor("Blue", "#598FD0"),
         CategoryColor("Purple", "#A177CA"), CategoryColor("Pink", "#C46F9D"),
-        CategoryColor("Rose", "#F2C7C7"), CategoryColor("Peach", "#F7D5BE"),
-        CategoryColor("Butter", "#F3E8B8"), CategoryColor("Mint", "#CCE8D4"),
-        CategoryColor("Seafoam", "#C5E6E2"), CategoryColor("Sky", "#C9DEF5"),
-        CategoryColor("Lilac", "#DFD0EF"), CategoryColor("Blush", "#F2D0E2"),
+        CategoryColor("Rose", "#B9B5AC"), CategoryColor("Peach", "#C7B39A"),
+        CategoryColor("Butter", "#BCC49F"), CategoryColor("Mint", "#A9BEC2"),
+        CategoryColor("Seafoam", "#B8B0C2"), CategoryColor("Sky", "#C9DEF5"),
+        CategoryColor("Lilac", "#C6BAAD"), CategoryColor("Blush", "#F2D0E2"),
     )
 }

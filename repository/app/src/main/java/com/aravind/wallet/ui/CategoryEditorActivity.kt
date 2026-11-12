@@ -160,12 +160,14 @@ class CategoryEditorActivity : AppCompatActivity() {
     private fun updatePreview() {
         if (!::binding.isInitialized) return
         iconButtons.forEach { (key, views) ->
-            val selected = key == icon
+            val displayedKey = if (key == "tag" && CategoryCatalog.icons.take(6).none { it.key == icon }) icon else key
+            views.first.setOnClickListener { icon = displayedKey; updatePreview() }
+            val selected = displayedKey == icon
             views.first.isSelected = selected
             androidx.core.view.ViewCompat.setStateDescription(views.first, if (selected) "Selected" else "Not selected")
-            views.first.contentDescription = selectedDescription(getString(R.string.icon_accessibility, CategoryCatalog.icons.first { it.key == key }.label), selected)
+            views.first.contentDescription = selectedDescription(getString(R.string.icon_accessibility, CategoryCatalog.icons.first { it.key == displayedKey }.label), selected)
             views.first.setBackgroundResource(R.drawable.selection_surface)
-            views.second.showCategory(key, color)
+            views.second.showCategory(displayedKey, color)
         }
         colorButtons.forEach { (key, button) ->
             val selected = key == color

@@ -134,7 +134,7 @@
 
 ### V5.3 — Development baseline
 
-- Start from accepted V5.2. Additional scope pending user direction.
+- Add category icons, six distinct muted colors, immediate icon selection, an Uncategorised icon, and record keyboard fixes.
 - Version 5.3, code 14. See [V5.3 notes](V5.3-PLAN.md).
 
 ## Business rules

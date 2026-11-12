@@ -45,7 +45,7 @@ class AdditionalIconsActivity : AppCompatActivity() {
                 setBackgroundResource(R.drawable.icon_selection)
                 isClickable = true; isFocusable = true
                 contentDescription = getString(R.string.icon_accessibility, choice.label)
-                setOnClickListener { selected = choice.key; update() }
+                setOnClickListener { setResult(RESULT_OK, Intent().putExtra("icon", choice.key)); finish() }
             }
             cell.addView(ImageView(this).apply {
                 showCategory(choice.key, intent.getStringExtra("color") ?: "Sky")
@@ -55,19 +55,7 @@ class AdditionalIconsActivity : AppCompatActivity() {
             cells[choice.key] = cell; grid.addView(cell)
         }
         update()
-        root.addView(Button(this, null, 0, R.style.OutlineButton).apply {
-            setText(R.string.use_selected_icon)
-            gravity = Gravity.START or Gravity.CENTER_VERTICAL
-            setBackgroundResource(R.drawable.action_save)
-            setTextColor(getColor(R.color.action_save))
-            setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_save, 0, 0, 0)
-            compoundDrawableTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.action_save))
-            compoundDrawablePadding = dp(4)
-            layoutParams = LinearLayout.LayoutParams(-1, -2).apply { setMargins(dp(16), dp(12), dp(16), dp(16)) }
-            setOnClickListener { if (CategoryCatalog.icons.any { it.key == selected }) {
-                setResult(RESULT_OK, Intent().putExtra("icon", selected)); finish()
-            } }
-        })
+
     }
     override fun onSaveInstanceState(outState: Bundle) { outState.putString("icon", selected); super.onSaveInstanceState(outState) }
 }

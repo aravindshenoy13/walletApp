@@ -94,7 +94,7 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
         binding.flowGraph.show(start, end, data, breakdown)
         binding.breakdownList.removeAllViews()
         val values = data.categories.mapNotNull { (id, totals) ->
-            (current.categoriesById[id] ?: if (id.isEmpty()) com.aravind.wallet.data.WalletCategory("", "Uncategorised", "tag", "Sky") else null)?.let { it to totals.value(activeMode) }
+            (current.categoriesById[id] ?: if (id.isEmpty()) com.aravind.wallet.data.WalletCategory("", "Uncategorised", "uncategorised", "Sky") else null)?.let { it to totals.value(activeMode) }
         }.filter { if (viewIndex == 1) it.second.signum() < 0 else it.second.signum() != 0 }.sortedWith(compareByDescending<Pair<com.aravind.wallet.data.WalletCategory, java.math.BigInteger>> { it.second.abs() }.thenBy { it.first.name })
         wheel.show(values)
         binding.noCategoryValues.isVisible = viewIndex == 1 && values.isEmpty()

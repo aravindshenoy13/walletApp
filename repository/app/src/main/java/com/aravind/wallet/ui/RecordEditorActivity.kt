@@ -86,6 +86,11 @@ class RecordEditorActivity : AppCompatActivity() {
             }, occurredAt.hour, occurredAt.minute, DateFormat.is24HourFormat(this)).show()
         }
         binding.amount.showSoftInputOnFocus = false
+        binding.amount.setOnFocusChangeListener { _, focused -> if (focused) {
+            (getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager).hideSoftInputFromWindow(binding.amount.windowToken, 0)
+        } }
+        binding.root.isFocusableInTouchMode = true
+        binding.root.requestFocus()
         listOf(listOf("Clear", "⌫", "÷", "×"), listOf("7", "8", "9", "−"), listOf("4", "5", "6", "+"), listOf("1", "2", "3", "="), listOf("0", ".")).forEach { keys ->
             val row = android.widget.LinearLayout(this)
             keys.forEach { key ->
@@ -195,8 +200,8 @@ class RecordEditorActivity : AppCompatActivity() {
         selectedCategoryId = category?.id
         binding.categoryName.text = category?.let { if (it.isArchived) getString(R.string.archived_name, it.name) else it.name }
             ?: "Uncategorised"
-        binding.categoryBadge.isVisible = category != null
-        category?.let { binding.categoryBadge.showCategory(it.iconKey, it.backgroundColorKey) }
+        binding.categoryBadge.isVisible = true
+        binding.categoryBadge.showCategory(category?.iconKey ?: "uncategorised", category?.backgroundColorKey ?: "Sky")
         binding.category.contentDescription = getString(R.string.category_selection, binding.categoryName.text)
         updateType()
     }

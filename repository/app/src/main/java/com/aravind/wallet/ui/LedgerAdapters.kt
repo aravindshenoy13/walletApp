@@ -75,7 +75,7 @@ class RecordsAdapter(private val edit: (Long) -> Unit) :
                     description.text = if (record.accountId == row.accountScope) context.getString(R.string.transfer_to, row.destination)
                         else context.getString(R.string.transfer_from, row.source)
                 }
-                badge.isVisible = record.type == RecordType.TRANSFER || row.category != null
+                badge.isVisible = true
                 if (record.type == RecordType.TRANSFER) {
                     badge.setImageResource(R.drawable.ic_transfer)
                     badge.imageTintList = null
@@ -83,7 +83,7 @@ class RecordsAdapter(private val edit: (Long) -> Unit) :
                         setColor(context.getColor(R.color.transfer_background))
                         cornerRadius = 4 * context.resources.displayMetrics.density
                     }
-                } else row.category?.let { badge.showCategory(it.iconKey, it.backgroundColorKey) }
+                } else badge.showCategory(row.category?.iconKey ?: "uncategorised", row.category?.backgroundColorKey ?: "Sky")
                 amount.text = context.getString(when (record.type) {
                     RecordType.EXPENSE -> R.string.expense_amount
                     RecordType.INCOME -> R.string.income_amount

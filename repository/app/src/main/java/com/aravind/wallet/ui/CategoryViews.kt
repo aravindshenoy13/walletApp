@@ -36,6 +36,13 @@ fun categoryDisplayColor(context: Context, key: String): Int {
 
 fun ImageView.showCategory(iconKey: String, colorKey: String) {
     setImageResource(when (iconKey) {
+        "money" -> R.drawable.ic_category_money
+        "phone" -> R.drawable.ic_category_phone
+        "pet" -> R.drawable.ic_category_pet
+        "fitness" -> R.drawable.ic_category_fitness
+        "tools" -> R.drawable.ic_category_tools
+        "uncategorised" -> R.drawable.ic_category_uncategorised
+
         "plane" -> R.drawable.ic_category_plane
         "music" -> R.drawable.ic_category_music
         "heart" -> R.drawable.ic_category_heart
