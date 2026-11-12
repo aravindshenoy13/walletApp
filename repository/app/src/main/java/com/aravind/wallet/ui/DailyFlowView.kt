@@ -64,7 +64,7 @@ class DailyFlowView(context: Context, attrs: AttributeSet? = null) : View(contex
     private fun drawAxisLabel(canvas: Canvas, label: String, x: Float, y: Float, availableWidth: Float) {
         val size = paint.textSize
         val measured = paint.measureText(label)
-        if (measured > availableWidth) paint.textSize *= availableWidth / measured
+        if (measured > availableWidth) return
         canvas.drawText(label, x, y, paint)
         paint.textSize = size
     }
@@ -72,7 +72,7 @@ class DailyFlowView(context: Context, attrs: AttributeSet? = null) : View(contex
         super.onDraw(canvas)
         val density = resources.displayMetrics.density
         val left = 10f * density; val right = width - 12f * density
-        paint.textSize = 11f * resources.displayMetrics.scaledDensity
+        paint.textSize = 13f * resources.displayMetrics.scaledDensity
         val top = paint.fontSpacing + 12f * density
         val bottom = height - 2 * paint.fontSpacing - 16f * density
         if (right <= left || bottom <= top) return
@@ -87,7 +87,7 @@ class DailyFlowView(context: Context, attrs: AttributeSet? = null) : View(contex
         }
         val zero = y(BigInteger.ZERO)
         paint.style = Paint.Style.FILL; paint.color = context.getColor(R.color.quiet)
-        paint.textSize = 11f * resources.displayMetrics.scaledDensity
+        paint.textSize = 13f * resources.displayMetrics.scaledDensity
         drawAxisLabel(canvas, Money.compactNet(highest), left, top - 6f * density, right - left)
         if (lowest.signum() < 0) drawAxisLabel(canvas, Money.compactNet(lowest), left, bottom + paint.fontSpacing, right - left)
         else canvas.drawText("0", left, bottom + paint.fontSpacing, paint)
@@ -134,7 +134,7 @@ class DailyFlowView(context: Context, attrs: AttributeSet? = null) : View(contex
         paint.color = context.getColor(R.color.quiet)
         val format = DateTimeFormatter.ofPattern("d MMM")
         paint.textAlign = Paint.Align.LEFT; canvas.drawText(start.format(format), left, height - 8*density - paint.descent(), paint)
-        if (days > 0) { paint.textAlign = Paint.Align.RIGHT; canvas.drawText(end.format(format), right, height - 8*density - paint.descent(), paint) }
+        if (days > 0 && paint.measureText(start.format(format)) + paint.measureText(end.format(format)) + 16*density <= right-left) { paint.textAlign = Paint.Align.RIGHT; canvas.drawText(end.format(format), right, height - 8*density - paint.descent(), paint) }
         paint.textAlign = Paint.Align.LEFT
     }
 }

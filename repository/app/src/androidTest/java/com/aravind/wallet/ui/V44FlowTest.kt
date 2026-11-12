@@ -52,7 +52,7 @@ class V44FlowTest {
                         val color = categoryDisplayColor(activity, choice.key)
                         assertEquals(choice.key, 255, Color.alpha(color))
                         if (theme == AppCompatDelegate.MODE_NIGHT_YES)
-                            assertTrue(choice.key, ColorUtils.calculateContrast(Color.WHITE, color) >= 2.5)
+                            assertTrue(choice.key, ColorUtils.calculateContrast(Color.WHITE, color) >= 3.0)
                         else assertEquals(Color.parseColor(choice.hex), color)
                     }
                 }

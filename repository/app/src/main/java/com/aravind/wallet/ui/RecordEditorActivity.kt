@@ -58,6 +58,12 @@ class RecordEditorActivity : AppCompatActivity() {
         draft = savedInstanceState?.getBundle("draft")
         binding = ActivityRecordEditorBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.viewTreeObserver.addOnGlobalLayoutListener {
+            val height = maxOf(binding.account.height, binding.category.height)
+            if (height > 0) for (field in listOf(binding.account, binding.category)) {
+                if (field.height != height) field.layoutParams = field.layoutParams.apply { this.height = height }
+            }
+        }
         applyInsets(binding.root)
         binding.title.setText(if (recordId == 0L) R.string.new_record else R.string.edit_record)
         binding.delete.isVisible = recordId != 0L

@@ -4,7 +4,7 @@
             <TextView android:id="@+id/description" android:drawablePadding="8dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="16sp" />
             <TextView android:id="@+id/amount" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="8dp" android:textSize="18sp" />
         </LinearLayout>
-        <Button android:id="@+id/edit_account" style="@style/PlainButton" android:drawableStart="@drawable/ic_edit" android:drawableTint="@color/icon_stroke" android:drawablePadding="8dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/edit" />
+        <Button android:id="@+id/edit_account" style="@style/PlainButton" android:drawableStart="@drawable/ic_edit" android:drawableTint="@color/icon_stroke" android:gravity="start|center_vertical" android:minWidth="88dp" android:drawablePadding="8dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/edit" />
     </LinearLayout>
     <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="12dp" android:background="@color/line" />
 </LinearLayout>

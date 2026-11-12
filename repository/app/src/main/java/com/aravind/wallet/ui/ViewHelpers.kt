@@ -17,6 +17,21 @@ import java.util.Locale
 import kotlin.math.max
 
 fun AppCompatActivity.applyInsets(root: View, onKeyboardVisibilityChanged: ((Boolean) -> Unit)? = null) {
+    val title = root.findViewById<View>(R.id.title)
+    val header = title?.parent as? android.widget.LinearLayout
+    if ((this is RecordEditorActivity || this is AccountEditorActivity || this is CategoryEditorActivity) && header != null && (resources.configuration.screenWidthDp < 380 || resources.configuration.fontScale > 1.15f)) {
+        header.removeView(title)
+        val actions = android.widget.LinearLayout(this).apply { gravity = android.view.Gravity.CENTER_VERTICAL }
+        while (header.childCount > 0) {
+            val child = header.getChildAt(0)
+            header.removeView(child)
+            actions.addView(child)
+        }
+        header.orientation = android.widget.LinearLayout.VERTICAL
+        title.layoutParams = android.widget.LinearLayout.LayoutParams(-1, -2)
+        header.addView(title)
+        header.addView(actions, android.widget.LinearLayout.LayoutParams(-1, -2))
+    }
     WindowCompat.setDecorFitsSystemWindows(window, false)
     ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
         val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())

@@ -33,7 +33,7 @@ class RecordHeaderAlignmentTest {
                         val header = save.parent as ViewGroup
                         val center = header.height / 2f
                         val tolerance = activity.resources.displayMetrics.density
-                        for (id in listOf(R.id.back, R.id.title, R.id.save)) {
+                        for (id in if (activity.findViewById<View>(R.id.title).parent == header) listOf(R.id.back, R.id.title, R.id.save) else listOf(R.id.back, R.id.save)) {
                             val child = activity.findViewById<View>(id)
                             assertTrue("Header child $id must be vertically centered",
                                 abs(child.y + child.height / 2f - center) <= tolerance)
