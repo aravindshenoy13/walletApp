@@ -35,3 +35,22 @@ Build on V5.4. Follow the bulk-entry design in [wireframe revision 02](wireframe
 3. Verify mixed income, expense and transfer batches, same-category reimbursements, validation failures, cancellation, configuration changes, atomic rollback and duplicate-submit prevention. Check balances and totals against equivalent individually entered records.
 4. Verify search combined with each filter, clearing filters, transfer account matching, filter Back/Apply, calendar dates with and without records, and summary independence. Exercise light/dark mode, narrow screens and large text, including transfer field alignment.
 5. Run appropriate automated checks, debug and release builds, and lint; perform device or emulator checks where available. Record any checks that could not be performed. Update version metadata and roadmap when implementation is authorized.
+
+
+## Implementation notes
+
+- Version 6.0 (17). Room schema 3 and backup format 2 remain unchanged. No new dependencies.
+- Outgoing V5.4 source, Git history bundle, APKs and checksums: `backups/wallet-v5.4-2026-11-13-r02/`. ZIP integrity and bundle verification passed; credentials and build caches are excluded.
+- Bulk rows reuse the existing form controls and exact AmountCalculator/Money arithmetic. A retained ViewModel guards saving; the repository wraps existing per-record validation in one Room transaction, annotating validation errors with the row number.
+- Review keeps editable views intact; configuration recreation restores row values. The single-record editor stays underneath bulk entry. Successful confirmation returns to an unfiltered Records screen.
+- Records search is always visible under the list heading. Day/category/account filters are combined with it; clearing filters retains search. Filter Back cancels edits and Apply commits them. Transfers match either account endpoint and are excluded from category filters.
+- Calendar navigation replaces all filters and clears search. Today's/monthly summary still uses the full ledger. Transfer alignment updates layout parameters only when needed, avoiding repeated layout requests from hidden controls.
+
+## Verification
+
+- 29 JVM tests passed, including combined filters, Uncategorised handling, transfer endpoints and empty dates.
+- 12 targeted emulator tests passed: repository balance/validation tests plus bulk validation, draft recreation, review/back, duplicate confirmation and calendar/search clearing. An obsolete pre-V5.2 test rejecting null categories now checks a nonexistent category instead.
+- Both V6 UI tests passed at 320 dp width, 130% text and dark mode; captured bulk/Records screens were visually inspected. Emulator size and font settings were restored afterward.
+- Emulator checks used a separate application ID through an untracked local Gradle init script because the existing emulator app has a different signing certificate. The installed original wallet and its data were retained. Delivery builds use the normal `com.aravind.wallet` ID.
+- Debug, R8 release and lint checks are recorded in `repository/.tools/v6-delivery.txt`. Release APK is unsigned and requires signing for installation. APKs/checksums are in `repository/dist/`.
+- Validation is targeted rather than a full legacy UI suite. Not every draft/control combination was visually checked in both themes, and release APK device execution was not performed.

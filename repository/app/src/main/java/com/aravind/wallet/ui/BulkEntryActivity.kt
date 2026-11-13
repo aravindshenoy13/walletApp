@@ -89,7 +89,7 @@ class BulkEntryActivity : AppCompatActivity() {
   fun category() { val c=current.categories.find { it.id==d.category }; b.categoryName.text=c?.name ?: "Uncategorised"; b.categoryBadge.showCategory(c?.iconKey ?: "uncategorised",c?.backgroundColorKey ?: "Sky") }; category()
   b.category.setOnClickListener { val choices=current.categories.filter { !it.isArchived }; AlertDialog.Builder(this).setTitle("Category").setItems((listOf("Uncategorised")+choices.map { it.name }).toTypedArray()) { _,i->d.category=choices.getOrNull(i-1)?.id; category() }.show() }
   (b.date.parent as View).isVisible=false
-  b.time.text=d.time.toString(); b.time.setOnClickListener { android.app.TimePickerDialog(this,{ _,h,m->touched=true; d.time=LocalTime.of(h,m); b.time.text=d.time.toString() },d.time.hour,d.time.minute,android.text.format.DateFormat.is24HourFormat(this)).show() }
+  b.time.text=date.atTime(d.time).displayTime(this); b.time.setOnClickListener { android.app.TimePickerDialog(this,{ _,h,m->touched=true; d.time=LocalTime.of(h,m); b.time.text=date.atTime(d.time).displayTime(this) },d.time.hour,d.time.minute,android.text.format.DateFormat.is24HourFormat(this)).show() }
   b.amount.setText(s.getString("amount","")); b.description.setText(s.getString("description",""))
   val toggle=button(b.form,"Calculator") { b.calculatorKeys.isVisible=!b.calculatorKeys.isVisible }; b.form.removeView(toggle); b.form.addView(toggle,b.form.indexOfChild(b.calculatorKeys)); b.calculatorKeys.isVisible=false
   listOf(listOf("Clear","⌫","÷","×"),listOf("7","8","9","−"),listOf("4","5","6","+"),listOf("1","2","3","="),listOf("0",".")).forEach { keys ->
