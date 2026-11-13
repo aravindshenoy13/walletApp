@@ -1,0 +1,2 @@
+28ab93413bf29082cb708b72a5714dfce66c5a26066a52d604a6ce13d3ed1a64  wallet-v6-debug.apk
+b826702c68e7901bd501dfafc6b109b97e094a119b6d4ac0fa6bc5eba88156c8  wallet-v6-release-unsigned.apk
