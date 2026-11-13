@@ -83,6 +83,14 @@ class WalletRepository(private val database: WalletDatabase) {
         }
     }
 
+    suspend fun saveRecords(records: List<WalletRecord>) = database.withTransaction {
+        require(records.isNotEmpty()) { "Add at least one record." }
+        records.forEachIndexed { index, record ->
+            try { require(record.id == 0L); saveRecord(record) }
+            catch (error: IllegalArgumentException) { throw IllegalArgumentException("Record ${index + 1}: ${error.message}", error) }
+        }
+    }
+
     suspend fun restore(backup: Ledger) = database.withTransaction {
         // Recheck at commit time, so edits made while the picker was open cannot be overwritten.
         require(dao.accounts().isEmpty() && dao.records().isEmpty() && dao.categories().toSet() == V2CategorySeeds.rows.toSet()) {

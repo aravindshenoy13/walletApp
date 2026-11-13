@@ -60,8 +60,8 @@ class RecordEditorActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.root.viewTreeObserver.addOnGlobalLayoutListener {
             val height = maxOf(binding.account.height, binding.category.height)
-            if (height > 0) for (field in listOf(binding.account, binding.category)) {
-                if (field.height != height) field.layoutParams = field.layoutParams.apply { this.height = height }
+            if (height > 0) for (field in listOf(binding.account, binding.category, binding.destination)) {
+                if (field.layoutParams.height != height) field.layoutParams = field.layoutParams.apply { this.height = height }
             }
         }
         applyInsets(binding.root)
@@ -116,6 +116,13 @@ class RecordEditorActivity : AppCompatActivity() {
                 row.addView(button, android.widget.LinearLayout.LayoutParams(0, -2, 1f))
             }
             binding.calculatorKeys.addView(row)
+        }
+        if (recordId == 0L) {
+            val bulk = android.widget.Button(this, null, 0, R.style.OutlineButton).apply {
+                text = "Bulk add records"
+                setOnClickListener { startActivity(Intent(this@RecordEditorActivity, BulkEntryActivity::class.java)) }
+            }
+            binding.form.addView(bulk, 0)
         }
         binding.save.setOnClickListener { save() }
         binding.delete.setOnClickListener {

@@ -20,6 +20,7 @@ import com.aravind.wallet.R
 import com.aravind.wallet.databinding.ActivityMainBinding
 import com.aravind.wallet.domain.Ledger
 import com.aravind.wallet.domain.Money
+import com.aravind.wallet.domain.filterRecords
 import com.aravind.wallet.domain.searchRecords
 import com.aravind.wallet.domain.analyze
 import java.time.YearMonth
@@ -36,6 +37,18 @@ class MainActivity : AppCompatActivity() {
     private val model: WalletViewModel by viewModels()
     private val dateChanged = object : android.content.BroadcastReceiver() {
         override fun onReceive(context: android.content.Context?, intent: Intent?) { render() }
+    }
+    private var filterDay: String? = null
+    private var filterCategory: String? = null
+    private var filterAccount = 0L
+    private val hasFilters get() = filterDay != null || filterCategory != null || filterAccount != 0L
+    private val filterPicker = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            filterDay = result.data?.getStringExtra("day")
+            filterCategory = result.data?.getStringExtra("category")
+            filterAccount = result.data?.getLongExtra("account", 0) ?: 0
+            render()
+        }
     }
     private var monthlySummary = false
     private var searchState = SearchState.COLLAPSED
@@ -68,6 +81,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         tab = savedInstanceState?.getString("tab")?.let { runCatching { Tab.valueOf(it) }.getOrNull() }
             ?: if (savedInstanceState?.getBoolean("accounts") == true) Tab.ACCOUNTS else Tab.RECORDS
+        filterDay = savedInstanceState?.getString("filterDay")
+        filterCategory = savedInstanceState?.getString("filterCategory")
+        filterAccount = savedInstanceState?.getLong("filterAccount") ?: 0
         monthlySummary = savedInstanceState?.getBoolean("monthlySummary") ?: false
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -88,6 +104,15 @@ class MainActivity : AppCompatActivity() {
         analysis = AnalysisPanel(this, binding.analysisPanel, savedInstanceState) { start, end ->
             rangePicker.launch(Intent(this, DateRangeActivity::class.java).putExtra("start", start.toString()).putExtra("end", end.toString()))
         }
+        analysis.onDaySelected = { day ->
+            filterDay = day.toString(); filterCategory = null; filterAccount = 0
+            binding.recordSearch.text?.clear(); tab = Tab.RECORDS; render()
+        }
+        binding.filterRecords.setOnClickListener {
+            filterPicker.launch(Intent(this, RecordsFilterActivity::class.java).putExtra("day", filterDay).putExtra("category", filterCategory).putExtra("account", filterAccount))
+        }
+        binding.clearFilters.setOnClickListener { filterDay = null; filterCategory = null; filterAccount = 0; render() }
+        binding.recordSearch.setText(savedInstanceState?.getString("query").orEmpty())
         searchState = if (savedInstanceState?.getBoolean("searchExpanded") == true) SearchState.OPENING else SearchState.COLLAPSED
         binding.todayDate.setOnClickListener { monthlySummary = !monthlySummary; render() }
         binding.error.setOnClickListener { model.retry() }
@@ -98,6 +123,7 @@ class MainActivity : AppCompatActivity() {
             render()
             showSearchKeyboard()
         }
+        binding.recordSearch.setOnFocusChangeListener { _, focused -> if (focused) searchState = SearchState.OPENING }
         binding.recordSearch.doAfterTextChanged { render() }
         binding.clearSearch.setOnClickListener { binding.recordSearch.text?.clear(); binding.recordSearch.requestFocus() }
         binding.recordSearch.dismiss = { dismissSearch() }
@@ -167,7 +193,6 @@ class MainActivity : AppCompatActivity() {
     private fun dismissSearch() {
         if (!searchExpanded) return
         searchState = SearchState.COLLAPSED
-        binding.recordSearch.text?.clear()
         binding.recordSearch.clearFocus()
         binding.root.requestFocus()
         androidx.core.view.WindowCompat.getInsetsController(window, binding.root)
@@ -207,7 +232,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         unregisterReceiver(dateChanged)
-        if (!isChangingConfigurations) dismissSearch()
+
         super.onStop()
     }
 
@@ -216,12 +241,14 @@ class MainActivity : AppCompatActivity() {
     private fun render() = with(binding) {
         val today = LocalDate.now()
         analysis.refreshDefaults(today)
-        title.isVisible = !(tab == Tab.RECORDS && searchExpanded)
+        title.isVisible = true
         title.setText(R.string.app_name)
         add.setText(if (tab == Tab.CATEGORIES) R.string.add_category else R.string.add_account)
         add.isVisible = tab == Tab.ACCOUNTS || tab == Tab.CATEGORIES
-        searchBox.isVisible = tab == Tab.RECORDS && searchExpanded
-        openSearch.isVisible = tab == Tab.RECORDS && !searchExpanded
+        searchBox.isVisible = tab == Tab.RECORDS
+        openSearch.isVisible = false
+        clearFilters.isVisible = hasFilters
+        clearFilters.text = "Clear filters · " + listOfNotNull(filterDay, filterCategory?.let { key -> if (key.isEmpty()) "Uncategorised" else ledger?.categories?.find { it.id == key }?.name }, ledger?.accounts?.find { it.id == filterAccount }?.name).joinToString(" · ")
         clearSearch.isEnabled = !recordSearch.text.isNullOrEmpty()
         export.isVisible = false
         listOf(recordsTab to Tab.RECORDS, analysisTab to Tab.ANALYSIS, accountsTab to Tab.ACCOUNTS, categoriesTab to Tab.CATEGORIES).forEach { (button, target) ->
@@ -238,9 +265,9 @@ class MainActivity : AppCompatActivity() {
         todayDate.isChecked = monthlySummary
         todayDate.contentDescription = getString(R.string.summary_toggle, todayDate.text, getString(if (monthlySummary) R.string.today_summary_title else R.string.this_month))
         val current = ledger ?: return@with
-        val matching = current.searchRecords(recordSearch.text.toString())
+        val matching = current.searchRecords(recordSearch.text.toString()).filterRecords(filterDay, filterCategory, filterAccount)
         recordsAdapter.show(current, matching)
-        recordCount.text = if (recordSearch.text.isNullOrBlank()) getString(R.string.all_records)
+        recordCount.text = if (recordSearch.text.isNullOrBlank() && !hasFilters) getString(R.string.all_records)
             else resources.getQuantityString(R.plurals.matching_records, matching.size, matching.size)
         val totals = if (monthlySummary) current.analyze(month.atDay(1), month.atEndOfMonth()).totals else current.totals(today)
         income.text = Money.format(totals.income)
@@ -249,7 +276,7 @@ class MainActivity : AppCompatActivity() {
         totalBalance.showBalance(current.totalBalance)
         emptyAccounts.isVisible = current.accounts.isEmpty()
         val emptyMessage = when {
-            !recordSearch.text.isNullOrBlank() && matching.isEmpty() -> R.string.no_matches
+            (hasFilters || !recordSearch.text.isNullOrBlank()) && matching.isEmpty() -> R.string.no_matches
             current.accounts.isEmpty() -> R.string.no_accounts
             current.records.isEmpty() -> R.string.no_records
             else -> null
@@ -270,6 +297,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString("filterDay", filterDay)
+        outState.putString("filterCategory", filterCategory)
+        outState.putLong("filterAccount", filterAccount)
+        outState.putString("query", binding.recordSearch.text.toString())
         outState.putBoolean("monthlySummary", monthlySummary)
         outState.putBoolean("searchExpanded", searchExpanded)
         outState.putString("tab", tab.name)

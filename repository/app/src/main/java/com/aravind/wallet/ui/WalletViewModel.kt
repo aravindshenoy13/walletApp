@@ -55,6 +55,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
 
     fun saveAccount(account: Account) = perform { repository.saveAccount(account) }
     fun saveRecord(record: WalletRecord) = perform { repository.saveRecord(record) }
+    fun saveRecords(records: List<WalletRecord>) = perform { repository.saveRecords(records) }
     fun deleteRecord(id: Long) = perform { repository.deleteRecord(id) }
     fun saveCategory(category: WalletCategory, isNew: Boolean) = perform { repository.saveCategory(category, isNew) }
     fun deleteCategory(id: String) = perform { repository.deleteCategory(id) }

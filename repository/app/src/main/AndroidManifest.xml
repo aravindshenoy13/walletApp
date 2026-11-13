@@ -9,6 +9,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Wallet">
+        <activity android:name=".ui.BulkEntryActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ui.RecordsFilterActivity" android:exported="false" />
         <activity android:name=".ui.CategoryHistoryActivity" android:exported="false" />
         <activity android:name=".ui.AccountHistoryActivity" android:exported="false" />
         <activity android:name=".ui.DateRangeActivity" android:exported="false" />

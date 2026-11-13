@@ -20,7 +20,7 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 /** A summary grid of native text views, with exact values available to accessibility. */
-class MonthlyCalendar(private val container: LinearLayout) {
+class MonthlyCalendar(private val container: LinearLayout, private val onDay: (LocalDate) -> Unit = {}) {
     private val context get() = container.context
     private fun dp(value: Int) = (value * context.resources.displayMetrics.density).toInt()
 
@@ -75,6 +75,8 @@ class MonthlyCalendar(private val container: LinearLayout) {
                     cell.importantForAccessibility = android.view.View.IMPORTANT_FOR_ACCESSIBILITY_NO
                 } else {
                     val date = month.atDay(number)
+                    cell.setOnClickListener { onDay(date) }
+                    cell.isFocusable = true
                     val totals = daily[date]
                     val net = totals?.net ?: java.math.BigInteger.ZERO
                     cell.contentDescription = if (totals == null) context.getString(R.string.calendar_empty_day, date.display())

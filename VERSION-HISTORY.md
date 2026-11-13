@@ -70,3 +70,10 @@
 - Removed paw and wrench, redrew cash and airplane, and unified icon stroke widths.
 
 V5.3.1 completed: includes responsive UI refinements, explicit Uncategorised draft restoration, empty-category picking, last-category archiving, and normalized restore names. Archived under backups/wallet-v5.3.1-2026-11-13-r01/.
+
+
+## V6 — Bulk entry and Records filters
+
+- Shared-date bulk drafts, per-record calculators, review, atomic saving and retry protection.
+- Combined search and category/day/account filters, calendar day navigation, and transfer alignment.
+- Version 6.0 (17); database/backup formats unchanged. V5.4 snapshot: backups/wallet-v5.4-2026-11-13-r02/.

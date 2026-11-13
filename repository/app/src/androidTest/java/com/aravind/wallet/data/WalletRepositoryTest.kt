@@ -35,6 +35,24 @@ class WalletRepositoryTest {
         WalletRecord(type = type, amountMinor = 2_500, accountId = account, destinationAccountId = destination,
             categoryId = if (type == RecordType.TRANSFER) null else "SALARY", occurredAt = at, description = "Payment")
 
+    @Test fun batchRollsBackAndCanRetryWithoutPartialWrites() = runBlocking {
+        val source = repository.saveAccount(Account(name = "Source", openingBalanceMinor = 10000))
+        val destination = repository.saveAccount(Account(name = "Destination", openingBalanceMinor = 0))
+        val entries = listOf(entry(source), entry(source, RecordType.INCOME), entry(source, RecordType.TRANSFER, destination))
+        try {
+            repository.saveRecords(entries + entry(source).copy(amountMinor = 0))
+            fail("Invalid batch must fail")
+        } catch (_: IllegalArgumentException) { }
+        assertTrue(snapshot().records.isEmpty())
+        assertEquals(BigInteger.valueOf(10000), snapshot().balances[source])
+        repository.saveRecords(entries)
+        val result = snapshot()
+        assertEquals(3, result.records.size)
+        assertEquals(BigInteger.valueOf(7500), result.balances[source])
+        assertEquals(BigInteger.valueOf(2500), result.balances[destination])
+        assertEquals(BigInteger.ZERO, result.totals(at.toLocalDate()).net)
+    }
+
     @Test fun deletingCategoryPreservesRecordsAndBalances() = runBlocking {
         val account = repository.saveAccount(Account(name = "Cash", openingBalanceMinor = 10000))
         val id = repository.saveRecord(entry(account))
@@ -104,7 +122,7 @@ class WalletRepositoryTest {
     @Test fun invalidWritesAreRejectedWithoutPartialChanges() = runBlocking {
         val id = repository.saveAccount(Account(name = "Cash", openingBalanceMinor = 0))
         val invalid = listOf(entry(id).copy(amountMinor = 0), entry(id).copy(amountMinor = -1),
-            entry(id).copy(categoryId = null), entry(id).copy(description = "x".repeat(121)), entry(999),
+            entry(id).copy(categoryId = "MISSING_CATEGORY"), entry(id).copy(description = "x".repeat(121)), entry(999),
             entry(id, RecordType.TRANSFER, id), entry(id, RecordType.TRANSFER, 999),
             entry(id).copy(destinationAccountId = id), entry(id).copy(id = 999))
         invalid.forEach { record ->

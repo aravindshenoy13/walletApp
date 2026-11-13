@@ -23,7 +23,8 @@ class AnalysisPanel(private val activity: AppCompatActivity, private val binding
         private set
     private var calendarMonth = saved?.getString("calendarMonth")?.let(YearMonth::parse) ?: YearMonth.now()
     private var calendarCustom = saved?.takeIf { it.containsKey("calendarCustom") }?.getBoolean("calendarCustom") ?: (calendarMonth != YearMonth.now())
-    private val calendar = MonthlyCalendar(binding.calendarGrid)
+    var onDaySelected: (LocalDate) -> Unit = {}
+    private val calendar = MonthlyCalendar(binding.calendarGrid) { onDaySelected(it) }
     private var custom = saved?.getBoolean("analysisCustom") ?: false
     private var breakdown = saved?.getString("analysisBreakdown")?.let(BreakdownMode::valueOf) ?: BreakdownMode.NET
     private val wheel = CategoryWheelView(activity)

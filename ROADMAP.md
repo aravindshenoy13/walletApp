@@ -160,3 +160,11 @@
 
 - Restore the selection appearance from before the V5.3.1 square markers, preserving checked behavior and all bug fixes.
 - Version 5.4, code 16. See [V5.4 notes](V5.4-PLAN.md).
+
+
+### V6 — Bulk entry and Records filters
+
+- Editable bulk drafts with shared date, individual times, collapsed calculators, review totals, and atomic saving.
+- Category/day/account filters combined with live Records search; calendar dates open filtered Records.
+- Aligned transfer controls. Version 6.0, code 17; Room schema 3 and backup format 2 unchanged.
+- See [V6 notes](V6-PLAN.md).

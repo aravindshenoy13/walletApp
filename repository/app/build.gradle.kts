@@ -11,8 +11,8 @@ android {
         applicationId = "com.aravind.wallet"
         minSdk = 26
         targetSdk = 37
-        versionCode = 16
-        versionName = "5.4"
+        versionCode = 17
+        versionName = "6.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
