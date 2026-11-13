@@ -107,6 +107,11 @@ class MainActivity : AppCompatActivity() {
         analysis.onDaySelected = { day ->
             filterDay = day.toString(); filterCategory = null; filterAccount = 0
             binding.recordSearch.text?.clear(); tab = Tab.RECORDS; render()
+            binding.recordsPanel.apply {
+                animate().cancel(); alpha = 0.5f
+                animate().alpha(1f).setDuration(180).start()
+            }
+            android.widget.Toast.makeText(this, "Showing records for ${day.display()}", android.widget.Toast.LENGTH_SHORT).show()
         }
         binding.filterRecords.setOnClickListener {
             filterPicker.launch(Intent(this, RecordsFilterActivity::class.java).putExtra("day", filterDay).putExtra("category", filterCategory).putExtra("account", filterAccount))
@@ -249,7 +254,7 @@ class MainActivity : AppCompatActivity() {
         openSearch.isVisible = false
         clearFilters.isVisible = hasFilters
         clearFilters.text = "Clear filters · " + listOfNotNull(filterDay, filterCategory?.let { key -> if (key.isEmpty()) "Uncategorised" else ledger?.categories?.find { it.id == key }?.name }, ledger?.accounts?.find { it.id == filterAccount }?.name).joinToString(" · ")
-        clearSearch.isEnabled = !recordSearch.text.isNullOrEmpty()
+        clearSearch.isVisible = !recordSearch.text.isNullOrEmpty()
         export.isVisible = false
         listOf(recordsTab to Tab.RECORDS, analysisTab to Tab.ANALYSIS, accountsTab to Tab.ACCOUNTS, categoriesTab to Tab.CATEGORIES).forEach { (button, target) ->
             button.setTypeface(null, if (tab == target) Typeface.BOLD else Typeface.NORMAL)

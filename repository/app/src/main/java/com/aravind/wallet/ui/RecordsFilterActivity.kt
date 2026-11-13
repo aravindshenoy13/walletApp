@@ -27,9 +27,13 @@ class RecordsFilterActivity : AppCompatActivity() {
   header.addView(Button(this,null,0,R.style.PlainButton).apply { text="Back"; setOnClickListener { finish() } },LinearLayout.LayoutParams(-2,-2))
   header.addView(TextView(this).apply { text="Records filters"; textSize=20f; setTextColor(getColor(R.color.ink)) },LinearLayout.LayoutParams(0,-2,1f))
   val categoryButton=button("Category") { }
-  val dayButton=button(day ?: "Any day") { }
-  dayButton.setOnClickListener { chooseDate(day?.let(LocalDate::parse) ?: LocalDate.now()) { day=it.toString(); dayButton.text=day } }
-  button("Any day") { day=null; dayButton.text="Any day" }
+  val dayButton=button(day?.let { "Day · $it" } ?: "Day · Any day") { }
+  dayButton.setOnClickListener {
+   androidx.appcompat.app.AlertDialog.Builder(this).setTitle("Day").setItems(arrayOf("Choose date", "Any day")) { _,i ->
+    if(i==0) chooseDate(day?.let(LocalDate::parse) ?: LocalDate.now()) { day=it.toString(); dayButton.text="Day · $day" }
+    else { day=null; dayButton.text="Day · Any day" }
+   }.show()
+  }
   val accountButton=button("Account") { }
   val error=TextView(this); root.addView(error); error.setOnClickListener { model.retry() }
   val apply=button("Apply") { setResult(RESULT_OK,Intent().putExtra("day",day).putExtra("category",category).putExtra("account",account)); finish() }; apply.isEnabled=false; apply.setBackgroundResource(R.drawable.action_save); apply.setTextColor(getColor(R.color.action_save))

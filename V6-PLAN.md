@@ -54,3 +54,11 @@ Build on V5.4. Follow the bulk-entry design in [wireframe revision 02](wireframe
 - Emulator checks used a separate application ID through an untracked local Gradle init script because the existing emulator app has a different signing certificate. The installed original wallet and its data were retained. Delivery builds use the normal `com.aravind.wallet` ID.
 - Debug, R8 release and lint checks are recorded in `repository/.tools/v6-delivery.txt`. Release APK is unsigned and requires signing for installation. APKs/checksums are in `repository/dist/`.
 - Validation is targeted rather than a full legacy UI suite. Not every draft/control combination was visually checked in both themes, and release APK device execution was not performed.
+
+## Follow-up UI refinements
+
+- Bulk entry follows revision 02's compact two-column grid: Type/Amount, Account/Category (or destination), Description/Time, with a collapsed calculator below. Record number and Remove share a row.
+- Bulk add records appears at the bottom of the single-record form.
+- Records filters use one Day control with Choose date and Any day options.
+- The search clear cross is visible only while search text is present.
+- Calendar-to-Records navigation uses a short fade and a dated confirmation cue while retaining the visible applied filter.

@@ -78,8 +78,8 @@ class BulkEntryActivity : AppCompatActivity() {
   fun noSave(v: View) { v.isSaveEnabled=false; if(v is android.view.ViewGroup) for(i in 0 until v.childCount) noSave(v.getChildAt(i)) }; noSave(b.form)
   val heading=TextView(this).apply { text="Record ${drafts.size+1}"; textSize=18f }; b.form.addView(heading,0)
   val d=Draft(b,s.getString("time")?.let(LocalTime::parse) ?: LocalTime.now().withSecond(0).withNano(0),s.getString("category")); drafts.add(d)
-  button(b.form,"Remove record") { drafts.remove(d); rows.removeView(b.form); touched=true
-   drafts.forEachIndexed { i,row -> (row.b.form.getChildAt(0) as TextView).text="Record ${i+1}" } }
+  val remove=button(b.form,"Remove") { drafts.remove(d); rows.removeView(b.form); touched=true
+   drafts.forEachIndexed { i,row -> ((row.b.form.getChildAt(0) as LinearLayout).getChildAt(0) as TextView).text="Record ${i+1}" } }
   for(sp in listOf(b.account,b.destination)) sp.adapter=ArrayAdapter(this,android.R.layout.simple_spinner_item,current.accounts.map { it.name }).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
   b.account.setSelection(current.accounts.indexOfFirst { it.id==s.getLong("source") }.coerceAtLeast(0))
   b.destination.setSelection(current.accounts.indexOfFirst { it.id==s.getLong("destination") }.let { if(it>=0) it else if(current.accounts.size>1) 1 else 0 })
@@ -99,7 +99,48 @@ class BulkEntryActivity : AppCompatActivity() {
     try { when(key) { "Clear"->f.text.clear(); "⌫"->f.text.delete(if(start==end) (start-1).coerceAtLeast(0) else start,end); "="->f.setText(AmountCalculator.evaluate(f.text.toString())); else->f.text.replace(start,end,key) }; f.setSelection(f.length()) } catch(e: IllegalArgumentException) { f.error=e.message }
    } },LinearLayout.LayoutParams(0,-2,1f)) }
   }
+  compact(b,heading,remove,toggle)
   b.form.viewTreeObserver.addOnGlobalLayoutListener { val h=maxOf(b.account.height,b.category.height,b.destination.height); if(h>0) listOf(b.account,b.category,b.destination).forEach { if(it.layoutParams.height!=h) it.layoutParams=it.layoutParams.apply { height=h } } }
+ }
+ private fun compact(b: ActivityRecordEditorBinding, heading: TextView, remove: Button, calculator: Button) {
+  fun detach(v: View) { (v.parent as? android.view.ViewGroup)?.removeView(v) }
+  fun pair(left: View,right: View): LinearLayout = LinearLayout(this).apply {
+   orientation=LinearLayout.HORIZONTAL; gravity=android.view.Gravity.TOP
+   listOf(left,right).forEachIndexed { i,v -> detach(v); addView(v,LinearLayout.LayoutParams(0,-2,1f).apply { if(i==0) marginEnd=dp(8) }) }
+  }
+  fun field(label: String, control: View): LinearLayout = LinearLayout(this).apply {
+   orientation=LinearLayout.VERTICAL
+   addView(TextView(this@BulkEntryActivity).apply { text=label; textSize=12f; setTextColor(getColor(R.color.quiet)); labelFor=control.id },LinearLayout.LayoutParams(-1,-2))
+   detach(control); addView(control,LinearLayout.LayoutParams(-1,-2).apply { topMargin=dp(4) })
+  }
+  val accounts=b.account.parent.parent as View
+  detach(accounts)
+  val type=Spinner(this).apply {
+   contentDescription="Record type"; minimumHeight=dp(48); setBackgroundResource(R.drawable.action_outline)
+   adapter=ArrayAdapter(this@BulkEntryActivity,android.R.layout.simple_spinner_item,listOf("Expense","Income","Transfer")).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+   val ids=listOf(R.id.type_expense,R.id.type_income,R.id.type_transfer)
+   setSelection(ids.indexOf(b.type.checkedRadioButtonId).coerceAtLeast(0))
+   onItemSelectedListener=object: AdapterView.OnItemSelectedListener {
+    override fun onItemSelected(parent: AdapterView<*>?,view: View?,position: Int,id: Long) { b.type.check(ids[position]) }
+    override fun onNothingSelected(parent: AdapterView<*>?) { }
+   }
+  }
+  val title=pair(heading,remove)
+  heading.textSize=16f; heading.setTextColor(getColor(R.color.ink))
+  remove.setBackgroundResource(android.R.color.transparent); remove.setTextColor(getColor(R.color.action_delete)); remove.contentDescription="Remove "+heading.text
+  val typeAmount=pair(field("Type",type),field("Amount · \u20b9",b.amount))
+  val descriptionTime=pair(field("Description / payee",b.description),field("Time",b.time))
+  detach(calculator); detach(b.calculatorKeys)
+  b.form.removeAllViews()
+  b.form.setPadding(dp(8),dp(8),dp(8),dp(12))
+  b.form.layoutParams=LinearLayout.LayoutParams(-1,-2).apply { setMargins(dp(8),0,dp(8),dp(4)) }
+  listOf(title,typeAmount,accounts,descriptionTime,calculator,b.calculatorKeys).forEach { b.form.addView(it,LinearLayout.LayoutParams(-1,-2).apply { topMargin=if(it==title) 0 else dp(8) }) }
+  b.description.hint="Optional"
+  listOf(b.accountLabel,b.categoryLabel,b.destinationLabel).forEach { it.textSize=12f }
+  listOf(b.account,b.destination,b.category,b.amount,b.description,b.time,calculator,remove).forEach { v ->
+   v.minimumHeight=dp(48)
+   (v.layoutParams as? LinearLayout.LayoutParams)?.let { it.topMargin=dp(4); it.bottomMargin=0 }
+  }
  }
  private fun review() {
   try {

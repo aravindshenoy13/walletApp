@@ -122,7 +122,7 @@ class RecordEditorActivity : AppCompatActivity() {
                 text = "Bulk add records"
                 setOnClickListener { startActivity(Intent(this@RecordEditorActivity, BulkEntryActivity::class.java)) }
             }
-            binding.form.addView(bulk, 0)
+            binding.form.addView(bulk)
         }
         binding.save.setOnClickListener { save() }
         binding.delete.setOnClickListener {
