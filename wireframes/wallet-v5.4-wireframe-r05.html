@@ -1,0 +1,117 @@
+<style>
+  #records-filter-mock { --paper:light-dark(#fff,#181818); --ink:light-dark(#222,#eee); --line:light-dark(#aaa,#777); --quiet:light-dark(#555,#bbb); --red:light-dark(#ac5962,#f0a1a7); --green:light-dark(#4f8060,#a8d8b2); --blue:light-dark(#2864ad,#8dbbff); color:var(--ink); font:14px/1.4 Arial,sans-serif; }
+  #records-filter-mock * { box-sizing:border-box; }
+  #records-filter-mock .phone { max-width:420px; margin:auto; background:var(--paper); border:1px solid var(--ink); }
+  #records-filter-mock header { padding:14px; border-bottom:1px solid var(--ink); display:flex; align-items:center; gap:10px; }
+  #records-filter-mock svg { display:block; width:18px; height:18px; flex-shrink:0; }
+  #records-filter-mock .body { padding:14px; }
+  #records-filter-mock .row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  #records-filter-mock .row + .row { margin-top:8px; }
+  #records-filter-mock .muted { color:var(--quiet); font-size:12px; }
+  #records-filter-mock .income { color:var(--green); }
+  #records-filter-mock .expense { color:var(--red); }
+  #records-filter-mock .summary { padding:12px 0 16px; border-bottom:1px solid var(--line); }
+  #records-filter-mock .group { margin:16px 0 10px; }
+  #records-filter-mock .toolbar { display:flex; align-items:center; gap:10px; margin-bottom:20px; }
+  #records-filter-mock .search { display:flex; align-items:center; gap:8px; flex:1; min-width:0; padding:10px; border:1px solid var(--line); }
+  #records-filter-mock .search span { min-width:0; font-size:12px; color:var(--quiet); }
+  #records-filter-mock .filter { display:flex; align-items:center; gap:7px; padding:10px; border:1px solid var(--ink); white-space:nowrap; }
+  #records-filter-mock button { background:var(--paper); color:var(--ink); font:inherit; border-radius:0; }
+  #records-filter-mock .search input { width:100%; min-width:0; border:0; background:var(--paper); color:var(--ink); font:14px Arial,sans-serif; padding:0; }
+  #records-filter-mock .screen { display:flex; flex-direction:column; min-height:610px; }
+  #records-filter-mock .screen .body { flex:1; }
+  #records-filter-mock .search input { font-size:12px; }
+  #records-filter-mock .search > i { display:block; width:20px; height:20px; flex:0 0 20px; font:26px/20px Arial,sans-serif; color:var(--ink); }
+  #records-filter-mock .search > svg { display:block; width:20px; height:20px; flex:0 0 20px; stroke:var(--ink); stroke-width:2; }
+  #records-filter-mock .search input::placeholder { color:var(--quiet); opacity:1; }
+  #records-filter-mock .search input:focus::placeholder { color:transparent; }
+  #records-filter-mock .clear-filter { border:1px solid var(--line); min-width:40px; min-height:40px; padding:6px; font-size:20px; }
+  #records-filter-mock .back { border:0; padding:0; min-height:40px; }
+  #records-filter-mock .filter-footer { border-top:1px solid var(--line); padding:14px; }
+  #records-filter-mock .filter-footer button { width:100%; border:1px solid var(--blue); color:var(--blue); padding:10px; min-height:44px; }
+  #records-filter-mock label { display:block; font-size:12px; color:var(--quiet); margin-bottom:10px; }
+  #records-filter-mock select, #records-filter-mock input[type="date"] { display:block; width:100%; min-width:0; min-height:40px; border:1px solid var(--line); border-radius:0; background:var(--paper); color:var(--ink); font:16px Arial,sans-serif; padding:7px; margin-top:4px; }
+  #records-filter-mock [hidden] { display:none; }
+  #records-filter-mock .item { border-bottom:1px solid var(--line); padding:12px 0; }
+  #records-filter-mock .item .muted { margin-top:5px; }
+  #records-filter-mock .category { display:flex; align-items:center; gap:8px; }
+  #records-filter-mock .category svg { padding:6px; width:28px; height:28px; background:var(--chip,light-dark(#f7d5be,#a75b48)); }
+  #records-filter-mock .add { border:1px solid var(--blue); color:var(--blue); text-align:center; padding:10px; margin-top:26px; }
+  #records-filter-mock nav { display:flex; justify-content:space-between; gap:5px; border-top:1px solid var(--ink); padding:12px 8px; font-size:11px; }
+  #records-filter-mock nav span { display:flex; flex-direction:column; align-items:center; gap:5px; }
+  #records-filter-mock .selected { text-decoration:underline; text-underline-offset:4px; }
+  #records-filter-mock p { margin:0; }
+</style>
+<div id="records-filter-mock">
+  <div class="phone" aria-label="Records wireframe. Search on the left and Filter on the right share a row directly below All records, newest first.">
+    <div class="screen" data-records-page>
+    <header><i data-lucide="menu" aria-hidden="true"></i><span>Wallet Manager</span></header>
+    <div class="body">
+      <div class="row"><span>Today · 13 Nov 2026</span><span class="muted">Today / Month</span></div>
+      <div class="summary"><div class="row income"><span>Income</span><span>₹2,000.00</span></div><div class="row expense"><span>Expenses</span><span>₹400.00</span></div><div class="row"><span>Net</span><span>₹1,600.00</span></div></div>
+      <p class="group muted">All records · newest first</p>
+      <div class="toolbar">
+        <div class="search"><i data-lucide="search" aria-hidden="true">⌕</i><input data-search aria-label="Search for description or amount" placeholder="Search for description or amount"></div>
+        <button type="button" class="filter" data-filter aria-controls="records-filter-options"><i data-lucide="sliders-horizontal" aria-hidden="true"></i><span>Filter</span></button>
+        <button type="button" class="clear-filter" data-clear-filter aria-label="Remove all filters" hidden>×</button>
+      </div>
+      <p class="muted">13 Nov 2026 · Today</p>
+      <div class="item"><div class="row"><span class="category"><i data-lucide="car" aria-hidden="true"></i>Transport</span><span class="expense">− ₹150.00</span></div><p class="muted">17:15 · Bank · Cab</p></div>
+      <div class="item"><div class="row"><span class="category"><i data-lucide="utensils" aria-hidden="true"></i>Food</span><span class="expense">− ₹250.00</span></div><p class="muted">13:30 · Cash · Lunch</p></div>
+      <div class="item"><div class="row"><span class="category"><i data-lucide="briefcase" aria-hidden="true"></i>Salary</span><span class="income">+ ₹2,000.00</span></div><p class="muted">09:00 · Bank</p></div>
+      <p class="muted" data-empty hidden>No matching records</p>
+      <div class="add">+ Add record</div>
+    </div>
+    <nav aria-label="App navigation"><span class="selected"><i data-lucide="receipt" aria-hidden="true"></i>Records</span><span><i data-lucide="chart-no-axes-combined" aria-hidden="true"></i>Analysis</span><span><i data-lucide="wallet" aria-hidden="true"></i>Accounts</span><span><i data-lucide="tag" aria-hidden="true"></i>Categories</span></nav>
+    </div>
+    <div class="screen" id="records-filter-options" data-filter-page hidden>
+      <header><button type="button" class="back" data-back>‹ Back</button><span>Filter records</span></header>
+      <div class="body">
+        <label>Category<select data-category><option value="">All categories</option><option>Food</option><option>Transport</option><option>Salary</option></select></label>
+        <label>Day<input data-day type="date" aria-label="Filter by a particular day"></label>
+        <label>Account / bank<select data-account><option value="">All accounts</option><option>Bank</option><option>Cash</option></select></label>
+      </div>
+      <div class="filter-footer"><button type="button" data-apply>Apply filters</button></div>
+    </div>
+  </div>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('records-filter-mock');
+  const panel = root.querySelector('[data-filter-page]');
+  const recordsPage = root.querySelector('[data-records-page]');
+  const clearFilter = root.querySelector('[data-clear-filter]');
+  const toggle = root.querySelector('[data-filter]');
+  const search = root.querySelector('[data-search]');
+  const category = root.querySelector('[data-category]');
+  const day = root.querySelector('[data-day]');
+  const account = root.querySelector('[data-account]');
+  let applied = { category:'', day:'', account:'' };
+  const records = [
+    { category:'Transport', description:'Cab', amount:'150.00', account:'Bank', day:'2026-11-13' },
+    { category:'Food', description:'Lunch', amount:'250.00', account:'Cash', day:'2026-11-13' },
+    { category:'Salary', description:'', amount:'2000.00', account:'Bank', day:'2026-11-13' }
+  ];
+  function render() {
+    const query = search.value.trim().toLowerCase();
+    [...root.querySelectorAll('.item')].forEach((item, i) => {
+      const r = records[i];
+      item.hidden = !((!query || r.description.toLowerCase().includes(query) || r.amount.includes(query)) && (!applied.category || applied.category === r.category) && (!applied.day || applied.day === r.day) && (!applied.account || applied.account === r.account));
+    });
+    const active = Boolean(applied.category || applied.day || applied.account);
+    clearFilter.hidden = !active;
+    toggle.setAttribute('aria-label', active ? 'Edit active filters' : 'Filter records');
+    root.querySelector('[data-empty]').hidden = [...root.querySelectorAll('.item')].some(item => !item.hidden);
+  }
+  function showRecords() { panel.hidden = true; recordsPage.hidden = false; toggle.focus(); }
+  toggle.addEventListener('click', () => {
+    category.value = applied.category; day.value = applied.day; account.value = applied.account;
+    recordsPage.hidden = true; panel.hidden = false; root.querySelector('[data-back]').focus();
+  });
+  search.addEventListener('input', render);
+  root.querySelector('[data-apply]').addEventListener('click', () => { applied = { category:category.value, day:day.value, account:account.value }; render(); showRecords(); });
+  root.querySelector('[data-back]').addEventListener('click', showRecords);
+  clearFilter.addEventListener('click', () => { category.value = ''; day.value = ''; account.value = ''; applied = { category:'', day:'', account:'' }; render(); toggle.focus(); });
+  render();
+})();
+</script>

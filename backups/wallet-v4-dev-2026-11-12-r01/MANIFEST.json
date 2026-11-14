@@ -1,0 +1,14 @@
+{
+  "version": "v4-dev",
+  "source_commit": "129eab5b686c5670b6d87dde0d870f37d6cf4e46",
+  "git_tag": "wallet-v4-dev-2026-11-12-r01",
+  "status": "Development checkpoint; final acceptance outstanding",
+  "saved_on_local_date": "2026-11-12",
+  "timezone": "Asia/Calcutta",
+  "excluded": [
+    "credentials",
+    "signing keys",
+    "build caches",
+    "personal wallet data"
+  ]
+}

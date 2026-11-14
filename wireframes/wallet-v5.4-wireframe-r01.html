@@ -1,0 +1,94 @@
+<style>
+  #wallet-bulk { --paper:light-dark(#fff,#181818); --ink:light-dark(#222,#eee); --line:light-dark(#aaa,#777); --quiet:light-dark(#555,#bbb); --blue:light-dark(#2864ad,#8dbbff); --green:light-dark(#26733b,#a8d8b2); --red:light-dark(#b3261e,#ffb4ab); color:var(--ink); font:14px/1.4 Arial,sans-serif; }
+  #wallet-bulk * { box-sizing:border-box; }
+  #wallet-bulk .board { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:28px 24px; }
+  #wallet-bulk section { display:flex; flex-direction:column; min-width:0; }
+  #wallet-bulk h2 { font-size:14px; font-weight:400; margin:0 0 10px; }
+  #wallet-bulk .phone { background:var(--paper); border:1px solid var(--ink); display:flex; flex-direction:column; flex:1; min-height:590px; }
+  #wallet-bulk header { display:flex; align-items:center; justify-content:space-between; gap:8px; border-bottom:1px solid var(--ink); padding:14px; }
+  #wallet-bulk .body { padding:14px; flex:1; }
+  #wallet-bulk p { margin:0; }
+  #wallet-bulk .pair { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+  #wallet-bulk .label { color:var(--quiet); font-size:12px; margin:12px 0 5px; }
+  #wallet-bulk .field { border:1px solid var(--line); padding:9px; min-height:40px; }
+  #wallet-bulk .row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  #wallet-bulk .row > :last-child { flex-shrink:0; }
+  #wallet-bulk .muted { color:var(--quiet); font-size:12px; }
+  #wallet-bulk .types { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:4px; }
+  #wallet-bulk .types span { text-align:center; padding:8px 0; border:1px solid currentColor; font-size:12px; }
+  #wallet-bulk .expense { color:var(--red); }
+  #wallet-bulk .income { color:var(--green); }
+  #wallet-bulk .transfer { color:var(--blue); }
+  #wallet-bulk .current { text-decoration:underline; text-underline-offset:4px; }
+  #wallet-bulk .keys { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; margin-top:8px; }
+  #wallet-bulk .keys span { border:1px solid var(--line); text-align:center; padding:9px 0; }
+  #wallet-bulk .action { border:1px solid currentColor; color:var(--blue); text-align:center; padding:10px; margin-top:14px; }
+  #wallet-bulk .save { color:var(--green); }
+  #wallet-bulk .item { border-bottom:1px solid var(--line); padding:13px 0; }
+  #wallet-bulk .item .muted { margin-top:5px; }
+  #wallet-bulk .group { margin:18px 0 6px; }
+  #wallet-bulk .footer { border-top:1px solid var(--line); padding:0 14px 14px; }
+  #wallet-bulk .summary { border:1px solid var(--line); padding:10px; margin-top:14px; }
+  #wallet-bulk .summary .row + .row { margin-top:6px; }
+  @media(max-width:640px) { #wallet-bulk .board { grid-template-columns:minmax(0,1fr); } }
+</style>
+<div id="wallet-bulk">
+  <div class="board">
+    <section aria-label="Usual Add Record screen with a Bulk add records entry at the bottom">
+      <h2>01 / Start from Add Record</h2><div class="phone">
+        <header><span>‹ Back</span><span>New record</span><span class="save">Save</span></header>
+        <div class="body">
+          <div class="types"><span class="expense current">Expense</span><span class="income">Income</span><span class="transfer">Transfer</span></div>
+          <div class="pair"><div><div class="label">Account</div><div class="field row"><span>Cash</span><span>⌄</span></div></div><div><div class="label">Category</div><div class="field row"><span>Food</span><span>⌄</span></div></div></div>
+          <div class="pair"><div><div class="label">Date</div><div class="field">13 Nov 2026</div></div><div><div class="label">Time</div><div class="field">13:30</div></div></div>
+          <div class="label">Description / payee · optional</div><div class="field">Lunch</div>
+          <div class="label">Amount · ₹</div><div class="field">250</div>
+          <div class="keys" aria-label="Existing amount calculator"><span>Clear</span><span>⌫</span><span>÷</span><span>×</span><span>7</span><span>8</span><span>9</span><span>−</span><span>4</span><span>5</span><span>6</span><span>+</span><span>1</span><span>2</span><span>3</span><span>=</span><span>0</span><span>.</span></div>
+        </div>
+        <div class="footer"><div class="action">Bulk add records</div></div>
+      </div>
+    </section>
+    <section aria-label="Bulk draft list with selected day at the top and controls to add another transaction or review">
+      <h2>02 / Choose a day &amp; build a batch</h2><div class="phone">
+        <header><span>‹ Back</span><span>Bulk add records</span></header>
+        <div class="body">
+          <div class="label">Day for all records</div><div class="field row"><span>13 Nov 2026</span><span>⌄</span></div>
+          <div class="group row"><span>2 records in batch</span><span class="muted">Not saved yet</span></div>
+          <div class="item"><div class="row"><span>Food · Lunch</span><span class="expense">− ₹250</span></div><p class="muted">13:30 · Cash</p><div class="row muted"><span>Edit</span><span>Remove</span></div></div>
+          <div class="item"><div class="row"><span>Transport · Cab</span><span class="expense">− ₹150</span></div><p class="muted">17:15 · Bank</p><div class="row muted"><span>Edit</span><span>Remove</span></div></div>
+          <div class="action">+ Add another record</div>
+        </div>
+        <div class="footer"><div class="action">Review 2 records</div></div>
+      </div>
+    </section>
+    <section aria-label="Add the next transaction to the batch, inheriting the selected day">
+      <h2>03 / Add one transaction at a time</h2><div class="phone">
+        <header><span>‹ Batch</span><span>New batch record</span></header>
+        <div class="body">
+          <div class="label">Day for this batch</div><div class="field">13 Nov 2026</div>
+          <div class="group types"><span class="expense">Expense</span><span class="income current">Income</span><span class="transfer">Transfer</span></div>
+          <div class="pair"><div><div class="label">Account</div><div class="field row"><span>Bank</span><span>⌄</span></div></div><div><div class="label">Category</div><div class="field row"><span>Food</span><span>⌄</span></div></div></div>
+          <div class="label">Time</div><div class="field">18:00</div>
+          <div class="label">Description / payee · optional</div><div class="field">Lunch reimbursement</div>
+          <div class="label">Amount · ₹</div><div class="field">100</div>
+          <div class="keys" aria-label="Same shared-field amount calculator"><span>Clear</span><span>⌫</span><span>÷</span><span>×</span><span>7</span><span>8</span><span>9</span><span>−</span><span>4</span><span>5</span><span>6</span><span>+</span><span>1</span><span>2</span><span>3</span><span>=</span><span>0</span><span>.</span></div>
+        </div>
+        <div class="footer"><div class="action">Add to batch</div></div>
+      </div>
+    </section>
+    <section aria-label="Overview of all three unsaved transactions with totals and a final confirmation action">
+      <h2>04 / Review &amp; confirm</h2><div class="phone">
+        <header><span>‹ Batch</span><span>Review records</span></header>
+        <div class="body">
+          <div class="label">Day for all records</div><div class="field">13 Nov 2026</div>
+          <div class="group row"><span>3 records to add</span><span class="muted">Not saved yet</span></div>
+          <div class="summary"><div class="row"><span>Income</span><span class="income">₹100</span></div><div class="row"><span>Expenses</span><span class="expense">₹400</span></div><div class="row"><span>Net</span><span class="expense">− ₹300</span></div></div>
+          <div class="item"><div class="row"><span>Food · Lunch</span><span class="expense">− ₹250</span></div><p class="muted">13:30 · Cash · Expense</p><div class="row muted"><span>Edit</span><span>Remove</span></div></div>
+          <div class="item"><div class="row"><span>Transport · Cab</span><span class="expense">− ₹150</span></div><p class="muted">17:15 · Bank · Expense</p><div class="row muted"><span>Edit</span><span>Remove</span></div></div>
+          <div class="item"><div class="row"><span>Food · Reimbursement</span><span class="income">+ ₹100</span></div><p class="muted">18:00 · Bank · Income</p><div class="row muted"><span>Edit</span><span>Remove</span></div></div>
+        </div>
+        <div class="footer"><div class="action save">Confirm &amp; add 3 records</div></div>
+      </div>
+    </section>
+  </div>
+</div>

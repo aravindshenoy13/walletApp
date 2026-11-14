@@ -1,0 +1,51 @@
+{
+  "version": "1.0",
+  "version_code": 1,
+  "application_id": "com.aravind.wallet",
+  "source_commit": "3908f31e3e7c9291023cc0a035826b563a246005",
+  "git_tag": "wallet-v1-2026-11-11-r01",
+  "saved_on_local_date": "2026-11-11",
+  "timezone": "Asia/Calcutta",
+  "created_at_utc": "2026-11-11T10:11:03.0977498+00:00",
+  "validation": {
+    "source_files_verified": 54,
+    "git_bundle_verified": true,
+    "git_restore_and_object_check": "passed",
+    "debug_build": "passed",
+    "release_build": "passed",
+    "jvm_tests": 6,
+    "jvm_test_failures": 0,
+    "debug_lint_errors": 0,
+    "android_device_tests": "not rerun for this archival task"
+  },
+  "files": [
+    {
+      "name": "wallet-v1-source.zip",
+      "bytes": 1275887,
+      "sha256": "91692cd78124c684e072361f8b5a5de86ac1726ff736b9266bb5abd4cdefb333"
+    },
+    {
+      "name": "wallet-v1-history.bundle",
+      "bytes": 1265740,
+      "sha256": "f88c2cb981ef16eafa508badfcc39ab2f0c54aa256602170d208ef953ee816ee"
+    },
+    {
+      "name": "wallet-v1-debug.apk",
+      "bytes": 4500070,
+      "sha256": "bf51a6854343a0b90f7d46607751bc8c2792eb0d8e514bb19bc3040f3e4734f2"
+    },
+    {
+      "name": "wallet-v1-release-unsigned.apk",
+      "bytes": 864503,
+      "sha256": "ce39556dd4476af0d4498f81fc285af4ba322fce1539bdcb5e25d32f7fd5024b"
+    }
+  ],
+  "excluded": [
+    "credentials",
+    "local SDK configuration",
+    "signing keys",
+    "tool caches",
+    "generated build directories",
+    "on-device wallet data"
+  ]
+}

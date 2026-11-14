@@ -1,5 +1,37 @@
 # WalletApp wireframes
 
+## Records search/filter proposal · V5.4 baseline, revision 05
+
+- `wallet-v5.4-wireframe-r05.html` makes the in-field magnifying glass explicit, with a text-symbol fallback if the preview host does not initialize Lucide icons. The placeholder reads "Search for description or amount" and still disappears on focus. Preserves revision 04's separate filter screen and active-filter removal control.
+
+## Records search/filter proposal · V5.4 baseline, revision 04
+
+- `wallet-v5.4-wireframe-r04.html` keeps Search left and Filter right below "All records · newest first". Search has an in-field magnifying glass and a description/amount hint that disappears on focus.
+- Filter opens a separate screen with category, day, and account/bank controls. Apply filters is at the bottom and returns to Records. Back returns without applying draft changes.
+- A × button appears beside Filter only while filters are applied. It clears all filters while retaining the search text. The preview demonstrates these interactions on sample records; app implementation and roadmap are unchanged.
+
+## Records search/filter placement proposal · V5.4 baseline, revision 03
+
+- `wallet-v5.4-wireframe-r03.html` is a quick static Records mock: Search appears on the left and Filter on the right in one row directly below "All records · newest first". Search is removed from the top header.
+- Filter opens category, particular day, and account/bank selectors. Search matches descriptions and amounts only. The preview demonstrates combined search/filter matching on three sample rows, keeping the summary independent. The filter panel starts open to show its contents.
+- The V5.4 number identifies the current baseline. The accepted bulk-add concept remains in revision 02; this is a separate screen proposal. No Android implementation or roadmap changes are included.
+
+## Bulk add proposal · V5.4 baseline, revision 02
+
+- `wallet-v5.4-wireframe-r02.html` replaces the separate transaction editor with in-place editing. Add another record appends a blank editable record on the same page and focuses its amount. All drafts remain editable together, sharing the day selected at the top.
+- Interactive layout preview: add/remove records, edit fields, choose a type, and review. Transfer replaces category with destination account. Review validates the current drafts, shows their overview and totals, and offers Back to editing and a separate final confirmation. Confirm is preview-only.
+- The calculator is collapsed per record to keep quick entry compact. Its simplified preview supports one binary operation at a time and rounds to two decimal places; production money/calculator rules are not finalized here. No application data is saved.
+- The normal Add Record bottom entry remains as shown in revision 01. That revision's separate bulk transaction-entry page is superseded by this in-place proposal. No Android application or roadmap change is included.
+
+## Bulk add proposal · V5.4 baseline, revision 01
+
+- `wallet-v5.4-wireframe-r01.html` shows four static concept screens: the normal Add Record screen with a bottom Bulk add records button, a shared-day draft batch list, the next transaction form, and final review/confirmation.
+- Choose the day once at the top of the batch. Every draft inherits that day and retains its own time, type, account, category or transfer destination, description/payee, and amount/calculation field.
+- Add to batch creates a pending draft. It does not write a transaction or change account balances. The list allows adding another, editing, and removing drafts. The final review exposes all records and totals before Confirm & add records commits the batch.
+- The example progresses from two expense drafts to adding a reimbursement and reviewing three drafts. Transfers would appear in review but be excluded from income, expense, and net totals.
+- Proposed implementation behavior to decide later: final batch save should be atomic, retain drafts on failure, prevent duplicate confirmation, and preserve or explicitly handle an existing unsaved single-record draft when entering bulk mode. Cancellation, day changes, and draft recovery also need decisions before implementation.
+- V5.4 names the current app baseline, not a newly assigned feature release. The app, roadmap, and AGENTS.md are unchanged.
+
 ## Calculator proposal · V5.1 baseline, revision 03
 
 - `wallet-v5.1-wireframe-r03.html` moves the transaction-type buttons above Account and Category. The buttons use red for Expense, green for Income, and blue for Transfer; the selected button is underlined and more strongly outlined.

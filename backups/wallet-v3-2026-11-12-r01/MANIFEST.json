@@ -1,0 +1,25 @@
+{
+  "version": "3.0",
+  "version_code": 3,
+  "source_commit": "a9e1814c681e91518fe22855ed5d7ad25e34ab59",
+  "git_tag": "wallet-v3-2026-11-12-r01",
+  "saved_on_local_date": "2026-11-12",
+  "timezone": "Asia/Calcutta",
+  "room_schema": 2,
+  "validation": {
+    "unit_tests_passed": 22,
+    "lint_errors": 0,
+    "lint_warnings": 34,
+    "debug_build": "passed",
+    "r8_unsigned_release": "passed",
+    "final_device_visual_check": "not performed",
+    "updated_android_test_flows": "compiled, not run"
+  },
+  "excluded": [
+    "credentials",
+    "signing keys",
+    "build caches",
+    "on-device wallet data",
+    "uncommitted V4 drafts"
+  ]
+}

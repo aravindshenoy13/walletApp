@@ -1,0 +1,155 @@
+<style>
+  #bulk-inline { --paper:light-dark(#fff,#181818); --ink:light-dark(#222,#eee); --line:light-dark(#aaa,#777); --quiet:light-dark(#555,#bbb); --blue:light-dark(#2864ad,#8dbbff); --green:light-dark(#26733b,#a8d8b2); --red:light-dark(#b3261e,#ffb4ab); color:var(--ink); font:14px/1.4 Arial,sans-serif; }
+  #bulk-inline * { box-sizing:border-box; }
+  #bulk-inline .phone { max-width:440px; margin:auto; background:var(--paper); border:1px solid var(--ink); }
+  #bulk-inline header { padding:14px; border-bottom:1px solid var(--ink); display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  #bulk-inline .body { padding:14px; }
+  #bulk-inline label { display:block; color:var(--quiet); font-size:12px; }
+  #bulk-inline input, #bulk-inline select { width:100%; min-width:0; min-height:40px; border:1px solid var(--line); border-radius:0; background:var(--paper); color:var(--ink); padding:7px; margin:4px 0 0; font:16px Arial,sans-serif; }
+  #bulk-inline button { min-height:40px; border:1px solid var(--line); border-radius:0; padding:8px; background:var(--paper); color:var(--ink); font:14px Arial,sans-serif; }
+  #bulk-inline .row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  #bulk-inline .fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 10px; margin-top:9px; }
+  #bulk-inline .draft { border-bottom:1px solid var(--line); padding:16px 0; }
+  #bulk-inline .muted { color:var(--quiet); font-size:12px; }
+  #bulk-inline .remove { color:var(--red); border:0; padding:4px 0; }
+  #bulk-inline .action { width:100%; margin-top:14px; border-color:var(--blue); color:var(--blue); }
+  #bulk-inline .confirm { border-color:var(--green); color:var(--green); }
+  #bulk-inline .error { color:var(--red); font-size:12px; margin:10px 0; }
+  #bulk-inline .summary { border:1px solid var(--line); padding:10px; margin:14px 0; }
+  #bulk-inline .summary .row + .row { margin-top:5px; }
+  #bulk-inline .review-item { border-bottom:1px solid var(--line); padding:12px 0; }
+  #bulk-inline details { margin-top:8px; }
+  #bulk-inline summary { color:var(--quiet); font-size:12px; }
+  #bulk-inline .calc-keys { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; margin-top:8px; }
+  #bulk-inline p { margin:0; }
+  #bulk-inline [hidden] { display:none; }
+</style>
+<div id="bulk-inline">
+  <div class="phone">
+    <header><span data-title>Bulk add records</span><span class="muted">Not saved yet</span></header>
+    <div class="body">
+      <label>Day for all records<input data-day type="date" value="2026-11-13"></label>
+      <div data-editor>
+        <div data-drafts></div>
+        <button type="button" class="action" data-add>+ Add another record</button>
+        <p class="error" data-error role="alert" hidden></p>
+        <button type="button" class="action" data-review>Review records</button>
+      </div>
+      <div data-overview hidden>
+        <div class="summary" data-totals></div>
+        <div data-review-list></div>
+        <button type="button" class="action" data-back>Back to editing</button>
+        <button type="button" class="action confirm" data-confirm>Confirm &amp; add records</button>
+        <p class="muted" data-status aria-live="polite"></p>
+      </div>
+      <p data-announcement class="muted" aria-live="polite"></p>
+    </div>
+  </div>
+  <template data-template>
+    <div class="draft">
+      <div class="row"><span data-number>Record</span><button type="button" class="remove" data-remove>Remove</button></div>
+      <div class="fields">
+        <label>Type<select data-field="type"><option value="expense">Expense</option><option value="income">Income</option><option value="transfer">Transfer</option></select></label>
+        <label>Amount · ₹<input data-field="amount" type="text" inputmode="decimal" placeholder="0.00"></label>
+        <label>Account<select data-field="account"><option value="">Choose account</option><option>Cash</option><option>Bank</option></select></label>
+        <label data-category>Category<select data-field="category"><option value="">Choose category</option><option>Food</option><option>Transport</option><option>Groceries</option><option>Uncategorised</option></select></label>
+        <label data-destination hidden>To account<select data-field="destination"><option value="">Choose account</option><option>Cash</option><option>Bank</option></select></label>
+        <label>Description / payee<input data-field="description" type="text" placeholder="Optional"></label>
+        <label>Time<input data-field="time" type="time"></label>
+      </div>
+      <details><summary>Calculator</summary><div class="calc-keys"><button type="button" data-key="+">+</button><button type="button" data-key="−">−</button><button type="button" data-key="×">×</button><button type="button" data-key="÷">÷</button><button type="button" data-key="clear">Clear</button><button type="button" data-key="back">⌫</button><button type="button" data-key=".">.</button><button type="button" data-key="=">=</button></div></details>
+    </div>
+  </template>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('bulk-inline');
+  const drafts = root.querySelector('[data-drafts]');
+  const error = root.querySelector('[data-error]');
+  const editor = root.querySelector('[data-editor]');
+  const overview = root.querySelector('[data-overview]');
+  const money = value => '₹' + value.toFixed(2);
+  const field = (row, name) => row.querySelector('[data-field="' + name + '"]');
+  function fail(message) { error.textContent = message; error.hidden = false; }
+  function renumber() {
+    [...drafts.children].forEach((row, i) => row.querySelector('[data-number]').textContent = 'Record ' + (i + 1));
+    root.querySelector('[data-review]').textContent = 'Review ' + drafts.children.length + ' records';
+  }
+  function add(values = {}, focus = false) {
+    const row = root.querySelector('[data-template]').content.firstElementChild.cloneNode(true);
+    Object.entries(values).forEach(([key, value]) => { field(row, key).value = value; });
+    row.querySelector('[data-remove]').addEventListener('click', () => { row.remove(); renumber(); });
+    field(row, 'type').addEventListener('change', () => {
+      const transfer = field(row, 'type').value === 'transfer';
+      row.querySelector('[data-category]').hidden = transfer;
+      row.querySelector('[data-destination]').hidden = !transfer;
+    });
+    row.querySelector('.calc-keys').addEventListener('click', event => {
+      const key = event.target.closest('[data-key]')?.dataset.key;
+      if (!key) return;
+      const amount = field(row, 'amount');
+      error.hidden = true;
+      if (key === 'clear') amount.value = '';
+      else if (key === 'back') amount.value = amount.value.slice(0, -1);
+      else if (key === '=') {
+        const parts = amount.value.replace(/\s/g, '').match(/^(\d+(?:\.\d*)?|\.\d+)([+−×÷*/-])(\d+(?:\.\d*)?|\.\d+)$/);
+        if (!parts) { if (!/^\d+(\.\d*)?$/.test(amount.value)) fail('Enter a calculation such as 300 + 500.'); return; }
+        const a = Number(parts[1]), b = Number(parts[3]);
+        if ((parts[2] === '÷' || parts[2] === '/') && b === 0) { fail('Cannot divide by zero.'); return; }
+        const result = parts[2] === '+' ? a + b : ['−', '-'].includes(parts[2]) ? a - b : ['×', '*'].includes(parts[2]) ? a * b : a / b;
+        if (!Number.isFinite(result)) { fail('Enter a smaller amount.'); return; }
+        amount.value = String(Number(result.toFixed(2)));
+      } else amount.value += key;
+    });
+    drafts.append(row);
+    renumber();
+    if (focus) { field(row, 'amount').focus(); root.querySelector('[data-announcement]').textContent = 'Blank record added. Edit it here.'; }
+  }
+  add({ type:'expense', amount:'250', account:'Cash', category:'Food', description:'Lunch', time:'13:30' });
+  add({ type:'expense', amount:'150', account:'Bank', category:'Transport', description:'Cab', time:'17:15' });
+  root.querySelector('[data-add]').addEventListener('click', () => add({}, true));
+  root.querySelector('[data-review]').addEventListener('click', () => {
+    error.hidden = true;
+    if (!root.querySelector('[data-day]').value) return fail('Choose the day for this batch.');
+    if (!drafts.children.length) return fail('Add at least one record.');
+    const rows = [...drafts.children];
+    const list = root.querySelector('[data-review-list]');
+    list.replaceChildren();
+    let income = 0, expense = 0;
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i], type = field(row, 'type').value;
+      const amountText = field(row, 'amount').value.trim(), amount = Number(amountText);
+      if (!/^\d+(?:\.\d{1,2})?$/.test(amountText) || !Number.isFinite(amount) || amount <= 0 || !field(row, 'account').value || !field(row, 'time').value || (type !== 'transfer' && !field(row, 'category').value) || (type === 'transfer' && (!field(row, 'destination').value || field(row, 'destination').value === field(row, 'account').value))) return fail('Complete record ' + (i + 1) + ': choose its fields and enter a positive amount with up to two decimal places.');
+      if (type === 'income') income += amount;
+      if (type === 'expense') expense += amount;
+      const item = document.createElement('div');
+      item.className = 'review-item';
+      const title = document.createElement('p');
+      title.textContent = (i + 1) + '. ' + (field(row, 'description').value || (type === 'transfer' ? 'Transfer' : field(row, 'category').value)) + ' · ' + money(amount);
+      const detail = document.createElement('p');
+      detail.className = 'muted';
+      detail.textContent = field(row, 'time').value + ' · ' + type + ' · ' + field(row, 'account').value + (type === 'transfer' ? ' → ' + field(row, 'destination').value : ' · ' + field(row, 'category').value);
+      item.append(title, detail); list.append(item);
+    }
+    const totals = root.querySelector('[data-totals]');
+    totals.replaceChildren();
+    for (const [name, value] of [['Income', income], ['Expenses', expense], ['Net', income - expense]]) {
+      const line = document.createElement('div'); line.className = 'row';
+      const label = document.createElement('span'); label.textContent = name;
+      const number = document.createElement('span'); number.textContent = money(value);
+      line.append(label, number); totals.append(line);
+    }
+    root.querySelector('[data-confirm]').textContent = 'Confirm & add ' + rows.length + ' records';
+    root.querySelector('[data-title]').textContent = 'Review records';
+    editor.hidden = true; overview.hidden = false;
+    root.querySelector('[data-day]').disabled = true;
+    root.querySelector('[data-announcement]').textContent = '';
+    root.querySelector('[data-status]').textContent = '';
+  });
+  root.querySelector('[data-back]').addEventListener('click', () => {
+    editor.hidden = false; overview.hidden = true; root.querySelector('[data-day]').disabled = false;
+    root.querySelector('[data-title]').textContent = 'Bulk add records';
+  });
+  root.querySelector('[data-confirm]').addEventListener('click', () => { root.querySelector('[data-status]').textContent = 'Preview only — no records were saved.'; });
+})();
+</script>

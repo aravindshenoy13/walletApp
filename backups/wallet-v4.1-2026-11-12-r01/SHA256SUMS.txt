@@ -1,0 +1,6 @@
+aadf2300c3616f3cb981f2a29efd50abfdfd1d897404259350da0a46f9b5d213  MANIFEST.json
+2d7e7a06491903a8d98e13c5cc9cabd40365b30bcbd2f428b59d15c13f7c684a  README.md
+983431c7ef693b7df72f945e1957d34d2d37563a791cfe3d32acf6a895d9c9c6  wallet-v4.1-debug.apk
+fb96a3467ddc0afb23e561af9b6e6dc3b0fadaa6e26254b05948bf01f6e8434c  wallet-v4.1-history.bundle
+deb8b11e17bd6ac255810ea151ba298a4e79f3191fada1ef9eb51a795f2d6f9b  wallet-v4.1-release-unsigned.apk
+df7418b68029b121e5f8a01bbc44bee59b687d6c1285681b75a8ee7589bfd4f6  wallet-v4.1-source.zip

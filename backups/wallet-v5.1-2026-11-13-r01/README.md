@@ -1,0 +1,1 @@
+Wallet Manager V5.1 archive. Version 5.1, code 12. Source commit 9d8523662eec45da035a0e4f6a307e23e0b93f02. Includes committed source/history and original V5.1 debug/unsigned release APKs. Credentials, caches and device data are excluded. See V5.1-PLAN.md in the source archive for validation.

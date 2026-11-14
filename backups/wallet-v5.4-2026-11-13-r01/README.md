@@ -1,0 +1,1 @@
+Wallet Manager 5.4, code 16. Restores border-based selection styling and preserves all 5.3.1 bug fixes. Debug and optimized release builds and lint passed. No device visual check performed. Debug APK is installable; release APK requires signing. Source archive and Git history exclude local secrets and caches.

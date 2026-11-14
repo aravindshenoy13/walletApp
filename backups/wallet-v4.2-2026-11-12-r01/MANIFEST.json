@@ -1,0 +1,26 @@
+{
+  "version": "4.2",
+  "version_code": 6,
+  "source_commit": "ed1f827008eecd4c1ea6f6ff9a55477d1a04bb4a",
+  "git_tag": "wallet-v4.2-2026-11-12-r01",
+  "saved_on_local_date": "2026-11-12",
+  "timezone": "Asia/Calcutta",
+  "room_schema": 3,
+  "backup_format": 2,
+  "validation": {
+    "lint_errors": 0,
+    "lint_warnings": 54,
+    "unit_tests_passed": 23,
+    "android_tests_passed": 38,
+    "r8_unsigned_release": "passed",
+    "large_text_ui_tests_passed": 3,
+    "debug_build": "passed",
+    "final_packaged_ui_tests_passed": 3
+  },
+  "excluded": [
+    "credentials",
+    "signing keys",
+    "build caches",
+    "personal wallet data"
+  ]
+}

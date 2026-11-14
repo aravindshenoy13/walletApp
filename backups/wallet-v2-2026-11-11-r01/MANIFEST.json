@@ -1,0 +1,16 @@
+{
+  "version": "2.0",
+  "version_code": 2,
+  "source_commit": "8cc58c7324f579c3cc028dfa875aa97ea9e4bd41",
+  "git_tag": "wallet-v2-2026-11-11-r01",
+  "saved_on_local_date": "2026-11-11",
+  "timezone": "Asia/Calcutta",
+  "source": "Committed V2 implementation, excluding uncommitted V3 work",
+  "apks": "Copied before any V3 build; hashes verified against V2 dist checksums",
+  "excluded": [
+    "credentials",
+    "signing keys",
+    "build caches",
+    "on-device wallet data"
+  ]
+}

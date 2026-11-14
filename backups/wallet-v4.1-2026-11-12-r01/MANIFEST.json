@@ -1,0 +1,14 @@
+{
+  "version": "v4.1",
+  "source_commit": "9b7faee2065bb8d4f2b7acb36cf223e0c852c91c",
+  "git_tag": "wallet-v4.1-2026-11-12-r01",
+  "status": "Implemented; validation recorded in V4.1-PLAN.md",
+  "saved_on_local_date": "2026-11-12",
+  "timezone": "Asia/Calcutta",
+  "excluded": [
+    "credentials",
+    "signing keys",
+    "build caches",
+    "personal wallet data"
+  ]
+}

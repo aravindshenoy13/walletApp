@@ -1,0 +1,1 @@
+Wallet Manager V5.2 archive. Version 5.2, code 13. Source tag wallet-v5.2-2026-11-13-r01. Includes source/history, debug APK, unsigned R8 release APK and release mapping. Unit tests and debug/release builds passed. Device tests compiled previously but were not executed. Credentials, build caches and device data excluded.
