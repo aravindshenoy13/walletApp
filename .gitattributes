@@ -1,0 +1,3 @@
+
+# Preserve backup files byte-for-byte for recorded checksums.
+/backups/** -text
